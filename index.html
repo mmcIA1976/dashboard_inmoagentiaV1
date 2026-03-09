@@ -1,0 +1,1655 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InmoAgentia — Automatización inteligente de leads para inmobiliarias</title>
+  <meta name="description" content="InmoAgentia automatiza la gestión de leads inmobiliarios con IA. Responde en menos de 60 segundos, cualifica leads y agenda visitas automáticamente.">
+  <meta property="og:title" content="InmoAgentia — Automatización inteligente de leads para inmobiliarias">
+  <meta property="og:description" content="Tu agencia responde en menos de 60 segundos, cualifica leads y agenda visitas automáticamente.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://inmoagentia.com">
+  <meta property="og:locale" content="es_ES">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #0D1B2A;
+      --bg-secondary: #1B2E42;
+      --bg-card: #253D56;
+      --accent: #C9A84C;
+      --accent-hover: #d4b65e;
+      --text-primary: #F0F4F8;
+      --text-secondary: #8FA3B1;
+      --border-gold: rgba(201, 168, 76, 0.2);
+      --border-gray: rgba(143, 163, 177, 0.15);
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
+      --shadow-hover: 0 8px 32px rgba(0, 0, 0, 0.35);
+      --radius: 12px;
+      --radius-sm: 8px;
+      --transition: 0.3s ease;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 80px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    h1, h2, h3 {
+      font-family: 'Playfair Display', serif;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img { max-width: 100%; }
+
+    .section-title {
+      font-size: 2rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+
+    .section-subtitle {
+      text-align: center;
+      color: var(--text-secondary);
+      max-width: 680px;
+      margin: 0 auto 48px;
+      font-size: 1.05rem;
+      line-height: 1.7;
+    }
+
+    section {
+      padding: 96px 0;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ============ NAVBAR ============ */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 16px 0;
+      transition: background var(--transition), padding var(--transition), box-shadow var(--transition);
+    }
+
+    .navbar.scrolled {
+      background: rgba(13, 27, 42, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 10px 0;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .navbar .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.5px;
+    }
+
+    .nav-links {
+      display: none;
+      list-style: none;
+      gap: 32px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      transition: color var(--transition);
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent);
+      transition: width var(--transition);
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--accent);
+    }
+
+    .nav-links a.active::after,
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 28px;
+      border-radius: var(--radius-sm);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all var(--transition);
+      text-align: center;
+    }
+
+    .btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg-primary);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(201, 168, 76, 0.3);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-primary);
+      border: 1px solid var(--border-gold);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .nav-cta {
+      display: none;
+    }
+
+    .nav-toggle {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .nav-toggle span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--text-primary);
+      transition: all var(--transition);
+    }
+
+    .nav-toggle.open span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    .nav-toggle.open span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .nav-toggle.open span:nth-child(3) {
+      transform: rotate(-45deg) translate(5px, -5px);
+    }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(13, 27, 42, 0.98);
+      z-index: 999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+    }
+
+    .mobile-menu.open {
+      display: flex;
+    }
+
+    .mobile-menu a {
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      transition: color var(--transition);
+    }
+
+    .mobile-menu a:hover {
+      color: var(--accent);
+    }
+
+    @media (min-width: 768px) {
+      .nav-links { display: flex; }
+      .nav-cta { display: inline-flex; }
+      .nav-toggle { display: none; }
+    }
+
+    /* ============ HERO ============ */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding-top: 100px;
+      padding-bottom: 60px;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 50%, rgba(201, 168, 76, 0.06) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(27, 46, 66, 0.6) 0%, transparent 50%),
+        linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+      z-index: 0;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(201, 168, 76, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201, 168, 76, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      z-index: 0;
+    }
+
+    .hero .container {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      padding: 8px 20px;
+      background: rgba(201, 168, 76, 0.1);
+      border: 1px solid var(--border-gold);
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--accent);
+      margin-bottom: 28px;
+      letter-spacing: 0.5px;
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 20px;
+      color: var(--text-primary);
+    }
+
+    .hero-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      max-width: 640px;
+      margin: 0 auto 36px;
+      line-height: 1.7;
+    }
+
+    .hero-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+      margin-bottom: 56px;
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      max-width: 700px;
+      margin: 0 auto 56px;
+    }
+
+    .stat-item {
+      background: rgba(37, 61, 86, 0.4);
+      border: 1px solid var(--border-gray);
+      border-radius: var(--radius-sm);
+      padding: 20px 16px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .hero-agent-block {
+      max-width: 540px;
+      margin: 0 auto;
+      background: rgba(37, 61, 86, 0.3);
+      border: 1px solid var(--border-gold);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      text-align: center;
+    }
+
+    .hero-agent-block h3 {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .hero-agent-block p {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+
+    .hero-agent-block .btn {
+      font-size: 0.85rem;
+      padding: 10px 22px;
+    }
+
+    @media (min-width: 768px) {
+      .hero h1 { font-size: 3.5rem; }
+      .hero-subtitle { font-size: 1.2rem; }
+      .hero-stats { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    @media (min-width: 1024px) {
+      .hero h1 { font-size: 4rem; }
+    }
+
+    /* ============ CÓMO FUNCIONA ============ */
+    .como-funciona {
+      background: var(--bg-secondary);
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    .step-item {
+      text-align: center;
+      position: relative;
+    }
+
+    .step-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: rgba(201, 168, 76, 0.1);
+      border: 2px solid var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      position: relative;
+    }
+
+    .step-icon i {
+      font-size: 1.5rem;
+      color: var(--accent);
+    }
+
+    .step-number {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: var(--bg-primary);
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .step-title {
+      font-family: 'Inter', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+    }
+
+    .step-desc {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      max-width: 220px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+
+    @media (min-width: 768px) {
+      .steps-grid {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 20px;
+      }
+    }
+
+    /* ============ FUNCIONALIDADES ============ */
+    .features-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-gray);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      transition: all var(--transition);
+    }
+
+    .feature-card:hover {
+      border-color: var(--border-gold);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .feature-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: var(--radius-sm);
+      background: rgba(201, 168, 76, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .feature-icon i {
+      font-size: 1.3rem;
+      color: var(--accent);
+    }
+
+    .feature-card h3 {
+      font-family: 'Inter', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--text-primary);
+    }
+
+    .feature-card p {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    @media (min-width: 768px) {
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ============ CASOS DE USO ============ */
+    .casos-uso {
+      background: var(--bg-secondary);
+    }
+
+    .cases-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+
+    .case-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-gray);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      transition: all var(--transition);
+    }
+
+    .case-card:hover {
+      border-color: var(--border-gold);
+      box-shadow: var(--shadow);
+    }
+
+    .case-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+
+    .chat-bubble {
+      padding: 16px 20px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .chat-client {
+      background: rgba(143, 163, 177, 0.1);
+      border: 1px solid var(--border-gray);
+      border-bottom-left-radius: 4px;
+      margin-right: 20px;
+      color: var(--text-primary);
+    }
+
+    .chat-system {
+      background: rgba(201, 168, 76, 0.08);
+      border: 1px solid var(--border-gold);
+      border-bottom-right-radius: 4px;
+      margin-left: 20px;
+      color: var(--text-secondary);
+    }
+
+    .chat-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .chat-client .chat-label { color: var(--text-secondary); }
+    .chat-system .chat-label { color: var(--accent); }
+
+    @media (min-width: 768px) {
+      .cases-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    /* ============ CONTACTO AGENTE ============ */
+    .agente-section {
+      background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+      position: relative;
+    }
+
+    .agente-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-top: 1px solid var(--border-gold);
+      border-bottom: 1px solid var(--border-gold);
+      pointer-events: none;
+    }
+
+    .agente-wrapper {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+
+    .agente-content h2 {
+      text-align: left;
+      margin-bottom: 16px;
+    }
+
+    .agente-content > p {
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      margin-bottom: 36px;
+    }
+
+    .agente-points {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .agente-point {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .agente-point-icon {
+      flex-shrink: 0;
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: rgba(201, 168, 76, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .agente-point-icon i {
+      font-size: 1.1rem;
+      color: var(--accent);
+    }
+
+    .agente-point h3 {
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .agente-point p {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .agente-cta-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-gray);
+      border-radius: var(--radius);
+      padding: 40px 32px;
+      text-align: center;
+    }
+
+    .agente-cta-area .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .agente-note {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .agente-note i {
+      color: var(--accent);
+    }
+
+    @media (min-width: 768px) {
+      .agente-wrapper { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* ============ PRECIOS ============ */
+    .precios-section {
+      background: var(--bg-secondary);
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 28px;
+      max-width: 800px;
+      margin: 0 auto 36px;
+    }
+
+    .pricing-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-gray);
+      border-radius: var(--radius);
+      padding: 36px 32px;
+      position: relative;
+      transition: all var(--transition);
+    }
+
+    .pricing-card:hover {
+      border-color: var(--border-gold);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .pricing-card.popular {
+      border-color: var(--accent);
+    }
+
+    .pricing-badge {
+      position: absolute;
+      top: -12px;
+      right: 24px;
+      background: var(--accent);
+      color: var(--bg-primary);
+      padding: 4px 16px;
+      border-radius: 50px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .pricing-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .pricing-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+    }
+
+    .pricing-card > p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    .pricing-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .pricing-list li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .pricing-list li i {
+      color: var(--accent);
+      font-size: 0.85rem;
+    }
+
+    .pricing-note {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      max-width: 640px;
+      margin: 0 auto 16px;
+      line-height: 1.6;
+    }
+
+    .pricing-microcopy {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+
+    .pricing-cta-wrap {
+      text-align: center;
+      margin-top: 32px;
+    }
+
+    @media (min-width: 768px) {
+      .pricing-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ============ CONTACTO ============ */
+    .contacto-section {
+      background: var(--bg-primary);
+    }
+
+    .contacto-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-gray);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      transition: border-color var(--transition);
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .form-group input:focus-visible,
+    .form-group select:focus-visible,
+    .form-group textarea:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .form-group select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238FA3B1' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 40px;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .form-group select option {
+      background: var(--bg-card);
+      color: var(--text-primary);
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .checkbox-group label {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      cursor: pointer;
+    }
+
+    .form-error-msg {
+      display: none;
+      font-size: 0.78rem;
+      color: #e74c3c;
+      margin-top: 4px;
+    }
+
+    .form-group.has-error input,
+    .form-group.has-error select,
+    .form-group.has-error textarea {
+      border-color: #e74c3c;
+    }
+
+    .form-group.has-error .form-error-msg {
+      display: block;
+    }
+
+    .form-success {
+      display: none;
+      text-align: center;
+      padding: 40px 24px;
+      background: rgba(201, 168, 76, 0.06);
+      border: 1px solid var(--border-gold);
+      border-radius: var(--radius);
+    }
+
+    .form-success i {
+      font-size: 2.5rem;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .form-success h3 {
+      font-family: 'Inter', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .form-success p {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .contacto-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .trust-points {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .trust-item i {
+      color: var(--accent);
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .sidebar-highlight {
+      background: var(--bg-card);
+      border: 1px solid var(--border-gold);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+    }
+
+    .sidebar-highlight h3 {
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 10px;
+    }
+
+    .sidebar-highlight p {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    @media (min-width: 768px) {
+      .contacto-grid { grid-template-columns: 1fr 380px; }
+    }
+
+    /* ============ FOOTER ============ */
+    footer {
+      background: #080F1A;
+      padding: 48px 0 32px;
+      border-top: 1px solid var(--border-gray);
+    }
+
+    .footer-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      text-align: center;
+    }
+
+    .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .footer-tagline {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+    }
+
+    .footer-links a {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      transition: color var(--transition);
+    }
+
+    .footer-links a:hover { color: var(--accent); }
+
+    .footer-links a:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .footer-copy {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      opacity: 0.7;
+    }
+
+    @media (min-width: 768px) {
+      .section-title { font-size: 2.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header>
+    <nav class="navbar" aria-label="Navegación principal">
+      <div class="container">
+        <a href="#" class="nav-logo" aria-label="InmoAgentia - Inicio">InmoAgentia</a>
+        <ul class="nav-links">
+          <li><a href="#como-funciona">Cómo funciona</a></li>
+          <li><a href="#funcionalidades">Funcionalidades</a></li>
+          <li><a href="#precios">Precios</a></li>
+          <li><a href="#contacto">Contacto</a></li>
+        </ul>
+        <a href="#contacto" class="btn btn-primary nav-cta">Solicitar demo</a>
+        <button class="nav-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobileMenu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </nav>
+    <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+      <a href="#como-funciona">Cómo funciona</a>
+      <a href="#funcionalidades">Funcionalidades</a>
+      <a href="#precios">Precios</a>
+      <a href="#contacto">Contacto</a>
+      <a href="#contacto" class="btn btn-primary">Solicitar demo</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero" id="inicio">
+      <div class="container">
+        <div class="hero-badge">Automatización IA para inmobiliarias</div>
+        <h1>Nunca pierdas un lead inmobiliario</h1>
+        <p class="hero-subtitle">Tu agencia responde en menos de 60 segundos, cualifica leads y agenda visitas automáticamente — mientras tú cierras ventas.</p>
+        <div class="hero-buttons">
+          <a href="#contacto" class="btn btn-primary">Solicitar demo gratuita</a>
+          <a href="#como-funciona" class="btn btn-secondary">Ver cómo funciona</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <div class="stat-value">&lt; 60s</div>
+            <div class="stat-label">respuesta</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">24/7</div>
+            <div class="stat-label">disponible</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">3-4h</div>
+            <div class="stat-label">ahorradas/día</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">0€</div>
+            <div class="stat-label">coste por lead extra</div>
+          </div>
+        </div>
+        <div class="hero-agent-block">
+          <h3>¿Tienes dudas antes de empezar?</h3>
+          <p>Habla con un agente y resuelve preguntas sobre instalación, funcionamiento o adaptación a tu agencia.</p>
+          <a href="#contacto-agente" class="btn btn-secondary">Consultar con un agente</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- CÓMO FUNCIONA -->
+    <section class="como-funciona" id="como-funciona">
+      <div class="container">
+        <h2 class="section-title reveal">De lead a visita en segundos</h2>
+        <div class="steps-grid">
+          <div class="step-item reveal">
+            <div class="step-icon">
+              <i class="fas fa-envelope"></i>
+              <span class="step-number">1</span>
+            </div>
+            <div class="step-title">Recibe el email</div>
+            <p class="step-desc">El cliente contacta por email desde cualquier portal.</p>
+          </div>
+          <div class="step-item reveal">
+            <div class="step-icon">
+              <i class="fas fa-brain"></i>
+              <span class="step-number">2</span>
+            </div>
+            <div class="step-title">IA extrae criterios</div>
+            <p class="step-desc">Zona, precio, habitaciones y equipamiento detectados automáticamente.</p>
+          </div>
+          <div class="step-item reveal">
+            <div class="step-icon">
+              <i class="fas fa-search"></i>
+              <span class="step-number">3</span>
+            </div>
+            <div class="step-title">Busca en cartera</div>
+            <p class="step-desc">Filtra los pisos disponibles que encajan en tiempo real.</p>
+          </div>
+          <div class="step-item reveal">
+            <div class="step-icon">
+              <i class="fas fa-reply"></i>
+              <span class="step-number">4</span>
+            </div>
+            <div class="step-title">Responde al instante</div>
+            <p class="step-desc">Email profesional con opciones reales en menos de 60 segundos.</p>
+          </div>
+          <div class="step-item reveal">
+            <div class="step-icon">
+              <i class="fas fa-calendar-check"></i>
+              <span class="step-number">5</span>
+            </div>
+            <div class="step-title">Agenda la visita</div>
+            <p class="step-desc">Formulario + reserva automática en Google Calendar.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FUNCIONALIDADES -->
+    <section id="funcionalidades">
+      <div class="container">
+        <h2 class="section-title reveal">Todo lo que hace por ti</h2>
+        <div class="features-grid">
+          <div class="feature-card reveal">
+            <div class="feature-icon"><i class="fas fa-envelope-open-text"></i></div>
+            <h3>Lectura inteligente de emails</h3>
+            <p>Analiza automáticamente cada consulta entrante y detecta intención y contexto.</p>
+          </div>
+          <div class="feature-card reveal">
+            <div class="feature-icon"><i class="fas fa-database"></i></div>
+            <h3>Búsqueda en base de datos en tiempo real</h3>
+            <p>Encuentra inmuebles compatibles según los criterios del lead.</p>
+          </div>
+          <div class="feature-card reveal">
+            <div class="feature-icon"><i class="fas fa-paper-plane"></i></div>
+            <h3>Respuesta personalizada automática</h3>
+            <p>Genera correos profesionales con opciones relevantes en segundos.</p>
+          </div>
+          <div class="feature-card reveal">
+            <div class="feature-icon"><i class="fas fa-file-alt"></i></div>
+            <h3>Formulario de visita HTML</h3>
+            <p>Envía formularios claros para recoger disponibilidad e interés del cliente.</p>
+          </div>
+          <div class="feature-card reveal">
+            <div class="feature-icon"><i class="fas fa-calendar-alt"></i></div>
+            <h3>Reserva en Google Calendar</h3>
+            <p>Automatiza la gestión de visitas y evita intercambios manuales.</p>
+          </div>
+          <div class="feature-card reveal">
+            <div class="feature-icon"><i class="fas fa-table"></i></div>
+            <h3>CRM automático en Google Sheets</h3>
+            <p>Registra la actividad y mantiene trazabilidad del proceso comercial.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CASOS DE USO -->
+    <section class="casos-uso" id="casos-uso">
+      <div class="container">
+        <h2 class="section-title reveal">Así trabaja el sistema en situaciones reales</h2>
+        <div class="cases-grid">
+          <div class="case-card reveal">
+            <div class="case-label">Caso 1 — Búsqueda por características</div>
+            <div class="chat-bubble chat-client">
+              <span class="chat-label">Cliente</span>
+              "Busco piso en Gràcia, 2 habitaciones, ascensor, hasta 450.000€"
+            </div>
+            <div class="chat-bubble chat-system">
+              <span class="chat-label"><i class="fas fa-robot"></i> Sistema</span>
+              Identifica criterios, filtra la cartera y responde con opciones en menos de 30 segundos.
+            </div>
+          </div>
+          <div class="case-card reveal">
+            <div class="case-label">Caso 2 — Referencia de portal</div>
+            <div class="chat-bubble chat-client">
+              <span class="chat-label">Cliente</span>
+              "Me interesa este piso de Fotocasa: [URL]"
+            </div>
+            <div class="chat-bubble chat-system">
+              <span class="chat-label"><i class="fas fa-robot"></i> Sistema</span>
+              Localiza el inmueble, revisa su estado y propone alternativas similares disponibles.
+            </div>
+          </div>
+          <div class="case-card reveal">
+            <div class="case-label">Caso 3 — Solicitud de visita</div>
+            <div class="chat-bubble chat-client">
+              <span class="chat-label">Cliente</span>
+              "Me gustan las opciones, ¿cuándo puedo visitarlas?"
+            </div>
+            <div class="chat-bubble chat-system">
+              <span class="chat-label"><i class="fas fa-robot"></i> Sistema</span>
+              Detecta intención de visita, envía formulario y agenda automáticamente en Google Calendar.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACTO AGENTE -->
+    <section class="agente-section" id="contacto-agente">
+      <div class="container">
+        <div class="agente-wrapper">
+          <div class="agente-content">
+            <h2 class="section-title reveal" style="text-align:left;">Habla con un agente cuando lo necesites</h2>
+            <p class="reveal">Si quieres entender mejor cómo funciona la aplicación, cómo se instala o cómo se adapta a tu agencia, te atendemos personalmente.</p>
+            <div class="agente-points reveal">
+              <div class="agente-point">
+                <div class="agente-point-icon"><i class="fas fa-lightbulb"></i></div>
+                <div>
+                  <h3>Dudas sobre la aplicación</h3>
+                  <p>Te explicamos qué hace exactamente el sistema y cómo encaja en tu operativa.</p>
+                </div>
+              </div>
+              <div class="agente-point">
+                <div class="agente-point-icon"><i class="fas fa-cogs"></i></div>
+                <div>
+                  <h3>Dudas sobre instalación y configuración</h3>
+                  <p>Resolvemos preguntas sobre puesta en marcha, integraciones y adaptación inicial.</p>
+                </div>
+              </div>
+              <div class="agente-point">
+                <div class="agente-point-icon"><i class="fas fa-handshake"></i></div>
+                <div>
+                  <h3>Acompañamiento antes de contratar</h3>
+                  <p>Te ayudamos a valorar si la solución encaja con tu volumen de leads y cartera.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="agente-cta-area reveal">
+            <div style="margin-bottom: 8px;">
+              <i class="fas fa-headset" style="font-size: 2.5rem; color: var(--accent); margin-bottom: 16px; display: block;"></i>
+              <p style="font-size: 1rem; color: var(--text-primary); font-weight: 500; margin-bottom: 4px;">Elige cómo contactarnos</p>
+            </div>
+            <div class="btn-group">
+              <a href="#contacto" class="btn btn-primary">Solicitar una llamada</a>
+              <a href="#contacto" class="btn btn-secondary">Escribir mi consulta</a>
+            </div>
+            <div class="agente-note">
+              <i class="fas fa-check-circle"></i>
+              <span>Respuesta humana, clara y sin compromiso.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRECIOS -->
+    <section class="precios-section" id="precios">
+      <div class="container">
+        <h2 class="section-title reveal">Inversión clara y sin sorpresas</h2>
+        <p class="section-subtitle reveal">Primer mes pagando solo la cuota mensual — setup incluido sin coste</p>
+        <div class="pricing-grid">
+          <div class="pricing-card reveal">
+            <div class="pricing-label">Pago inicial</div>
+            <h3>Setup único</h3>
+            <p>Configuración completa adaptada a tu agencia</p>
+            <ul class="pricing-list">
+              <li><i class="fas fa-check"></i> Integración email</li>
+              <li><i class="fas fa-check"></i> Base de datos de pisos</li>
+              <li><i class="fas fa-check"></i> Formulario visita personalizado</li>
+              <li><i class="fas fa-check"></i> Google Calendar</li>
+              <li><i class="fas fa-check"></i> Formación 1h equipo</li>
+            </ul>
+          </div>
+          <div class="pricing-card popular reveal">
+            <div class="pricing-badge">Más popular</div>
+            <div class="pricing-label">Cuota mensual</div>
+            <h3>Mantenimiento</h3>
+            <p>Sistema activo, actualizado y con soporte</p>
+            <ul class="pricing-list">
+              <li><i class="fas fa-check"></i> Monitorización 24/7</li>
+              <li><i class="fas fa-check"></i> Actualizaciones</li>
+              <li><i class="fas fa-check"></i> Soporte prioritario</li>
+              <li><i class="fas fa-check"></i> Ajustes según necesidades</li>
+              <li><i class="fas fa-check"></i> Informe mensual</li>
+            </ul>
+          </div>
+        </div>
+        <p class="pricing-note reveal">* Los precios se adaptan según volumen de leads y tamaño de cartera. Solicita tu propuesta personalizada.</p>
+        <p class="pricing-microcopy reveal">¿Prefieres resolver dudas antes de solicitar una propuesta? Puedes hablar con un agente desde el <a href="#contacto" style="color:var(--accent);">formulario de contacto</a>.</p>
+        <div class="pricing-cta-wrap reveal">
+          <a href="#contacto" class="btn btn-primary">Solicitar propuesta personalizada</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACTO -->
+    <section class="contacto-section" id="contacto">
+      <div class="container">
+        <h2 class="section-title reveal">¿Hablamos?</h2>
+        <p class="section-subtitle reveal">Cuéntanos sobre tu agencia o envíanos tus dudas sobre la aplicación, la instalación o la configuración, y te responderemos con una propuesta o con la orientación que necesites.</p>
+        <div class="contacto-grid">
+          <div class="reveal">
+            <form id="contactForm" novalidate>
+              <div class="form-group">
+                <label for="nombre">Nombre *</label>
+                <input type="text" id="nombre" name="nombre" required placeholder="Tu nombre completo" autocomplete="name" aria-describedby="nombre-error">
+                <div class="form-error-msg" id="nombre-error" role="alert">Por favor, introduce tu nombre.</div>
+              </div>
+              <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" required placeholder="tu@email.com" autocomplete="email" aria-describedby="email-error">
+                <div class="form-error-msg" id="email-error" role="alert">Por favor, introduce un email válido.</div>
+              </div>
+              <div class="form-group">
+                <label for="telefono">Teléfono</label>
+                <input type="tel" id="telefono" name="telefono" placeholder="+34 600 000 000" autocomplete="tel">
+              </div>
+              <div class="form-group">
+                <label for="agencia">Nombre de la agencia</label>
+                <input type="text" id="agencia" name="agencia" placeholder="Tu agencia inmobiliaria" autocomplete="organization">
+              </div>
+              <div class="form-group">
+                <label for="pisos">Número aproximado de pisos en cartera</label>
+                <select id="pisos" name="pisos">
+                  <option value="" disabled selected>Selecciona una opción</option>
+                  <option value="1-20">1-20</option>
+                  <option value="21-50">21-50</option>
+                  <option value="51-100">51-100</option>
+                  <option value="+100">+100</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="tipo">Tipo de consulta</label>
+                <select id="tipo" name="tipo">
+                  <option value="" disabled selected>Selecciona el motivo</option>
+                  <option value="demo">Solicitar demo</option>
+                  <option value="propuesta">Solicitar propuesta</option>
+                  <option value="dudas-app">Dudas sobre la aplicación</option>
+                  <option value="dudas-instalacion">Dudas sobre instalación/configuración</option>
+                  <option value="otro">Otro</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="mensaje">Mensaje</label>
+                <textarea id="mensaje" name="mensaje" placeholder="Cuéntanos lo que necesites..."></textarea>
+              </div>
+              <div class="checkbox-group">
+                <input type="checkbox" id="privacidad" name="privacidad">
+                <label for="privacidad">Acepto que InmoAgentia me contacte para responder a mi solicitud y gestionar la propuesta comercial.</label>
+              </div>
+              <button type="submit" class="btn btn-primary" style="width:100%;">Solicitar propuesta</button>
+            </form>
+            <div class="form-success" id="formSuccess">
+              <i class="fas fa-check-circle"></i>
+              <h3>Gracias por contactarnos</h3>
+              <p>Hemos recibido tu solicitud y te responderemos lo antes posible.</p>
+            </div>
+          </div>
+          <div class="contacto-sidebar reveal">
+            <div class="trust-points">
+              <div class="trust-item">
+                <i class="fas fa-clock"></i>
+                <span>Respuesta en menos de 24h</span>
+              </div>
+              <div class="trust-item">
+                <i class="fas fa-file-signature"></i>
+                <span>Propuesta personalizada para tu agencia</span>
+              </div>
+              <div class="trust-item">
+                <i class="fas fa-user-shield"></i>
+                <span>Soporte humano para dudas sobre instalación y funcionamiento</span>
+              </div>
+            </div>
+            <div class="sidebar-highlight">
+              <h3>También puedes usar este formulario para hablar con un agente</h3>
+              <p>Si todavía no quieres pedir una demo, puedes escribirnos simplemente para resolver dudas.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-logo">InmoAgentia</div>
+        <p class="footer-tagline">Automatización inteligente para inmobiliarias</p>
+        <div class="footer-links">
+          <a href="#">Política de privacidad</a>
+          <a href="#">Aviso legal</a>
+        </div>
+        <p class="footer-copy">&copy; 2026 InmoAgentia</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+      'use strict';
+
+      var navbar = document.querySelector('.navbar');
+      var navToggle = document.querySelector('.nav-toggle');
+      var mobileMenu = document.getElementById('mobileMenu');
+      var navLinks = document.querySelectorAll('.nav-links a');
+      var mobileLinks = mobileMenu.querySelectorAll('a');
+      var navSectionIds = ['como-funciona', 'funcionalidades', 'precios', 'contacto'];
+      var navSections = navSectionIds.map(function(id) { return document.getElementById(id); }).filter(Boolean);
+      var contactForm = document.getElementById('contactForm');
+      var formSuccess = document.getElementById('formSuccess');
+      var reveals = document.querySelectorAll('.reveal');
+
+      function handleNavScroll() {
+        if (window.scrollY > 60) {
+          navbar.classList.add('scrolled');
+        } else {
+          navbar.classList.remove('scrolled');
+        }
+      }
+      window.addEventListener('scroll', handleNavScroll, { passive: true });
+
+      navToggle.addEventListener('click', function() {
+        var isOpen = mobileMenu.classList.toggle('open');
+        navToggle.classList.toggle('open');
+        navToggle.setAttribute('aria-expanded', String(isOpen));
+        navToggle.setAttribute('aria-label', isOpen ? 'Cerrar menú' : 'Abrir menú');
+        mobileMenu.setAttribute('aria-hidden', String(!isOpen));
+        document.body.style.overflow = isOpen ? 'hidden' : '';
+        if (isOpen) {
+          mobileMenu.querySelector('a').focus();
+        }
+      });
+
+      function closeMobileMenu() {
+        mobileMenu.classList.remove('open');
+        navToggle.classList.remove('open');
+        navToggle.setAttribute('aria-expanded', 'false');
+        navToggle.setAttribute('aria-label', 'Abrir menú');
+        mobileMenu.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        navToggle.focus();
+      }
+
+      mobileLinks.forEach(function(link) {
+        link.addEventListener('click', closeMobileMenu);
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && mobileMenu.classList.contains('open')) {
+          closeMobileMenu();
+        }
+      });
+
+      var observerOptions = {
+        root: null,
+        rootMargin: '-20% 0px -60% 0px',
+        threshold: 0
+      };
+
+      var sectionObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            var id = entry.target.getAttribute('id');
+            navLinks.forEach(function(link) {
+              link.classList.remove('active');
+              if (link.getAttribute('href') === '#' + id) {
+                link.classList.add('active');
+              }
+            });
+          }
+        });
+      }, observerOptions);
+
+      navSections.forEach(function(section) {
+        sectionObserver.observe(section);
+      });
+
+      var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+      if (!prefersReducedMotion.matches) {
+        var revealObserver = new IntersectionObserver(function(entries) {
+          entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              revealObserver.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.1 });
+
+        reveals.forEach(function(el) {
+          revealObserver.observe(el);
+        });
+      } else {
+        reveals.forEach(function(el) {
+          el.classList.add('visible');
+        });
+      }
+
+      function setFieldError(field, hasError) {
+        var group = field.closest('.form-group');
+        if (hasError) {
+          group.classList.add('has-error');
+          field.setAttribute('aria-invalid', 'true');
+        } else {
+          group.classList.remove('has-error');
+          field.removeAttribute('aria-invalid');
+        }
+      }
+
+      contactForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        var nombre = document.getElementById('nombre');
+        var email = document.getElementById('email');
+        var valid = true;
+
+        setFieldError(nombre, false);
+        setFieldError(email, false);
+
+        if (!nombre.value.trim()) {
+          setFieldError(nombre, true);
+          nombre.focus();
+          valid = false;
+        }
+
+        if (!email.value.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
+          setFieldError(email, true);
+          if (valid) email.focus();
+          valid = false;
+        }
+
+        if (!valid) return;
+
+        contactForm.style.display = 'none';
+        formSuccess.style.display = 'block';
+        formSuccess.setAttribute('role', 'status');
+        contactForm.reset();
+
+        setTimeout(function() {
+          formSuccess.style.display = 'none';
+          contactForm.style.display = 'block';
+        }, 6000);
+      });
+
+      document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+        anchor.addEventListener('click', function(e) {
+          var targetId = this.getAttribute('href');
+          if (targetId === '#') return;
+          var target = document.querySelector(targetId);
+          if (target) {
+            e.preventDefault();
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+      });
+
+    })();
+  </script>
+</body>
+</html>
