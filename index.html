@@ -156,26 +156,27 @@
       height: 60px;
       width: auto;
       pointer-events: none;
-      animation: letterGlow 7s ease-in-out infinite;
+      opacity: 0.85;
+      animation: letterGlow 12s ease-in-out infinite;
       -webkit-mask-image: linear-gradient(90deg,
         black 0%,
         black var(--glow-pos),
-        transparent calc(var(--glow-pos) + 5%),
+        transparent calc(var(--glow-pos) + 3%),
         transparent 100%
       );
       mask-image: linear-gradient(90deg,
         black 0%,
         black var(--glow-pos),
-        transparent calc(var(--glow-pos) + 5%),
+        transparent calc(var(--glow-pos) + 3%),
         transparent 100%
       );
     }
 
     @keyframes letterGlow {
-      0%, 8% { --glow-pos: 0%; }
-      42% { --glow-pos: 100%; }
-      50%, 58% { --glow-pos: 100%; }
-      92% { --glow-pos: 0%; }
+      0%, 10% { --glow-pos: 0%; }
+      40% { --glow-pos: 100%; }
+      50%, 60% { --glow-pos: 100%; }
+      90% { --glow-pos: 0%; }
       100% { --glow-pos: 0%; }
     }
 
@@ -1118,17 +1119,18 @@
       height: 52px;
       width: auto;
       pointer-events: none;
-      animation: letterGlow 7s ease-in-out infinite;
+      opacity: 0.85;
+      animation: letterGlow 12s ease-in-out infinite;
       -webkit-mask-image: linear-gradient(90deg,
         black 0%,
         black var(--glow-pos),
-        transparent calc(var(--glow-pos) + 5%),
+        transparent calc(var(--glow-pos) + 3%),
         transparent 100%
       );
       mask-image: linear-gradient(90deg,
         black 0%,
         black var(--glow-pos),
-        transparent calc(var(--glow-pos) + 5%),
+        transparent calc(var(--glow-pos) + 3%),
         transparent 100%
       );
     }
