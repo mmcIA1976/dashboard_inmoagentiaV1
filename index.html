@@ -2290,11 +2290,19 @@
     var chatChips = document.getElementById('chatChips');
     var btnEscribirConsulta = document.getElementById('btnEscribirConsulta');
     var chatBackBtn = document.getElementById('chatBackBtn');
+    var agenteWrapper = chatWidget ? chatWidget.closest('.agente-wrapper') : null;
+
+    function activateChat() {
+      if (!chatWidget.classList.contains('chat-active')) {
+        chatWidget.classList.add('chat-active');
+        chatMessages.classList.remove('initial-hidden');
+        if (agenteWrapper) agenteWrapper.classList.add('chat-expanded');
+      }
+    }
 
     if (btnEscribirConsulta) {
       btnEscribirConsulta.addEventListener('click', function() {
-        chatWidget.classList.add('chat-active');
-        chatMessages.classList.remove('initial-hidden');
+        activateChat();
         if (chatInput) chatInput.focus();
       });
     }
@@ -2305,16 +2313,6 @@
         chatMessages.classList.add('initial-hidden');
         if (agenteWrapper) agenteWrapper.classList.remove('chat-expanded');
       });
-    }
-
-    var agenteWrapper = chatWidget ? chatWidget.closest('.agente-wrapper') : null;
-
-    function activateChat() {
-      if (!chatWidget.classList.contains('chat-active')) {
-        chatWidget.classList.add('chat-active');
-        chatMessages.classList.remove('initial-hidden');
-        if (agenteWrapper) agenteWrapper.classList.add('chat-expanded');
-      }
     }
 
     if (chatInput) {
