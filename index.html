@@ -1209,6 +1209,15 @@
     .agente-wrapper.chat-expanded .agente-content {
       display: none;
     }
+
+    .agente-wrapper.chat-expanded {
+      grid-template-columns: 1fr !important;
+    }
+
+    .chat-active .chat-messages {
+      max-height: 500px;
+      min-height: 350px;
+    }
     .cw-header-expanded { display: none; }
 
     .cw-header-expanded {
