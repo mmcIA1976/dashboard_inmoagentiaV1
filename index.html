@@ -1196,11 +1196,19 @@
     .chat-active .cw-divider,
     .chat-active .cw-chat { display: none; }
 
-    .chat-active .chat-messages { display: flex; max-height: 340px; }
+    .chat-active .chat-messages { display: flex; max-height: 440px; }
 
     .chat-messages.initial-hidden { display: none; }
 
     .chat-active .cw-header-expanded { display: flex; }
+
+    .chat-active {
+      grid-column: 1 / -1;
+    }
+
+    .agente-wrapper.chat-expanded .agente-content {
+      display: none;
+    }
     .cw-header-expanded { display: none; }
 
     .cw-header-expanded {
@@ -2286,13 +2294,17 @@
       chatBackBtn.addEventListener('click', function() {
         chatWidget.classList.remove('chat-active');
         chatMessages.classList.add('initial-hidden');
+        if (agenteWrapper) agenteWrapper.classList.remove('chat-expanded');
       });
     }
+
+    var agenteWrapper = chatWidget ? chatWidget.closest('.agente-wrapper') : null;
 
     function activateChat() {
       if (!chatWidget.classList.contains('chat-active')) {
         chatWidget.classList.add('chat-active');
         chatMessages.classList.remove('initial-hidden');
+        if (agenteWrapper) agenteWrapper.classList.add('chat-expanded');
       }
     }
 
@@ -2364,6 +2376,7 @@
 
     function sendChip(btn) {
       var text = btn.textContent.trim();
+      activateChat();
       hideChips();
       dispatchMessage(text);
     }
