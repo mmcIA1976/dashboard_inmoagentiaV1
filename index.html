@@ -805,19 +805,6 @@
       line-height: 1.25;
     }
 
-    .cw-close {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      font-size: 1.15rem;
-      cursor: pointer;
-      padding: 2px 4px;
-      transition: color 0.2s;
-      line-height: 1;
-    }
-
-    .cw-close:hover { color: var(--text-primary); }
-
     .cw-body {
       display: flex;
       gap: 12px;
@@ -1889,7 +1876,6 @@
                   <div class="cw-avatar"><i class="fas fa-headset"></i></div>
                   <div class="cw-header-title">¿En qué podemos<br>ayudarte?</div>
                 </div>
-                <button class="cw-close" aria-label="Cerrar"><i class="fas fa-times"></i></button>
               </div>
             </div>
 
@@ -2303,12 +2289,25 @@
       });
     }
 
+    function activateChat() {
+      if (!chatWidget.classList.contains('chat-active')) {
+        chatWidget.classList.add('chat-active');
+        chatMessages.classList.remove('initial-hidden');
+      }
+    }
+
     if (chatInput) {
       chatInput.addEventListener('keydown', function(e) {
         if (e.key === 'Enter' && !e.shiftKey) {
           e.preventDefault();
           sendMessage();
         }
+      });
+      chatInput.addEventListener('input', function() {
+        if (this.value.length > 0) activateChat();
+      });
+      chatInput.addEventListener('focus', function() {
+        if (this.value.length > 0) activateChat();
       });
     }
 
@@ -2373,6 +2372,7 @@
       var text = chatInput.value.trim();
       if (!text || chatBusy) return;
       chatInput.value = '';
+      activateChat();
       hideChips();
       dispatchMessage(text);
     }
