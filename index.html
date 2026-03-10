@@ -2323,6 +2323,42 @@
       });
     }
 
+    var audioCtx = null;
+    function playNotif() {
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        var now = audioCtx.currentTime;
+        var g = audioCtx.createGain();
+        g.connect(audioCtx.destination);
+        g.gain.setValueAtTime(0.18, now);
+        g.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+
+        var o1 = audioCtx.createOscillator();
+        o1.type = 'sine';
+        o1.frequency.setValueAtTime(1200, now);
+        o1.frequency.exponentialRampToValueAtTime(800, now + 0.15);
+        o1.connect(g);
+        o1.start(now);
+        o1.stop(now + 0.15);
+
+        var o2 = audioCtx.createOscillator();
+        o2.type = 'sine';
+        o2.frequency.setValueAtTime(1500, now + 0.18);
+        o2.frequency.exponentialRampToValueAtTime(1000, now + 0.5);
+        o2.connect(g);
+        o2.start(now + 0.18);
+        o2.stop(now + 0.5);
+
+        var o3 = audioCtx.createOscillator();
+        o3.type = 'sine';
+        o3.frequency.setValueAtTime(1800, now + 0.35);
+        o3.frequency.exponentialRampToValueAtTime(1200, now + 0.8);
+        o3.connect(g);
+        o3.start(now + 0.35);
+        o3.stop(now + 0.8);
+      } catch(e) {}
+    }
+
     function appendMessage(role, text) {
       var wrapper = document.createElement('div');
       wrapper.className = 'chat-msg ' + role;
@@ -2409,11 +2445,14 @@
           var reply = (data && (data.output || data.text || data.message || data.reply))
             ? (data.output || data.text || data.message || data.reply)
             : 'Gracias por tu mensaje. En breve recibirás respuesta.';
-          appendMessage('bot', reply);
+          var msgEl = appendMessage('bot', reply);
+          msgEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          playNotif();
         })
         .catch(function() {
           removeTyping();
-          appendMessage('bot', 'En este momento no puedo conectar con el agente. Puedes escribirnos directamente usando el formulario de contacto.');
+          var msgEl = appendMessage('bot', 'En este momento no puedo conectar con el agente. Puedes escribirnos directamente usando el formulario de contacto.');
+          msgEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
         })
         .finally(function() {
           setBusy(false);
