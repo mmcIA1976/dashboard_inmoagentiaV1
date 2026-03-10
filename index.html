@@ -752,37 +752,272 @@
       line-height: 1.5;
     }
 
-    .agente-cta-area {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 20px;
+    /* ============ CHAT WIDGET ============ */
+    .chat-widget {
       background: var(--bg-card);
       border: 1px solid var(--border-gray);
-      border-radius: var(--radius);
-      padding: 40px 32px;
-      text-align: center;
-    }
-
-    .agente-cta-area .btn-group {
+      border-radius: 20px;
+      overflow: hidden;
       display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      justify-content: center;
+      flex-direction: column;
+      height: 460px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.4);
     }
 
-    .agente-note {
+    .chat-header {
+      background: linear-gradient(135deg, #0f2337 0%, #162d46 100%);
+      border-bottom: 1px solid var(--border-gold);
+      padding: 18px 20px;
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 0.85rem;
-      color: var(--text-secondary);
+      justify-content: space-between;
+      flex-shrink: 0;
     }
 
-    .agente-note i {
-      color: var(--accent);
+    .chat-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
+
+    .chat-bot-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent) 0%, #e8c26a 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .chat-bot-avatar i {
+      font-size: 1.1rem;
+      color: var(--bg-primary);
+    }
+
+    .chat-header-title {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+
+    .chat-header-sub {
+      font-size: 0.75rem;
+      color: var(--accent);
+      margin-top: 2px;
+    }
+
+    .chat-status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4ade80;
+      box-shadow: 0 0 6px #4ade8088;
+      animation: pulse-dot 2s infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-gray) transparent;
+    }
+
+    .chat-messages::-webkit-scrollbar { width: 4px; }
+    .chat-messages::-webkit-scrollbar-track { background: transparent; }
+    .chat-messages::-webkit-scrollbar-thumb { background: var(--border-gray); border-radius: 2px; }
+
+    .chat-msg {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+      max-width: 86%;
+    }
+
+    .chat-msg.bot { align-self: flex-start; }
+    .chat-msg.user { align-self: flex-end; flex-direction: row-reverse; }
+
+    .chat-msg-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent) 0%, #e8c26a 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .chat-msg-avatar i {
+      font-size: 0.75rem;
+      color: var(--bg-primary);
+    }
+
+    .chat-bubble {
+      padding: 10px 14px;
+      border-radius: 16px;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .chat-msg.bot .chat-bubble {
+      background: #1a2e42;
+      color: var(--text-primary);
+      border-bottom-left-radius: 4px;
+    }
+
+    .chat-msg.user .chat-bubble {
+      background: linear-gradient(135deg, var(--accent) 0%, #e8c26a 100%);
+      color: var(--bg-primary);
+      font-weight: 500;
+      border-bottom-right-radius: 4px;
+    }
+
+    .chat-typing {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 10px 14px;
+      background: #1a2e42;
+      border-radius: 16px;
+      border-bottom-left-radius: 4px;
+    }
+
+    .chat-typing span {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: typing-bounce 1.2s infinite;
+    }
+
+    .chat-typing span:nth-child(2) { animation-delay: 0.2s; }
+    .chat-typing span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typing-bounce {
+      0%, 100% { transform: translateY(0); opacity: 0.4; }
+      50% { transform: translateY(-4px); opacity: 1; }
+    }
+
+    .chat-quick-replies {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 8px 16px;
+      flex-shrink: 0;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .chat-chip {
+      background: rgba(201, 168, 76, 0.1);
+      border: 1px solid rgba(201, 168, 76, 0.3);
+      color: var(--accent);
+      font-size: 0.78rem;
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: background 0.2s, border-color 0.2s;
+      white-space: nowrap;
+    }
+
+    .chat-chip:hover {
+      background: rgba(201, 168, 76, 0.2);
+      border-color: var(--accent);
+    }
+
+    .chat-input-area {
+      padding: 12px 16px;
+      border-top: 1px solid var(--border-gray);
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-shrink: 0;
+      background: #0f1f2f;
+    }
+
+    .chat-input {
+      flex: 1;
+      background: #1a2e42;
+      border: 1px solid var(--border-gray);
+      border-radius: 24px;
+      padding: 10px 16px;
+      color: var(--text-primary);
+      font-size: 0.88rem;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .chat-input::placeholder { color: var(--text-muted); }
+
+    .chat-input:focus { border-color: var(--accent); }
+
+    .chat-send-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent) 0%, #e8c26a 100%);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+
+    .chat-send-btn:hover { transform: scale(1.08); }
+    .chat-send-btn:active { transform: scale(0.95); }
+    .chat-send-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .chat-send-btn i { color: var(--bg-primary); font-size: 0.9rem; }
+
+    .chat-footer-bar {
+      padding: 8px 16px;
+      background: #0a1929;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .chat-footer-label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chat-footer-label i { color: var(--accent); font-size: 0.7rem; }
+
+    .chat-footer-dots {
+      display: flex;
+      gap: 4px;
+    }
+
+    .chat-footer-dots span {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--border-gray);
+    }
+
+    .chat-footer-dots span:last-child { background: var(--accent); }
 
     @media (min-width: 768px) {
       .agente-wrapper { grid-template-columns: 1fr 1fr; }
@@ -1397,18 +1632,49 @@
               </div>
             </div>
           </div>
-          <div class="agente-cta-area reveal">
-            <div style="margin-bottom: 8px;">
-              <i class="fas fa-headset" style="font-size: 2.5rem; color: var(--accent); margin-bottom: 16px; display: block;"></i>
-              <p style="font-size: 1rem; color: var(--text-primary); font-weight: 500; margin-bottom: 4px;">Elige cómo contactarnos</p>
+          <div class="chat-widget reveal" role="region" aria-label="Chat con agente IA">
+            <div class="chat-header">
+              <div class="chat-header-left">
+                <div class="chat-bot-avatar"><i class="fas fa-robot"></i></div>
+                <div>
+                  <div class="chat-header-title">Agente IA InmoAgentia</div>
+                  <div class="chat-header-sub">Respuesta inmediata · 24/7</div>
+                </div>
+              </div>
+              <div class="chat-status-dot" title="En línea"></div>
             </div>
-            <div class="btn-group">
-              <a href="#contacto" class="btn btn-primary">Solicitar una llamada</a>
-              <a href="#contacto" class="btn btn-secondary">Escribir mi consulta</a>
+
+            <div class="chat-messages" id="chatMessages" aria-live="polite">
+              <div class="chat-msg bot">
+                <div class="chat-msg-avatar"><i class="fas fa-robot"></i></div>
+                <div class="chat-bubble">¡Hola! Soy tu asistente IA.<br>¿En qué puedo ayudarte hoy? 👋</div>
+              </div>
             </div>
-            <div class="agente-note">
-              <i class="fas fa-check-circle"></i>
-              <span>Respuesta humana, clara y sin compromiso.</span>
+
+            <div class="chat-quick-replies" id="chatChips">
+              <button class="chat-chip" onclick="sendChip(this)">¿Cómo funciona la aplicación?</button>
+              <button class="chat-chip" onclick="sendChip(this)">¿Cómo se instala?</button>
+              <button class="chat-chip" onclick="sendChip(this)">¿Cuánto cuesta?</button>
+            </div>
+
+            <div class="chat-input-area">
+              <input
+                type="text"
+                class="chat-input"
+                id="chatInput"
+                placeholder="Escribe tu mensaje..."
+                aria-label="Escribe tu mensaje"
+                maxlength="500"
+                autocomplete="off"
+              />
+              <button class="chat-send-btn" id="chatSendBtn" onclick="sendMessage()" aria-label="Enviar mensaje">
+                <i class="fas fa-paper-plane"></i>
+              </button>
+            </div>
+
+            <div class="chat-footer-bar">
+              <span class="chat-footer-label"><i class="fas fa-shield-alt"></i> Chatea con el agente IA 24/7</span>
+              <div class="chat-footer-dots"><span></span><span></span><span class="active"></span></div>
             </div>
           </div>
         </div>
@@ -1718,6 +1984,120 @@
       });
 
     })();
+
+    /* ============ CHAT WIDGET ============ */
+    var N8N_WEBHOOK_URL = 'https://TU_N8N_WEBHOOK_URL_AQUI';
+    var chatBusy = false;
+
+    var chatInput = document.getElementById('chatInput');
+    var chatSendBtn = document.getElementById('chatSendBtn');
+    var chatMessages = document.getElementById('chatMessages');
+    var chatChips = document.getElementById('chatChips');
+
+    if (chatInput) {
+      chatInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          sendMessage();
+        }
+      });
+    }
+
+    function appendMessage(role, text) {
+      var wrapper = document.createElement('div');
+      wrapper.className = 'chat-msg ' + role;
+      if (role === 'bot') {
+        wrapper.innerHTML =
+          '<div class="chat-msg-avatar"><i class="fas fa-robot"></i></div>' +
+          '<div class="chat-bubble">' + escapeHtml(text) + '</div>';
+      } else {
+        wrapper.innerHTML =
+          '<div class="chat-bubble">' + escapeHtml(text) + '</div>';
+      }
+      chatMessages.appendChild(wrapper);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      return wrapper;
+    }
+
+    function showTyping() {
+      var wrapper = document.createElement('div');
+      wrapper.className = 'chat-msg bot';
+      wrapper.id = 'chatTyping';
+      wrapper.innerHTML =
+        '<div class="chat-msg-avatar"><i class="fas fa-robot"></i></div>' +
+        '<div class="chat-typing"><span></span><span></span><span></span></div>';
+      chatMessages.appendChild(wrapper);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function removeTyping() {
+      var el = document.getElementById('chatTyping');
+      if (el) el.remove();
+    }
+
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/\n/g, '<br>');
+    }
+
+    function setBusy(busy) {
+      chatBusy = busy;
+      chatSendBtn.disabled = busy;
+      chatInput.disabled = busy;
+    }
+
+    function hideChips() {
+      if (chatChips) chatChips.style.display = 'none';
+    }
+
+    function sendChip(btn) {
+      var text = btn.textContent.trim();
+      hideChips();
+      dispatchMessage(text);
+    }
+
+    function sendMessage() {
+      var text = chatInput.value.trim();
+      if (!text || chatBusy) return;
+      chatInput.value = '';
+      hideChips();
+      dispatchMessage(text);
+    }
+
+    function dispatchMessage(text) {
+      appendMessage('user', text);
+      setBusy(true);
+      showTyping();
+
+      fetch(N8N_WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text, source: 'inmoagentia-landing' })
+      })
+        .then(function(res) {
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          return res.json();
+        })
+        .then(function(data) {
+          removeTyping();
+          var reply = (data && (data.output || data.text || data.message || data.reply))
+            ? (data.output || data.text || data.message || data.reply)
+            : 'Gracias por tu mensaje. En breve recibirás respuesta.';
+          appendMessage('bot', reply);
+        })
+        .catch(function() {
+          removeTyping();
+          appendMessage('bot', 'En este momento no puedo conectar con el agente. Puedes escribirnos directamente usando el formulario de contacto.');
+        })
+        .finally(function() {
+          setBusy(false);
+        });
+    }
+
   </script>
 </body>
 </html>
