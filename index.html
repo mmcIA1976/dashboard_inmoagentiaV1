@@ -927,13 +927,13 @@
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
-      background: var(--accent);
-      color: var(--bg-primary);
-      border: none;
+      background: transparent;
+      color: var(--text-primary);
+      border: 1px solid var(--border-gray);
       text-decoration: none;
     }
 
-    .cw-btn-call:hover { background: #d4b85c; }
+    .cw-btn-call:hover { border-color: var(--accent); color: var(--accent); }
 
     .cw-btn-write {
       padding: 10px 18px;
@@ -943,12 +943,12 @@
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
-      background: transparent;
-      color: var(--text-primary);
-      border: 1px solid var(--border-gray);
+      background: var(--accent);
+      color: var(--bg-primary);
+      border: none;
     }
 
-    .cw-btn-write:hover { border-color: var(--accent); color: var(--accent); }
+    .cw-btn-write:hover { background: #d4b85c; }
 
     .cw-divider {
       height: 1px;
