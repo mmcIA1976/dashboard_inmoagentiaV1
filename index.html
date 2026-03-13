@@ -2035,7 +2035,8 @@
               </div>
               <div class="form-group">
                 <label for="telefono">Teléfono</label>
-                <input type="tel" id="telefono" name="telefono" placeholder="+34 600 000 000" autocomplete="tel">
+                <input type="tel" id="telefono" name="telefono" placeholder="670 22 33 44" autocomplete="tel" maxlength="12" aria-describedby="telefono-error" pattern="\d{3} \d{2} \d{2} \d{2}">
+                <div class="form-error-msg" id="telefono-error" role="alert">Por favor, introduce un teléfono válido (ej. 670 22 33 44).</div>
               </div>
               <div class="form-group">
                 <label for="agencia">Nombre de la agencia</label>
@@ -2230,15 +2231,35 @@
         }
       }
 
+      var telefonoInput = document.getElementById('telefono');
+      if (telefonoInput) {
+        telefonoInput.addEventListener('input', function(e) {
+          var input = e.target.value.replace(/\D/g, '').substring(0, 9);
+          var formatted = input;
+          if (input.length > 3) {
+            formatted = input.substring(0, 3) + ' ' + input.substring(3);
+          }
+          if (input.length > 5) {
+            formatted = input.substring(0, 3) + ' ' + input.substring(3, 5) + ' ' + input.substring(5);
+          }
+          if (input.length > 7) {
+            formatted = input.substring(0, 3) + ' ' + input.substring(3, 5) + ' ' + input.substring(5, 7) + ' ' + input.substring(7);
+          }
+          e.target.value = formatted;
+        });
+      }
+
       contactForm.addEventListener('submit', function(e) {
         e.preventDefault();
 
         var nombre = document.getElementById('nombre');
         var email = document.getElementById('email');
+        var telefono = document.getElementById('telefono');
         var valid = true;
 
         setFieldError(nombre, false);
         setFieldError(email, false);
+        if (telefono) setFieldError(telefono, false);
 
         if (!nombre.value.trim()) {
           setFieldError(nombre, true);
@@ -2246,23 +2267,63 @@
           valid = false;
         }
 
-        if (!email.value.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
+        if (!email.value.trim() || !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email.value.trim())) {
           setFieldError(email, true);
           if (valid) email.focus();
           valid = false;
         }
 
+        if (telefono && telefono.value.trim() && !/^\d{3} \d{2} \d{2} \d{2}$/.test(telefono.value.trim())) {
+          setFieldError(telefono, true);
+          if (valid) telefono.focus();
+          valid = false;
+        }
+
         if (!valid) return;
 
-        contactForm.style.display = 'none';
-        formSuccess.style.display = 'block';
-        formSuccess.setAttribute('role', 'status');
-        contactForm.reset();
+        var submitBtn = contactForm.querySelector('button[type="submit"]');
+        var originalBtnText = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Enviando...';
 
-        setTimeout(function() {
-          formSuccess.style.display = 'none';
-          contactForm.style.display = 'block';
-        }, 6000);
+        var formData = {
+          nombre: nombre.value.trim(),
+          email: email.value.trim(),
+          telefono: telefono ? telefono.value.trim() : '',
+          agencia: document.getElementById('agencia') ? document.getElementById('agencia').value.trim() : '',
+          pisos: document.getElementById('pisos') ? document.getElementById('pisos').value : '',
+          tipo: document.getElementById('tipo') ? document.getElementById('tipo').value : '',
+          mensaje: document.getElementById('mensaje') ? document.getElementById('mensaje').value.trim() : '',
+          privacidad: document.getElementById('privacidad') ? document.getElementById('privacidad').checked : false
+        };
+
+        // URL del Webhook de N8N proporcionada por el usuario
+        var FORM_WEBHOOK_URL = 'https://mauriciomeseguer.up.railway.app/webhook/8e997a62-a2fc-4e7e-8dda-3aaa02ab3082'; 
+
+        fetch(FORM_WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        })
+        .then(function(response) {
+          contactForm.style.display = 'none';
+          formSuccess.style.display = 'block';
+          formSuccess.setAttribute('role', 'status');
+          contactForm.reset();
+
+          setTimeout(function() {
+            formSuccess.style.display = 'none';
+            contactForm.style.display = 'block';
+          }, 6000);
+        })
+        .catch(function(error) {
+          console.error('Error enviando formulario:', error);
+          alert('Hubo un error al conectar con el servidor. Inténtalo de nuevo más tarde.');
+        })
+        .finally(function() {
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalBtnText;
+        });
       });
 
       document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
@@ -2297,6 +2358,11 @@
         chatWidget.classList.add('chat-active');
         chatMessages.classList.remove('initial-hidden');
         if (agenteWrapper) agenteWrapper.classList.add('chat-expanded');
+        
+        // Centrar el widget de chat en la pantalla para una mejor experiencia móvil
+        setTimeout(function() {
+          chatWidget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
       }
     }
 
@@ -2312,6 +2378,14 @@
         chatWidget.classList.remove('chat-active');
         chatMessages.classList.add('initial-hidden');
         if (agenteWrapper) agenteWrapper.classList.remove('chat-expanded');
+        
+        // Volver a encuadrar la sección del agente
+        var agenteSection = document.getElementById('contacto-agente');
+        if (agenteSection) {
+          setTimeout(function() {
+            agenteSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 100);
+        }
       });
     }
 
