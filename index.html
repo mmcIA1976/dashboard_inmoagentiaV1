@@ -52,8 +52,9 @@
       font-family: 'Inter', sans-serif;
       background-color: var(--bg-primary);
       color: var(--text-primary);
-      line-height: 1.6;
+      line-height: 1.7; /* Mayor espaciado interlineado para mejor lectura */
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
       overflow-x: hidden;
     }
 
@@ -65,6 +66,7 @@
 
     h1, h2, h3 {
       font-family: 'Playfair Display', serif;
+      letter-spacing: -0.02em; /* Tracking ligeramente negativo para toque editorial */
     }
 
     a {
@@ -118,11 +120,12 @@
     }
 
     .navbar.scrolled {
-      background: rgba(13, 27, 42, 0.95);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: rgba(13, 27, 42, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       padding: 10px 0;
-      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     .navbar .container {
@@ -141,6 +144,11 @@
       display: flex;
       align-items: center;
       position: relative;
+      transition: transform var(--transition);
+    }
+
+    .nav-logo:hover {
+      transform: scale(1.02);
     }
 
     .nav-logo img {
@@ -240,12 +248,29 @@
     .btn-primary {
       background: var(--accent);
       color: var(--bg-primary);
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.6s ease;
+      z-index: -1;
+    }
+
+    .btn-primary:hover::before {
+      left: 100%;
     }
 
     .btn-primary:hover {
       background: var(--accent-hover);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 16px rgba(201, 168, 76, 0.3);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(201, 168, 76, 0.35);
     }
 
     .btn-secondary {
@@ -916,7 +941,7 @@
     .cw-buttons {
       display: flex;
       gap: 10px;
-      padding: 0 22px 16px;
+      padding: 0 16px 16px;
     }
 
     .cw-btn-call {
@@ -956,7 +981,7 @@
     }
 
     .cw-chat {
-      padding: 16px 22px 10px;
+      padding: 16px 16px 10px;
     }
 
     .cw-chat-msg {
@@ -985,7 +1010,7 @@
     .cw-chat-bubble {
       background: linear-gradient(135deg, var(--accent) 0%, #e8c26a 100%);
       color: var(--bg-primary);
-      padding: 12px 16px;
+      padding: 12px 14px;
       border-radius: 16px;
       border-bottom-left-radius: 4px;
       font-size: 0.88rem;
@@ -998,7 +1023,7 @@
       display: flex;
       gap: 8px;
       align-items: center;
-      padding: 10px 22px;
+      padding: 10px 16px;
     }
 
     .cw-input {
@@ -1040,7 +1065,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      padding: 4px 22px 10px;
+      padding: 4px 16px 10px;
     }
 
     .cw-chip {
@@ -1053,7 +1078,8 @@
       cursor: pointer;
       font-family: 'Inter', sans-serif;
       transition: background 0.2s, border-color 0.2s;
-      white-space: nowrap;
+      white-space: normal;
+      text-align: left;
     }
 
     .cw-chip:hover {
@@ -1062,7 +1088,7 @@
     }
 
     .cw-footer {
-      padding: 10px 22px;
+      padding: 10px 16px;
       background: #080f18;
       display: flex;
       align-items: center;
@@ -1103,7 +1129,7 @@
     .chat-messages {
       flex: 1;
       overflow-y: auto;
-      padding: 16px 22px;
+      padding: 16px 6px; /* Ajustado al máximo a los bordes */
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -1118,29 +1144,16 @@
 
     .chat-msg {
       display: flex;
-      gap: 10px;
+      gap: 6px; /* Menor gap para ganar espacio */
       align-items: flex-end;
-      max-width: 90%;
+      max-width: 100%; /* Aprovecha el 100% de la caja */
     }
 
     .chat-msg.bot { align-self: flex-start; }
     .chat-msg.user { align-self: flex-end; flex-direction: row-reverse; }
 
     .chat-msg-avatar {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #1a2e42 0%, #243b53 100%);
-      border: 2px solid var(--accent);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .chat-msg-avatar i {
-      font-size: 0.8rem;
-      color: var(--accent);
+      display: none;
     }
 
     .chat-bubble {
@@ -1204,6 +1217,7 @@
 
     .chat-active {
       grid-column: 1 / -1;
+      max-width: 100%;
     }
 
     .agente-wrapper.chat-expanded .agente-content {
@@ -1221,7 +1235,7 @@
     .cw-header-expanded { display: none; }
 
     .cw-header-expanded {
-      padding: 14px 22px;
+      padding: 14px 10px; /* Expande al máximo la cabecera */
       background: linear-gradient(135deg, #0f2337 0%, #162d46 100%);
       border-bottom: 1px solid var(--border-gold);
       align-items: center;
@@ -1231,7 +1245,7 @@
     .cw-header-expanded-left {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .cw-header-expanded-back {
@@ -1401,6 +1415,7 @@
 
     .form-group {
       margin-bottom: 20px;
+      position: relative;
     }
 
     .form-group label {
@@ -1422,7 +1437,36 @@
       color: var(--text-primary);
       font-family: 'Inter', sans-serif;
       font-size: 0.9rem;
-      transition: border-color var(--transition);
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+
+    .form-group.is-valid input,
+    .form-group.is-valid select {
+      border-color: #4ade80;
+      background: #ffffff;
+      color: #0D1B2A;
+    }
+
+    /* Evitar que el autofill del navegador coloree solo algunos campos */
+    .form-group input:-webkit-autofill,
+    .form-group input:-webkit-autofill:hover,
+    .form-group input:-webkit-autofill:focus {
+      -webkit-box-shadow: 0 0 0px 1000px #ffffff inset;
+      -webkit-text-fill-color: #0D1B2A;
+      border-color: #4ade80;
+      transition: background-color 5000s ease-in-out 0s;
+    }
+
+    .form-group.is-valid::after {
+      content: '\f058'; /* Check de Font Awesome */
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      color: #4ade80;
+      position: absolute;
+      right: 16px;
+      top: 38px;
+      font-size: 1.1rem;
+      pointer-events: none;
     }
 
     .form-group input:focus,
@@ -1430,13 +1474,15 @@
     .form-group textarea:focus {
       outline: none;
       border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.12);
     }
 
     .form-group input:focus-visible,
     .form-group select:focus-visible,
     .form-group textarea:focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: 2px;
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.12);
     }
 
     .form-group select {
@@ -1945,7 +1991,6 @@
 
             <div class="chat-messages initial-hidden" id="chatMessages" aria-live="polite">
               <div class="chat-msg bot">
-                <div class="chat-msg-avatar"><i class="fas fa-robot"></i></div>
                 <div class="chat-bubble">¡Hola! Soy tu asistente IA.<br>¿En qué puedo ayudarte hoy? 👋</div>
               </div>
             </div>
@@ -2108,7 +2153,7 @@
   <footer>
     <div class="container">
       <div class="footer-content">
-        <div class="footer-logo"><img src="/logo.png" alt="InmoAgentia"><img src="/logo-bright.png" alt="" class="logo-glow" aria-hidden="true"></div>
+        <div class="footer-logo"><img src="/logo.png" alt="InmoAgentia" loading="lazy"><img src="/logo-bright.png" alt="" class="logo-glow" aria-hidden="true" loading="lazy"></div>
         <p class="footer-tagline">Automatización inteligente para inmobiliarias</p>
         <div class="footer-links">
           <a href="#">Política de privacidad</a>
@@ -2231,6 +2276,33 @@
         }
       }
 
+      var nombreInput = document.getElementById('nombre');
+      if (nombreInput) {
+        nombreInput.addEventListener('input', function(e) {
+          var isValid = e.target.value.trim().length >= 2;
+          if (isValid) e.target.closest('.form-group').classList.add('is-valid');
+          else e.target.closest('.form-group').classList.remove('is-valid');
+        });
+      }
+
+      var agenciaInput = document.getElementById('agencia');
+      if (agenciaInput) {
+        agenciaInput.addEventListener('input', function(e) {
+          var isValid = e.target.value.trim().length >= 2;
+          if (isValid) e.target.closest('.form-group').classList.add('is-valid');
+          else e.target.closest('.form-group').classList.remove('is-valid');
+        });
+      }
+
+      var emailInput = document.getElementById('email');
+      if (emailInput) {
+        emailInput.addEventListener('input', function(e) {
+          var isValid = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(e.target.value.trim());
+          if(isValid) e.target.closest('.form-group').classList.add('is-valid');
+          else e.target.closest('.form-group').classList.remove('is-valid');
+        });
+      }
+
       var telefonoInput = document.getElementById('telefono');
       if (telefonoInput) {
         telefonoInput.addEventListener('input', function(e) {
@@ -2246,6 +2318,10 @@
             formatted = input.substring(0, 3) + ' ' + input.substring(3, 5) + ' ' + input.substring(5, 7) + ' ' + input.substring(7);
           }
           e.target.value = formatted;
+
+          var isValid = /^\d{3} \d{2} \d{2} \d{2}$/.test(formatted);
+          if(isValid) e.target.closest('.form-group').classList.add('is-valid');
+          else e.target.closest('.form-group').classList.remove('is-valid');
         });
       }
 
@@ -2353,23 +2429,36 @@
     var chatBackBtn = document.getElementById('chatBackBtn');
     var agenteWrapper = chatWidget ? chatWidget.closest('.agente-wrapper') : null;
 
-    function activateChat() {
-      if (!chatWidget.classList.contains('chat-active')) {
+    function scrollToChat() {
+      // Esperar a que el DOM se expanda (transition del grid) antes de calcular posición
+      setTimeout(function() {
+        var rect = chatWidget.getBoundingClientRect();
+        var yOffset = rect.top + window.scrollY - 90;
+        window.scrollTo({ top: yOffset, behavior: 'smooth' });
+      }, 200);
+    }
+
+    function activateChat(doScroll) {
+      var wasAlreadyActive = chatWidget.classList.contains('chat-active');
+      if (!wasAlreadyActive) {
         chatWidget.classList.add('chat-active');
         chatMessages.classList.remove('initial-hidden');
         if (agenteWrapper) agenteWrapper.classList.add('chat-expanded');
-        
-        // Centrar el widget de chat en la pantalla para una mejor experiencia móvil
-        setTimeout(function() {
-          chatWidget.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 100);
+      }
+      // Siempre scrollear si se pide explícitamente, o si acababa de activarse
+      if (doScroll === true || (!wasAlreadyActive && doScroll !== false)) {
+        scrollToChat();
       }
     }
 
     if (btnEscribirConsulta) {
       btnEscribirConsulta.addEventListener('click', function() {
-        activateChat();
-        if (chatInput) chatInput.focus();
+        // Activar y centrar la vista en el chatbox antes de que salga el teclado
+        activateChat(true);
+        // Pequeño delay para permitir el scroll antes del foco (que abre el teclado)
+        setTimeout(function() {
+          if (chatInput) chatInput.focus();
+        }, 350);
       });
     }
 
@@ -2397,10 +2486,15 @@
         }
       });
       chatInput.addEventListener('input', function() {
-        if (this.value.length > 0) activateChat();
+        if (this.value.length > 0) activateChat(false);
       });
+      // touchstart se dispara ANTES de que el teclado móvil aparezca — el momento ideal para scrollear
+      chatInput.addEventListener('touchstart', function() {
+        activateChat(true);
+      }, { passive: true });
       chatInput.addEventListener('focus', function() {
-        if (this.value.length > 0) activateChat();
+        // En escritorio (sin touch) activar sin forzar scroll
+        activateChat(false);
       });
     }
 
@@ -2444,12 +2538,9 @@
       var wrapper = document.createElement('div');
       wrapper.className = 'chat-msg ' + role;
       if (role === 'bot') {
-        wrapper.innerHTML =
-          '<div class="chat-msg-avatar"><i class="fas fa-robot"></i></div>' +
-          '<div class="chat-bubble">' + escapeHtml(text) + '</div>';
+        wrapper.innerHTML = '<div class="chat-bubble">' + escapeHtml(text) + '</div>';
       } else {
-        wrapper.innerHTML =
-          '<div class="chat-bubble">' + escapeHtml(text) + '</div>';
+        wrapper.innerHTML = '<div class="chat-bubble">' + escapeHtml(text) + '</div>';
       }
       chatMessages.appendChild(wrapper);
       chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -2460,9 +2551,7 @@
       var wrapper = document.createElement('div');
       wrapper.className = 'chat-msg bot';
       wrapper.id = 'chatTyping';
-      wrapper.innerHTML =
-        '<div class="chat-msg-avatar"><i class="fas fa-robot"></i></div>' +
-        '<div class="chat-typing"><span></span><span></span><span></span></div>';
+      wrapper.innerHTML = '<div class="chat-typing"><span></span><span></span><span></span></div>';
       chatMessages.appendChild(wrapper);
       chatMessages.scrollTop = chatMessages.scrollHeight;
     }
@@ -2493,7 +2582,7 @@
 
     function sendChip(btn) {
       var text = btn.textContent.trim();
-      activateChat();
+      activateChat(true); // Scrollear para encuadrar la caja ya que el teclado no se abre
       hideChips();
       dispatchMessage(text);
     }
