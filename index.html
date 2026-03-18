@@ -2535,7 +2535,6 @@
       'use strict';
 
       var turnstileToken = '';
-      var isLocalDevelopment = window.location.hostname === 'localhost';
       var navbar = document.querySelector('.navbar');
       var navToggle = document.querySelector('.nav-toggle');
       var mobileMenu = document.getElementById('mobileMenu');
@@ -2558,13 +2557,6 @@
       window.onTurnstileError = function() {
         turnstileToken = '';
       };
-
-      if (!isLocalDevelopment) {
-        var turnstileWidget = document.querySelector('.cf-turnstile');
-        if (turnstileWidget) {
-          turnstileWidget.style.display = 'none';
-        }
-      }
 
       function handleNavScroll() {
         if (window.scrollY > 60) {
