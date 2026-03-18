@@ -2482,8 +2482,8 @@
             </form>
             <div class="form-success" id="formSuccess">
               <i class="fas fa-check-circle"></i>
-              <h3>Gracias por contactarnos</h3>
-              <p>Hemos recibido tu solicitud y te responderemos lo antes posible.</p>
+              <h3 id="formSuccessTitle">Gracias por contactarnos</h3>
+              <p id="formSuccessText">Hemos recibido tu solicitud y te responderemos lo antes posible.</p>
             </div>
           </div>
           <div class="contacto-sidebar reveal">
@@ -2544,6 +2544,8 @@
       var navSections = navSectionIds.map(function(id) { return document.getElementById(id); }).filter(Boolean);
       var contactForm = document.getElementById('contactForm');
       var formSuccess = document.getElementById('formSuccess');
+      var formSuccessTitle = document.getElementById('formSuccessTitle');
+      var formSuccessText = document.getElementById('formSuccessText');
       var reveals = document.querySelectorAll('.reveal');
 
       window.onTurnstileSuccess = function(token) {
@@ -2653,6 +2655,17 @@
           group.classList.remove('has-error');
           field.removeAttribute('aria-invalid');
         }
+      }
+
+      function showFormFeedback(title, message, isError) {
+        formSuccessTitle.textContent = title;
+        formSuccessText.textContent = message;
+        formSuccess.style.display = 'block';
+        formSuccess.style.background = isError ? 'rgba(182, 72, 72, 0.08)' : 'rgba(201, 168, 76, 0.06)';
+        formSuccess.style.borderColor = isError ? 'rgba(182, 72, 72, 0.45)' : 'var(--border-gold)';
+        formSuccess.querySelector('i').className = isError ? 'fas fa-triangle-exclamation' : 'fas fa-check-circle';
+        formSuccess.querySelector('i').style.color = isError ? '#ff8f8f' : 'var(--accent)';
+        formSuccess.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
 
       var nombreInput = document.getElementById('nombre');
@@ -2779,27 +2792,38 @@
           body: JSON.stringify(formData)
         })
         .then(function(response) {
-          if (!response.ok) {
-            throw new Error('Respuesta no valida del servidor (' + response.status + ')');
-          }
+          return response.json().catch(function() { return {}; }).then(function(data) {
+            if (!response.ok || data.ok === false) {
+              var errorMessage = data.error || ('Respuesta no valida del servidor (' + response.status + ')');
+              throw new Error(errorMessage);
+            }
 
-          contactForm.style.display = 'none';
-          formSuccess.style.display = 'block';
-          formSuccess.setAttribute('role', 'status');
-          contactForm.reset();
-          turnstileToken = '';
-          if (window.turnstile && typeof window.turnstile.reset === 'function') {
-            window.turnstile.reset();
-          }
+            contactForm.style.display = 'none';
+            formSuccess.setAttribute('role', 'status');
+            showFormFeedback(
+              'Gracias por contactarnos',
+              data.message || 'Hemos recibido tu solicitud y te responderemos lo antes posible.',
+              false
+            );
+            contactForm.reset();
+            turnstileToken = '';
+            if (window.turnstile && typeof window.turnstile.reset === 'function') {
+              window.turnstile.reset();
+            }
 
-          setTimeout(function() {
-            formSuccess.style.display = 'none';
-            contactForm.style.display = 'block';
-          }, 6000);
+            setTimeout(function() {
+              formSuccess.style.display = 'none';
+              contactForm.style.display = 'block';
+            }, 6000);
+          });
         })
         .catch(function(error) {
           console.error('Error enviando formulario:', error);
-          alert('Hubo un error al conectar con el servidor. Inténtalo de nuevo más tarde.');
+          showFormFeedback(
+            'No se pudo enviar el formulario',
+            error.message || 'Hubo un error al conectar con el servidor. Inténtalo de nuevo más tarde.',
+            true
+          );
           turnstileToken = '';
           if (window.turnstile && typeof window.turnstile.reset === 'function') {
             window.turnstile.reset();
