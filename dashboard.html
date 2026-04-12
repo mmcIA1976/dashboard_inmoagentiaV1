@@ -140,6 +140,15 @@
       background: rgba(255,255,255,0.035);
       border: 1px solid rgba(255,255,255,0.06);
     }
+    .hero-stat.clickable {
+      cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+    .hero-stat.clickable:hover {
+      transform: translateY(-2px);
+      border-color: rgba(201,168,76,0.38);
+      background: rgba(201,168,76,0.07);
+    }
     .hero-stat-label { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--dim); margin-bottom: 8px; }
     .hero-stat-value { font-family: 'Playfair Display', serif; font-size: 1.65rem; line-height: 1; margin-bottom: 6px; }
     .hero-stat-copy { color: var(--muted); font-size: 0.9rem; line-height: 1.5; }
@@ -787,6 +796,7 @@
             <p>Resumen global del negocio para dirección comercial, sin necesidad de navegar todavía a vistas profundas.</p>
             <div class="box-row"><span>Zona caliente</span><strong id="zoneTop"></strong></div>
             <div class="box-row"><span>Piso con más interés</span><strong id="propertyTop"></strong></div>
+            <div class="box-row"><span>Piso más visitado</span><strong id="propertyVisitedTop"></strong></div>
             <div class="box-row"><span>Conversión a visita</span><strong id="leadRate"></strong></div>
             <div class="box-row"><span>Visitas futuras</span><strong id="futureVisits"></strong></div>
             <div class="box-actions">
@@ -1279,9 +1289,11 @@
     function normalizeKpisGenerales(raw = {}) {
       const numericFields = [
         'leads_totales',
+        'clientes_unicos',
         'clientes_activos',
         'clientes_recurrentes',
         'leads_con_visita',
+        'leads_sin_visita',
         'visitas_programadas',
         'visitas_realizadas',
         'visitas_confirmadas_futuras',
@@ -1315,6 +1327,14 @@
       if (typeof value === 'boolean') return value;
       const text = String(value || '').trim().toLowerCase();
       return ['true', '1', 'si', 'sí', 'yes'].includes(text);
+    }
+
+    function normalizeState(value) {
+      return String(value || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .trim()
+        .toLowerCase();
     }
 
     function normalizeVisit(raw = {}) {
@@ -1387,7 +1407,10 @@
         interacciones_totales: 0,
         respuestas_enviadas: 0,
         solicitudes_visita: 0,
-        visitas_confirmadas: 0
+        visitas_confirmadas: 0,
+        zona_top_demanda: '',
+        piso_top_consultado: '',
+        piso_mas_visitado: ''
       },
       interacciones: [],
       visitas: [],
@@ -1460,6 +1483,80 @@
 
     function formatMadridNow() {
       return madridNowPillFormatter.format(new Date()).replace(',', '');
+    }
+
+    function toMadridDateParts(date = new Date()) {
+      const parts = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'Europe/Madrid',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      }).formatToParts(date);
+
+      const map = {};
+      for (const part of parts) map[part.type] = part.value;
+
+      return {
+        ymd: `${map.year}-${map.month}-${map.day}`
+      };
+    }
+
+    function normalizeDashboardDate(value) {
+      const text = String(value || '').trim();
+      if (!text) return '';
+      if (/^\d{4}-\d{2}-\d{2}/.test(text)) return text.slice(0, 10);
+      const esMatch = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+      if (esMatch) {
+        const [, day, month, year] = esMatch;
+        return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      }
+      return '';
+    }
+
+    function getTodayInteractionsCount() {
+      if (!Array.isArray(dashboardData.interacciones) || dashboardData.interacciones.length === 0) {
+        return Number(dashboardData.kpisDiarios.interacciones_totales || 0);
+      }
+
+      const today = toMadridDateParts().ymd;
+      return dashboardData.interacciones.filter((item) => normalizeDashboardDate(item.fecha) === today).length;
+    }
+
+    function getTodayActivityMetrics() {
+      const today = toMadridDateParts().ymd;
+
+      const interactionsToday = Array.isArray(dashboardData.interacciones)
+        ? dashboardData.interacciones.filter((item) => normalizeDashboardDate(item.fecha) === today)
+        : [];
+
+      const visitsToday = Array.isArray(dashboardData.visitas)
+        ? dashboardData.visitas.filter((visit) => {
+            const requestedDate = normalizeDashboardDate(visit.fecha_solicitada);
+            const confirmedDate = normalizeDashboardDate(visit.fecha_confirmada);
+            return requestedDate === today || confirmedDate === today;
+          })
+        : [];
+
+      const interacciones_totales = interactionsToday.length || Number(dashboardData.kpisDiarios.interacciones_totales || 0);
+      const respuestas_enviadas = interactionsToday.length
+        ? interactionsToday.filter((item) => normalizeState(item.enviado) === 'si').length
+        : Number(dashboardData.kpisDiarios.respuestas_enviadas || 0);
+      const solicitudes_visita = visitsToday.length
+        ? visitsToday.filter((visit) => normalizeDashboardDate(visit.fecha_solicitada) === today).length
+        : Number(dashboardData.kpisDiarios.solicitudes_visita || 0);
+      const visitas_confirmadas = visitsToday.length
+        ? visitsToday.filter((visit) =>
+            normalizeState(visit.estado_visita) === 'confirmada' &&
+            normalizeDashboardDate(visit.fecha_confirmada || visit.fecha_solicitada) === today
+          ).length
+        : Number(dashboardData.kpisDiarios.visitas_confirmadas || 0);
+
+      return {
+        interacciones_totales,
+        respuestas_enviadas,
+        solicitudes_visita,
+        visitas_confirmadas
+      };
     }
 
     function toDateParts(dateString) {
@@ -1658,6 +1755,146 @@
 
     function getPendingFollowUps() {
       return dashboardData.leadEstado.filter((lead) => lead.requiere_seguimiento);
+    }
+
+    function getPendingConfirmationVisits() {
+      return sortVisitsBySchedule(
+        getOpenVisits().filter((visit) => getVisitDisplayState(visit).key === 'pendiente_confirmacion')
+      );
+    }
+
+    function buildLeadFollowUpListHtml(leads = []) {
+      if (!leads.length) {
+        return '<div class="empty">No hay seguimientos comerciales pendientes.</div>';
+      }
+
+      return `<div class="list-stack">${leads.map((lead) => `
+        <div class="item">
+          <div class="item-row">
+            <div class="item-title">${getClientDisplayName(lead)}</div>
+            <span class="status pending"><i class="fa-solid fa-clock"></i>${lead.estado_pipeline || 'Seguimiento'}</span>
+          </div>
+          <div class="item-copy">${lead.proxima_accion || 'Revisar oportunidad'}${lead.motivo_seguimiento ? ` · ${lead.motivo_seguimiento}` : ''}</div>
+          <div class="item-copy">${lead.ultima_accion || 'Sin última acción registrada'}${lead.ultima_interaccion_fecha ? ` · ${lead.ultima_interaccion_fecha}` : ''}</div>
+          <div class="item-actions">
+            <button class="mini-btn primary" type="button" data-action="open-client" data-id="${lead.cliente_id}">Abrir cliente</button>
+          </div>
+        </div>
+      `).join('')}</div>`;
+    }
+
+    function getLeadInteractionDisplayName(record = {}) {
+      const name = String(record.cliente_nombre || record.nombre || '').trim();
+      if (name) return name;
+      const email = String(record.cliente_email || record.email || '').trim();
+      if (email) return email;
+      const clientId = String(record.cliente_id || '').trim();
+      if (clientId) return `Cliente ${clientId}`;
+      return 'Lead sin identificar';
+    }
+
+    function getLeadsWithoutVisitRecords() {
+      const interaccionesConVisita = new Set(
+        dashboardData.visitas
+          .map((visit) => String(visit.interaccion_id || '').trim())
+          .filter(Boolean)
+      );
+
+      const propertyIndex = dashboardData.pisos.reduce((acc, property) => {
+        if (property.piso_id) acc[property.piso_id] = property;
+        return acc;
+      }, {});
+
+      const clientIndex = getClientRecords().reduce((acc, client) => {
+        if (client.cliente_id) acc[client.cliente_id] = client;
+        return acc;
+      }, {});
+
+      return dashboardData.interacciones
+        .filter((interaction) => !interaccionesConVisita.has(String(interaction.interaccion_id || '').trim()))
+        .map((interaction) => {
+          const client = clientIndex[String(interaction.cliente_id || '').trim()] || {};
+          const suggestedIds = [...new Set(extractPropertyIds(interaction.pisos_sugeridos || interaction.respuesta_body))];
+          const suggestedProperties = suggestedIds.map((propertyId) => propertyIndex[propertyId] || { piso_id: propertyId });
+          const consultedProperty = propertyIndex[String(interaction.piso_consultado_id || '').trim()] || null;
+          const hasAlternative = suggestedIds.length > 0;
+          const interactionDate = normalizeDashboardDate(interaction.fecha);
+
+          return {
+            ...interaction,
+            cliente_nombre: client.cliente_nombre || interaction.nombre || '',
+            cliente_email: client.cliente_email || interaction.email || '',
+            cliente_telefono: client.cliente_telefono || interaction.telefono || '',
+            suggestedIds,
+            suggestedProperties,
+            consultedProperty,
+            hasAlternative,
+            interactionDate,
+            latestTouch: parseLocalDateTime(interactionDate ? `${interactionDate} 12:00:00` : '')?.getTime() || 0
+          };
+        })
+        .sort((a, b) => {
+          if (b.latestTouch !== a.latestTouch) return b.latestTouch - a.latestTouch;
+          return String(b.interaccion_id || '').localeCompare(String(a.interaccion_id || ''));
+        });
+    }
+
+    function buildNoVisitLeadsListHtml(records = []) {
+      if (!records.length) {
+        return '<div class="empty">No hay leads sin visita pendientes en este momento.</div>';
+      }
+
+      const withAlternative = records.filter((record) => record.hasAlternative);
+      const withoutAlternative = records.filter((record) => !record.hasAlternative);
+
+      const renderLeadRecord = (record) => {
+        const suggestedLabel = record.suggestedIds.length
+          ? record.suggestedIds.join(' · ')
+          : 'Sin alternativas visitables';
+        const consultedLabel = record.piso_consultado_id || record.consultedProperty?.piso_id || 'Sin referencia directa';
+        const actionLabel = record.hasAlternative
+          ? 'Se enviaron alternativas y sigue pendiente de solicitud de visita.'
+          : 'No se han podido ofrecer alternativas visitables con la cartera actual.';
+
+        return `
+          <div class="item">
+            <div class="item-row">
+              <div class="item-title">${getLeadInteractionDisplayName(record)}</div>
+              <span class="status pending"><i class="fa-solid fa-clock"></i>${record.hasAlternative ? 'Con alternativa' : 'Sin alternativa'}</span>
+            </div>
+            <div class="item-copy">${record.interactionDate ? formatDate(record.interactionDate) : 'Sin fecha'} · ${record.tipo || 'Consulta'} · ${record.zona || 'Zona sin definir'}</div>
+            <div class="item-copy">Piso consultado: ${consultedLabel}</div>
+            <div class="item-copy">Alternativas: ${suggestedLabel}</div>
+            <div class="item-copy">${actionLabel}</div>
+            <div class="item-actions">
+              ${record.cliente_id ? `<button class="mini-btn primary" type="button" data-action="open-client" data-id="${record.cliente_id}">Abrir cliente</button>` : ''}
+            </div>
+          </div>
+        `;
+      };
+
+      return `
+        <div class="list-stack">
+          <div class="drawer-stat">Con alternativa para visitar<strong>${withAlternative.length}</strong></div>
+          ${withAlternative.length ? withAlternative.map(renderLeadRecord).join('') : '<div class="empty">No hay leads sin visita con alternativas disponibles.</div>'}
+          <div class="drawer-stat">Sin alternativa<strong>${withoutAlternative.length}</strong></div>
+          ${withoutAlternative.length ? withoutAlternative.map(renderLeadRecord).join('') : '<div class="empty">No hay leads bloqueados por falta de alternativa.</div>'}
+        </div>
+      `;
+    }
+
+    function buildFollowUpOverviewHtml() {
+      const pendingConfirmationVisits = getPendingConfirmationVisits();
+      const followUps = getPendingFollowUps();
+
+      return `
+        <div class="list-stack">
+          <div class="drawer-stat">Visitas por confirmar<strong>${pendingConfirmationVisits.length}</strong></div>
+          ${pendingConfirmationVisits.length ? buildVisitListHtml(pendingConfirmationVisits, { includeCompletedAction: true }) : '<div class="empty">No hay visitas pendientes de confirmar.</div>'}
+          <div class="drawer-stat">Seguimiento comercial<strong>${followUps.length}</strong></div>
+          ${buildLeadFollowUpListHtml(followUps)}
+        </div>
+      `;
     }
 
     function extractPropertyIds(value) {
@@ -2031,7 +2268,10 @@
 
     function getPropertyCounts() {
       return dashboardData.pisos.reduce((acc, property) => {
-        acc[property.estado] = (acc[property.estado] || 0) + 1;
+        const normalizedStatus = normalizeState(property.estado);
+        if (normalizedStatus in acc) {
+          acc[normalizedStatus] = (acc[normalizedStatus] || 0) + 1;
+        }
         return acc;
       }, { disponible: 0, reservado: 0, vendido: 0 });
     }
@@ -2043,6 +2283,19 @@
       dashboardData.kpisGenerales.pisos_vendidos = counts.vendido;
     }
 
+    function getMostVisitedPropertyId() {
+      const visitCounts = dashboardData.visitas.reduce((acc, visit) => {
+        const state = normalizeState(visit.estado_visita);
+        if (state !== 'realizada') return acc;
+        const propertyId = String(visit.piso_id || '').trim();
+        if (!propertyId) return acc;
+        acc[propertyId] = (acc[propertyId] || 0) + 1;
+        return acc;
+      }, {});
+
+      return Object.entries(visitCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || '';
+    }
+
     function syncKpisWithVisits() {
       const openVisits = getOpenVisits();
       const completedVisits = getCompletedVisits();
@@ -2050,6 +2303,12 @@
       dashboardData.kpisGenerales.visitas_confirmadas_futuras = openVisits.filter((visit) => getVisitDisplayState(visit).key === 'programada').length;
       dashboardData.kpisGenerales.visitas_realizadas = completedVisits.length;
       dashboardData.kpisGenerales.pendientes_nueva_hora = openVisits.filter((visit) => getVisitDisplayState(visit).key === 'pendiente_nueva_hora').length;
+      const mostVisitedPropertyId = getMostVisitedPropertyId();
+      if (mostVisitedPropertyId) {
+        dashboardData.kpisDiarios.piso_mas_visitado = mostVisitedPropertyId;
+      } else if (completedVisits.length === 0) {
+        dashboardData.kpisDiarios.piso_mas_visitado = '';
+      }
     }
 
     function getPropertyById(propertyId) {
@@ -2443,14 +2702,19 @@
       if (type === 'mark-visit-done') {
         const visit = dashboardData.visitas.find((item) => item.visita_id === id);
         if (!visit) return;
+        const movementTimestamp = madridDateTimeFormatter.format(new Date()).replace(',', '');
         visit.estado_visita = 'realizada';
         visit.resultado_agenda = visit.resultado_agenda || 'Visita realizada';
+        visit.updated_at = movementTimestamp;
         const lead = dashboardData.leadEstado.find((item) => item.cliente_id === visit.cliente_id);
         if (lead) {
-          lead.estado_pipeline = 'Visita realizada';
+          lead.estado_pipeline = 'Seguimiento post-visita';
           lead.proxima_accion = 'Registrar seguimiento post-visita';
           lead.requiere_seguimiento = true;
           lead.motivo_seguimiento = 'Pendiente de anotar conclusiones y siguiente propuesta comercial';
+          lead.ultima_accion = visit.resultado_agenda || 'Visita realizada';
+          lead.ultima_interaccion_fecha = movementTimestamp;
+          lead.updated_at = movementTimestamp;
         }
         syncKpisWithVisits();
         refreshDashboardData();
@@ -2558,15 +2822,50 @@
         });
         return;
       }
+      if (type === 'card-leads-without-visit') {
+        const records = getLeadsWithoutVisitRecords();
+        const withAlternative = records.filter((record) => record.hasAlternative).length;
+        const withoutAlternative = records.length - withAlternative;
+        openDrawer({
+          eyebrow: 'Leads sin visita',
+          title: 'Oportunidades todavía sin conversión a visita',
+          copy: 'Separamos los leads sin visita entre los que ya tienen alternativas para visitar y los que siguen bloqueados por falta de opción real en cartera.',
+          bodyHtml: buildNoVisitLeadsListHtml(records),
+          actions: [
+            { type: 'open-clients-window', label: 'Abrir clientes', icon: 'fa-address-book' },
+            { type: 'scroll-follow', label: 'Ir a seguimiento', icon: 'fa-bullseye' },
+            { type: 'copy-summary', label: 'Compartir resumen', icon: 'fa-copy', ghost: true }
+          ]
+        });
+        showToast(`${records.length} leads sin visita · ${withAlternative} con alternativa · ${withoutAlternative} sin alternativa.`);
+        return;
+      }
       if (type === 'card-visits') {
         openCalendarWindow();
         showToast('Abriendo calendario general de visitas.');
         return;
       }
       if (type === 'card-follow') {
-        const firstPending = getPendingFollowUps()[0];
-        openClientsWindow(firstPending?.cliente_id || '');
-        showToast('Abriendo ficha de clientes con seguimiento comercial.');
+        const pendingConfirmationVisits = getPendingConfirmationVisits();
+        const followUps = getPendingFollowUps();
+        openDrawer({
+          eyebrow: 'Seguimiento',
+          title: 'Pendientes comerciales y de cierre',
+          copy: 'Aquí reunimos tanto las visitas que necesitan confirmación de realización como los seguimientos comerciales abiertos.',
+          bodyHtml: buildFollowUpOverviewHtml(),
+          actions: [
+            { type: 'open-calendar-window', label: 'Abrir calendario', icon: 'fa-calendar-days' },
+            { type: 'scroll-follow', label: 'Ir a seguimiento', icon: 'fa-bullseye' },
+            { type: 'open-clients-window', label: 'Abrir clientes', icon: 'fa-address-book', ghost: true }
+          ]
+        });
+        showToast(
+          pendingConfirmationVisits.length
+            ? 'Abriendo pendientes de cierre y seguimiento comercial.'
+            : followUps.length
+              ? 'Abriendo seguimiento comercial.'
+              : 'No hay pendientes abiertos ahora mismo.'
+        );
         return;
       }
       if (type === 'card-stock') {
@@ -2600,6 +2899,7 @@
         setText('heroCopy', 'Sincronizando datos comerciales reales. En cuanto responda el backend, la portada se actualizará automáticamente.');
         setText('zoneTop', 'Cargando');
         setText('propertyTop', 'Cargando');
+        setText('propertyVisitedTop', 'Cargando');
         setText('leadRate', '--');
         setText('futureVisits', 'Sincronizando');
         setText('updatedText', 'Sincronizando...');
@@ -2624,6 +2924,7 @@
         setText('heroCopy', 'El dashboard está esperando una respuesta válida del backend antes de enseñar métricas comerciales.');
         setText('zoneTop', 'Sin datos');
         setText('propertyTop', 'Sin datos');
+        setText('propertyVisitedTop', 'Sin datos');
         setText('leadRate', '--');
         setText('futureVisits', 'Sin datos');
         setText('updatedText', 'Sin conexión');
@@ -2636,6 +2937,7 @@
       const completedVisits = getCompletedVisits();
       const pendingFollowUps = getPendingFollowUps();
       const leadsWithoutVisit = Math.max(0, Number(kpisGenerales.leads_totales || 0) - Number(kpisGenerales.leads_con_visita || 0));
+      const todayInteractionsCount = getTodayInteractionsCount();
       const nextVisit = futureScheduledVisits[0] || null;
       const latestLead = [...dashboardData.leadEstado]
         .sort((a, b) => {
@@ -2649,7 +2951,8 @@
           value: leadsWithoutVisit,
           copy: leadsWithoutVisit === 0
             ? 'Toda la base activa ya ha dado el salto a agenda.'
-            : 'Clientes que todavía necesitan propuesta comercial o cierre de cita.'
+            : 'Clientes que todavía necesitan propuesta comercial o cierre de cita.',
+          action: 'card-leads-without-visit'
         },
         {
           label: 'Siguiente Visita',
@@ -2679,14 +2982,14 @@
         `${upcomingScheduledVisits.length} visita programada`,
         `${completedVisits.length} visita realizada`,
         `${pendingFollowUps.length} seguimientos abiertos`,
-        `${kpisDiarios.interacciones_totales} interacciones hoy`
+        `${todayInteractionsCount} interacciones hoy`
       ];
 
       document.getElementById('heroTags').innerHTML = heroTags
         .map((tag) => `<span class="tag"><strong>${tag.split(' ')[0]}</strong> ${tag.substring(tag.indexOf(' ') + 1)}</span>`)
         .join('');
       document.getElementById('heroInsights').innerHTML = heroInsights.map((item) => `
-        <article class="hero-stat">
+        <article class="hero-stat ${item.action ? 'clickable' : ''}" ${item.action ? `data-action="${item.action}"` : ''}>
           <div class="hero-stat-label">${item.label}</div>
           <div class="hero-stat-value">${item.value}</div>
           <div class="hero-stat-copy">${item.copy}</div>
@@ -2697,15 +3000,20 @@
         `${kpisGenerales.leads_totales} leads en cartera, ${upcomingScheduledVisits.length} visitas futuras y ${completedVisits.length} ya celebradas. El bloque superior ahora prioriza datos reales del pipeline en vez de texto genérico.`
       );
 
-      setText('zoneTop', kpisGenerales.zona_mas_demandada || 'Sin señal clara');
-      setText('propertyTop', kpisGenerales.piso_mas_consultado || 'Sin dato suficiente');
+      const zoneTopValue = kpisDiarios.zona_top_demanda || kpisGenerales.zona_mas_demandada || 'Sin señal clara';
+      const propertyTopValue = kpisDiarios.piso_top_consultado || kpisGenerales.piso_mas_consultado || 'Sin dato suficiente';
+      const propertyVisitedTopValue = kpisDiarios.piso_mas_visitado || 'Sin dato suficiente';
+
+      setText('zoneTop', zoneTopValue);
+      setText('propertyTop', propertyTopValue);
+      setText('propertyVisitedTop', propertyVisitedTopValue);
       setText('leadRate', `${kpisGenerales.tasa_lead_a_visita}%`);
       setText('futureVisits', `${upcomingScheduledVisits.length} programadas · ${completedVisits.length} realizadas`);
       setText('updatedText', 'Dashboard en vivo');
       setText('snapshotText', `Snapshot ${kpisGenerales.snapshot_id} · ${formatMadridTimestamp(kpisGenerales.updated_at)} Madrid`);
       setText('todayText', formatMadridNow());
-      setText('zoneDemand', kpisGenerales.zona_mas_demandada || 'Sin señal clara');
-      setText('propertyDemand', kpisGenerales.piso_mas_consultado || 'Sin dato suficiente');
+      setText('zoneDemand', zoneTopValue);
+      setText('propertyDemand', propertyTopValue);
     }
 
     function renderSummaryCards() {
@@ -2724,6 +3032,8 @@
       const upcomingScheduledVisits = getOpenVisits();
       const completedVisits = getCompletedVisits();
       const pendingFollowUps = getPendingFollowUps();
+      const pendingConfirmationVisits = getPendingConfirmationVisits();
+      const pendingAttentionCount = pendingFollowUps.length + pendingConfirmationVisits.length;
       const cards = [
         {
           icon: 'fa-users',
@@ -2749,11 +3059,11 @@
         {
           icon: 'fa-bullseye',
           label: 'Seguimiento Pendiente',
-          value: pendingFollowUps.length,
-          meta: pendingFollowUps.length === 0
-            ? 'La agenda está limpia y sin bloqueos comerciales.'
-            : 'Clientes que necesitan una nueva propuesta de hora.',
-          action: pendingFollowUps.length === 0 ? 'card-stock' : 'card-follow'
+          value: pendingAttentionCount,
+          meta: pendingAttentionCount === 0
+            ? 'No hay cierres ni seguimientos pendientes ahora mismo.'
+            : `${pendingConfirmationVisits.length} visitas por confirmar y ${pendingFollowUps.length} seguimientos comerciales abiertos.`,
+          action: 'card-follow'
         }
       ];
 
@@ -2961,11 +3271,13 @@
         list.innerHTML = '<div class="empty">No se ha podido cargar el seguimiento desde N8N.</div>';
         return;
       }
-      const followUps = dashboardData.leadEstado.filter((lead) => lead.requiere_seguimiento);
+      const followUps = getPendingFollowUps();
+      const pendingConfirmationVisits = getPendingConfirmationVisits();
+      const pendingAttentionCount = followUps.length + pendingConfirmationVisits.length;
 
-      setText('followBadge', `${followUps.length} abiertos`);
+      setText('followBadge', `${pendingAttentionCount} abiertos`);
 
-      if (!followUps.length) {
+      if (!pendingAttentionCount) {
         list.innerHTML = `
           <div class="empty">
             No hay seguimientos pendientes. La agencia puede centrarse en visitas y captación.
@@ -2979,19 +3291,22 @@
         return;
       }
 
-      list.innerHTML = followUps.map((lead) => `
-        <div class="item">
-          <div class="item-row">
-            <div class="item-title">${getClientDisplayName(lead)}</div>
-            <span class="status pending"><i class="fa-solid fa-clock"></i>${lead.estado_pipeline}</span>
+      list.innerHTML = `
+        ${pendingConfirmationVisits.length ? `
+          <div class="item">
+            <div class="item-row">
+              <div class="item-title">Visitas pendientes de confirmar</div>
+              <span class="status pending"><i class="fa-solid fa-clock"></i>${pendingConfirmationVisits.length} abiertas</span>
+            </div>
+            <div class="item-copy">Estas visitas ya han pasado y solo falta marcarlas como realizadas.</div>
+            <div class="item-actions">
+              <button class="mini-btn primary" type="button" data-action="open-calendar-window">Abrir calendario</button>
+            </div>
           </div>
-          <div class="item-copy">${lead.proxima_accion || 'Revisar oportunidad'}${lead.motivo_seguimiento ? ` · ${lead.motivo_seguimiento}` : ''}</div>
-          <div class="item-copy">${lead.ultima_accion || 'Sin última acción registrada'}${lead.ultima_interaccion_fecha ? ` · ${lead.ultima_interaccion_fecha}` : ''}</div>
-          <div class="item-actions">
-            <button class="mini-btn primary" type="button" data-action="open-client" data-id="${lead.cliente_id}">Abrir cliente</button>
-          </div>
-        </div>
-      `).join('');
+          ${buildVisitListHtml(pendingConfirmationVisits, { includeCompletedAction: true })}
+        ` : ''}
+        ${followUps.length ? buildLeadFollowUpListHtml(followUps) : ''}
+      `;
     }
 
     function renderStock() {
@@ -3036,26 +3351,26 @@
         `;
         return;
       }
-      const { kpisDiarios } = dashboardData;
+      const activityMetrics = getTodayActivityMetrics();
       const metrics = [
         {
           label: 'Interacciones Hoy',
-          value: kpisDiarios.interacciones_totales,
+          value: activityMetrics.interacciones_totales,
           copy: 'Entradas procesadas durante la jornada.'
         },
         {
           label: 'Respuestas Enviadas',
-          value: kpisDiarios.respuestas_enviadas,
+          value: activityMetrics.respuestas_enviadas,
           copy: 'Respuestas comerciales despachadas hoy.'
         },
         {
           label: 'Solicitudes De Visita',
-          value: kpisDiarios.solicitudes_visita,
+          value: activityMetrics.solicitudes_visita,
           copy: 'Solicitudes recibidas desde formulario o flujo comercial.'
         },
         {
           label: 'Visitas Confirmadas',
-          value: kpisDiarios.visitas_confirmadas,
+          value: activityMetrics.visitas_confirmadas,
           copy: 'Cierres positivos logrados en la agenda diaria.'
         }
       ];
@@ -3173,18 +3488,23 @@
       event.preventDefault();
       const visit = getVisitById(uiState.selectedVisitId);
       if (!visit) return;
+      const movementTimestamp = madridDateTimeFormatter.format(new Date()).replace(',', '');
       visit.fecha_confirmada = document.getElementById('visitDate').value;
       visit.hora_confirmada = document.getElementById('visitTime').value;
       visit.estado_visita = document.getElementById('visitStatus').value;
       visit.resultado_agenda = document.getElementById('visitNotes').value.trim() || `Visita ${visit.estado_visita.replaceAll('_', ' ')}`;
+      visit.updated_at = movementTimestamp;
       const lead = dashboardData.leadEstado.find((item) => item.cliente_id === visit.cliente_id);
       if (lead) {
-        lead.estado_pipeline = visit.estado_visita === 'realizada' ? 'Visita realizada' : 'Visita confirmada';
+        lead.estado_pipeline = visit.estado_visita === 'realizada' ? 'Seguimiento post-visita' : 'Visita confirmada';
         lead.proxima_accion = visit.estado_visita === 'realizada' ? 'Registrar seguimiento post-visita' : 'Preparar visita';
         lead.requiere_seguimiento = visit.estado_visita === 'realizada';
         lead.motivo_seguimiento = visit.estado_visita === 'realizada'
           ? 'Pendiente de anotar conclusiones y siguiente propuesta comercial'
           : '';
+        lead.ultima_accion = visit.resultado_agenda;
+        lead.ultima_interaccion_fecha = movementTimestamp;
+        lead.updated_at = movementTimestamp;
       }
       syncKpisWithVisits();
       refreshDashboardData();
