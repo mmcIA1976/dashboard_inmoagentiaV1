@@ -1,0 +1,3247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Comercial | InmoagentIA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --bg: #091420;
+      --bg-soft: #112233;
+      --panel: rgba(17, 34, 51, 0.82);
+      --panel-soft: rgba(17, 34, 51, 0.6);
+      --line: rgba(255,255,255,0.08);
+      --line-gold: rgba(201,168,76,0.2);
+      --gold: #c9a84c;
+      --gold-soft: #ebd188;
+      --green: #57c58e;
+      --amber: #dc9f31;
+      --text: #f2f6fa;
+      --muted: #a4b8c9;
+      --dim: #7890a5;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --radius-sm: 10px;
+      --shadow: 0 24px 50px rgba(0,0,0,0.35);
+    }
+    :root[data-theme="light"] {
+      --bg: #f4ead8;
+      --bg-soft: #fff8ec;
+      --panel: rgba(255, 250, 242, 0.9);
+      --panel-soft: rgba(255, 250, 242, 0.76);
+      --line: rgba(74, 59, 32, 0.12);
+      --line-gold: rgba(201,168,76,0.28);
+      --gold: #b78b1e;
+      --gold-soft: #8b6911;
+      --green: #2f8f63;
+      --amber: #b97c1c;
+      --text: #1c2836;
+      --muted: #516274;
+      --dim: #7b8b9c;
+      --shadow: 0 24px 50px rgba(61, 51, 31, 0.12);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(201,168,76,0.14), transparent 28%),
+        linear-gradient(180deg, #0a1624 0%, #08111a 100%);
+    }
+    body[data-theme="light"] {
+      background:
+        radial-gradient(circle at top left, rgba(201,168,76,0.16), transparent 24%),
+        linear-gradient(180deg, #f7efe1 0%, #efe5d2 100%);
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 56px 56px;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+    body[data-theme="light"]::before {
+      background-image:
+        linear-gradient(rgba(28,40,54,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(28,40,54,0.05) 1px, transparent 1px);
+      opacity: 0.45;
+    }
+    .shell { position: relative; z-index: 1; display: grid; grid-template-columns: 270px 1fr; min-height: 100vh; }
+    .sidebar {
+      position: sticky; top: 0; height: 100vh; padding: 28px 20px;
+      background: linear-gradient(180deg, rgba(7,17,28,0.95), rgba(7,17,28,0.72));
+      border-right: 1px solid var(--line);
+      backdrop-filter: blur(14px);
+    }
+    .brand-title { font-family: 'Playfair Display', serif; font-size: 1.55rem; margin-bottom: 4px; }
+    .brand-title span { color: var(--gold); font-style: italic; }
+    .brand-sub { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.22em; color: var(--dim); margin-bottom: 28px; }
+    .side-card, .panel, .kpi { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius-md); box-shadow: inset 0 1px 0 rgba(255,255,255,0.03); }
+    .side-card { padding: 16px; margin-bottom: 16px; }
+    .side-label { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.18em; color: var(--dim); margin-bottom: 10px; }
+    .side-value { color: var(--muted); font-size: 0.92rem; line-height: 1.5; }
+    .nav { display: grid; gap: 10px; margin: 18px 0 24px; }
+    .nav a {
+      display: flex; gap: 12px; align-items: center; padding: 13px 14px; border-radius: 12px;
+      color: var(--muted); text-decoration: none; border: 1px solid transparent; transition: 0.2s ease;
+    }
+    .nav a:hover, .nav a.active { background: rgba(201,168,76,0.08); border-color: rgba(201,168,76,0.14); color: var(--text); transform: translateX(4px); }
+    .nav i { color: var(--gold); }
+    .side-highlight { padding: 18px; border-radius: var(--radius-md); background: linear-gradient(180deg, rgba(201,168,76,0.12), rgba(201,168,76,0.04)); border: 1px solid var(--line-gold); }
+    .side-highlight h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; margin-bottom: 8px; }
+    .side-highlight p { color: var(--muted); font-size: 0.92rem; line-height: 1.6; }
+    .main { padding: 30px 34px 44px; }
+    .topbar { display: flex; justify-content: space-between; gap: 20px; align-items: flex-start; margin-bottom: 24px; }
+    .eyebrow { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--gold-soft); margin-bottom: 10px; }
+    .title { font-family: 'Playfair Display', serif; font-size: clamp(2.2rem, 4vw, 3.5rem); line-height: 0.98; letter-spacing: -0.04em; max-width: 12ch; margin-bottom: 14px; }
+    .copy { max-width: 62ch; color: var(--muted); line-height: 1.75; }
+    .top-actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: flex-end; }
+    .pill {
+      min-height: 46px; padding: 0 16px; display: inline-flex; align-items: center; gap: 10px;
+      border-radius: 999px; border: 1px solid var(--line); background: rgba(12,25,39,0.72); color: var(--muted);
+    }
+    button.pill {
+      font: inherit;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+    button.pill:hover { transform: translateY(-1px); border-color: rgba(201,168,76,0.18); color: var(--text); }
+    .action-btn {
+      min-height: 46px; padding: 0 18px; display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      border-radius: 999px; border: 1px solid rgba(201,168,76,0.18); background: rgba(201,168,76,0.12); color: var(--text);
+      font: inherit; cursor: pointer; transition: 0.2s ease;
+    }
+    .action-btn:hover { transform: translateY(-2px); background: rgba(201,168,76,0.18); }
+    .action-btn.ghost { background: rgba(255,255,255,0.04); border-color: var(--line); color: var(--muted); }
+    .hero {
+      padding: 26px; border-radius: var(--radius-lg); border: 1px solid var(--line-gold);
+      background: linear-gradient(135deg, rgba(201,168,76,0.1), transparent 48%), linear-gradient(180deg, rgba(17,34,51,0.98), rgba(10,21,34,0.88));
+      box-shadow: var(--shadow); margin-bottom: 22px;
+    }
+    .hero-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 22px; }
+    .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 3vw, 2.7rem); line-height: 1; max-width: 13ch; margin-bottom: 12px; }
+    .hero-copy { color: var(--muted); line-height: 1.7; max-width: 58ch; }
+    .hero-tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+    .tag { padding: 10px 14px; border-radius: 999px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.06); color: var(--muted); font-size: 0.88rem; }
+    .tag strong { color: var(--text); }
+    .hero-insights { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 20px; }
+    .hero-stat {
+      padding: 16px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.035);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .hero-stat-label { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--dim); margin-bottom: 8px; }
+    .hero-stat-value { font-family: 'Playfair Display', serif; font-size: 1.65rem; line-height: 1; margin-bottom: 6px; }
+    .hero-stat-copy { color: var(--muted); font-size: 0.9rem; line-height: 1.5; }
+    .hero-box { padding: 20px; border-radius: var(--radius-md); background: rgba(6,16,26,0.5); border: 1px solid var(--line); }
+    .hero-box h3 { font-size: 1.06rem; margin-bottom: 6px; }
+    .hero-box p { color: var(--muted); font-size: 0.92rem; line-height: 1.55; margin-bottom: 16px; }
+    .box-row { display: flex; justify-content: space-between; gap: 12px; color: var(--muted); padding: 8px 0; font-size: 0.92rem; }
+    .box-row strong { color: var(--text); }
+    .box-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+    .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 22px; }
+    .kpi { padding: 20px; position: relative; overflow: hidden; }
+    .kpi::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, var(--gold), rgba(235,209,136,0.15)); }
+    .kpi-button { width: 100%; text-align: left; color: inherit; background: none; border: none; cursor: pointer; font: inherit; }
+    .kpi-icon { width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: rgba(201,168,76,0.12); color: var(--gold-soft); margin-bottom: 16px; }
+    .kpi-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.16em; color: var(--dim); margin-bottom: 10px; }
+    .kpi-value { font-family: 'Playfair Display', serif; font-size: 2.2rem; line-height: 1; margin-bottom: 8px; }
+    .kpi-meta { color: var(--muted); line-height: 1.55; font-size: 0.92rem; }
+    .grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 22px; margin-bottom: 22px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .panel { padding: 22px; }
+    .panel-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; margin-bottom: 18px; }
+    .panel-title { font-size: 1.08rem; font-weight: 700; }
+    .panel-sub { color: var(--dim); font-size: 0.84rem; margin-top: 4px; }
+    .badge { padding: 7px 10px; border-radius: 999px; background: rgba(201,168,76,0.08); color: var(--gold-soft); border: 1px solid rgba(201,168,76,0.16); font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.14em; }
+    .list { display: grid; gap: 12px; }
+    .item { padding: 16px; border-radius: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); }
+    .item-row { display: flex; justify-content: space-between; gap: 14px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+    .item-title { font-size: 0.98rem; font-weight: 700; }
+    .item-copy { color: var(--muted); font-size: 0.92rem; line-height: 1.55; }
+    .item-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+    .mini-btn {
+      padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04); color: var(--text); font: inherit; cursor: pointer; transition: 0.2s ease;
+    }
+    .mini-btn:hover { transform: translateY(-1px); border-color: rgba(201,168,76,0.2); }
+    .mini-btn.primary { background: rgba(201,168,76,0.12); border-color: rgba(201,168,76,0.22); }
+    .status { display: inline-flex; gap: 7px; align-items: center; padding: 7px 11px; border-radius: 999px; font-size: 0.76rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+    .status.ok { background: rgba(87,197,142,0.12); color: #cbf0da; }
+    .status.pending { background: rgba(220,159,49,0.14); color: #f4d7a4; }
+    .status.empty { background: rgba(255,255,255,0.05); color: var(--dim); }
+    body[data-theme="light"] .status.ok { color: #1f7a51; background: rgba(87,197,142,0.16); }
+    body[data-theme="light"] .status.pending { color: #9b6306; background: rgba(220,159,49,0.18); }
+    .stock-row { display: grid; grid-template-columns: 1fr auto auto; gap: 12px; align-items: center; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .stock-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .stock-label { color: var(--muted); }
+    .stock-bar { width: 126px; height: 8px; background: rgba(255,255,255,0.06); border-radius: 999px; overflow: hidden; }
+    .stock-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-soft)); }
+    .stock-value { font-family: 'Playfair Display', serif; font-size: 1.18rem; }
+    .mini-card { padding: 16px; border-radius: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); }
+    .mini-label { font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--dim); margin-bottom: 8px; }
+    .mini-value { font-family: 'Playfair Display', serif; font-size: 1.55rem; margin-bottom: 6px; }
+    .mini-copy { color: var(--muted); font-size: 0.92rem; line-height: 1.55; }
+    .activity { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .calendar-shell {
+      padding: 24px; border-radius: var(--radius-lg); border: 1px solid var(--line-gold);
+      background: linear-gradient(180deg, rgba(13,26,39,0.98), rgba(9,18,29,0.92));
+      box-shadow: var(--shadow); margin-bottom: 22px;
+    }
+    .calendar-head { display: flex; justify-content: space-between; gap: 18px; align-items: flex-start; margin-bottom: 18px; }
+    .calendar-head p { color: var(--muted); max-width: 64ch; line-height: 1.65; }
+    .calendar-badges { display: flex; flex-wrap: wrap; gap: 10px; }
+    .calendar-badge {
+      padding: 10px 12px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04); color: var(--muted); font-size: 0.84rem;
+    }
+    .calendar-strip-wrap, .calendar-month-wrap {
+      width: 100%; overflow-x: auto; padding-bottom: 6px;
+    }
+    .calendar-strip {
+      display: grid; grid-template-columns: repeat(7, minmax(140px, 1fr)); gap: 12px; margin-bottom: 16px; min-width: 1040px;
+    }
+    .calendar-day {
+      padding: 14px; border-radius: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
+      min-height: 160px;
+    }
+    .calendar-day.today { border-color: rgba(201,168,76,0.28); background: linear-gradient(180deg, rgba(201,168,76,0.12), rgba(255,255,255,0.03)); }
+    .calendar-day-head { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; margin-bottom: 12px; }
+    .calendar-day-name { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--dim); }
+    .calendar-day-date { font-family: 'Playfair Display', serif; font-size: 1.35rem; }
+    .calendar-stack { display: grid; gap: 10px; }
+    .calendar-empty {
+      padding: 14px; border-radius: 14px; background: rgba(255,255,255,0.025); border: 1px dashed rgba(255,255,255,0.08);
+      color: var(--dim); font-size: 0.88rem; line-height: 1.5;
+    }
+    .calendar-event {
+      width: 100%; text-align: left; padding: 14px; border-radius: 14px; border: 1px solid rgba(201,168,76,0.18);
+      background: linear-gradient(180deg, rgba(201,168,76,0.12), rgba(255,255,255,0.03)); color: var(--text); cursor: pointer;
+      transition: 0.2s ease; font: inherit;
+    }
+    .calendar-event:hover { transform: translateY(-2px); border-color: rgba(201,168,76,0.3); }
+    .calendar-event.open-state {
+      border-color: rgba(220,159,49,0.28);
+      background: linear-gradient(180deg, rgba(220,159,49,0.14), rgba(255,255,255,0.03));
+    }
+    .calendar-event.done-state {
+      border-color: rgba(87,197,142,0.28);
+      background: linear-gradient(180deg, rgba(87,197,142,0.16), rgba(255,255,255,0.03));
+    }
+    .calendar-event.done-state .calendar-event-time { color: #cbf0da; }
+    .calendar-event-time { font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold-soft); margin-bottom: 8px; }
+    .calendar-event-title { font-weight: 700; margin-bottom: 4px; }
+    .calendar-event-copy { color: var(--muted); font-size: 0.9rem; line-height: 1.45; }
+    .window-overlay {
+      position: fixed; inset: 0; background: rgba(3, 9, 16, 0.72); backdrop-filter: blur(6px);
+      opacity: 0; pointer-events: none; transition: 0.2s ease; z-index: 24;
+    }
+    .window-overlay.open { opacity: 1; pointer-events: auto; }
+    .workspace-window {
+      position: fixed; inset: 24px; background: linear-gradient(180deg, rgba(10,21,34,0.98), rgba(8,17,27,0.98));
+      border: 1px solid rgba(201,168,76,0.18); border-radius: 28px; box-shadow: 0 30px 60px rgba(0,0,0,0.42);
+      z-index: 25; display: none; overflow: hidden;
+    }
+    .workspace-window.open { display: flex; flex-direction: column; }
+    .window-topbar {
+      display: flex; justify-content: space-between; gap: 16px; align-items: center; padding: 22px 24px;
+      border-bottom: 1px solid var(--line); background: rgba(255,255,255,0.02);
+    }
+    .window-topbar-copy { color: var(--muted); line-height: 1.55; margin-top: 8px; }
+    .window-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: flex-end; }
+    .window-select {
+      min-height: 44px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line);
+      min-width: 168px; background: rgba(13, 28, 43, 0.96); color: var(--text); font: inherit;
+      color-scheme: dark; appearance: none;
+      background-image:
+        linear-gradient(45deg, transparent 50%, var(--gold-soft) 50%),
+        linear-gradient(135deg, var(--gold-soft) 50%, transparent 50%);
+      background-position:
+        calc(100% - 22px) calc(50% - 3px),
+        calc(100% - 16px) calc(50% - 3px);
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+      padding-right: 36px;
+    }
+    .window-select option {
+      background: #102131;
+      color: var(--text);
+    }
+    .window-select:focus {
+      outline: none;
+      border-color: rgba(201,168,76,0.38);
+      box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+    }
+    .window-body { padding: 24px; overflow: auto; }
+    .window-range { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 18px; }
+    .window-range strong { font-family: 'Playfair Display', serif; font-size: 1.55rem; }
+    .window-range span { color: var(--muted); }
+    .property-shell {
+      display: grid; grid-template-columns: 360px minmax(0, 1fr); gap: 18px;
+    }
+    .property-panel {
+      padding: 18px; border-radius: 18px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    }
+    .property-panel-head { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; margin-bottom: 14px; }
+    .property-list { display: grid; gap: 10px; max-height: 62vh; overflow: auto; padding-right: 4px; }
+    .property-card {
+      width: 100%; text-align: left; padding: 14px; border-radius: 14px; background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05); color: var(--text); cursor: pointer; font: inherit; transition: 0.2s ease;
+    }
+    .property-card:hover, .property-card.active { border-color: rgba(201,168,76,0.24); background: rgba(201,168,76,0.08); }
+    .property-card strong { display: block; margin-bottom: 6px; }
+    .property-card small { color: var(--muted); display: block; line-height: 1.5; }
+    .property-badge {
+      display: inline-flex; align-items: center; padding: 6px 10px; border-radius: 999px; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em;
+      margin-top: 8px;
+    }
+    .property-badge.disponible { background: rgba(87,197,142,0.12); color: #cbf0da; }
+    .property-badge.reservado { background: rgba(220,159,49,0.14); color: #f4d7a4; }
+    .property-badge.vendido { background: rgba(255,255,255,0.09); color: var(--text); }
+    .property-form { display: grid; gap: 14px; }
+    .property-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .field { display: grid; gap: 7px; }
+    .field label { color: var(--muted); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.12em; }
+    .field input, .field select, .field textarea {
+      width: 100%; min-height: 46px; padding: 12px 14px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(11,22,34,0.95); color: var(--text); font: inherit;
+    }
+    .field input[type="date"],
+    .field input[type="time"] {
+      color-scheme: dark;
+      min-height: 54px;
+      font-size: 1rem;
+    }
+    .field input[type="date"]::-webkit-calendar-picker-indicator,
+    .field input[type="time"]::-webkit-calendar-picker-indicator {
+      filter: invert(0.9);
+      cursor: pointer;
+    }
+    .field.time-field { align-content: start; }
+    .time-input-wrap { position: relative; max-width: 180px; }
+    .field.time-field input {
+      max-width: 180px;
+      min-height: 46px;
+      padding-right: 44px;
+    }
+    .time-toggle {
+      position: absolute; top: 6px; right: 6px; width: 34px; height: 34px;
+      border-radius: 10px; border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04); color: var(--text); cursor: pointer;
+    }
+    .time-menu {
+      position: absolute; top: calc(100% + 8px); left: 0; width: 180px; max-height: 220px; overflow: auto;
+      padding: 8px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08); background: rgba(9,20,32,0.98);
+      box-shadow: 0 18px 36px rgba(0,0,0,0.32); display: none; z-index: 5;
+    }
+    .time-menu.open { display: grid; gap: 6px; }
+    .time-option {
+      width: 100%; text-align: left; padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.04);
+      background: rgba(255,255,255,0.03); color: var(--text); font: inherit; cursor: pointer;
+    }
+    .time-option:hover { border-color: rgba(201,168,76,0.2); background: rgba(201,168,76,0.08); }
+    .field textarea { min-height: 96px; resize: vertical; }
+    .field input:focus, .field select:focus, .field textarea:focus {
+      outline: none; border-color: rgba(201,168,76,0.38); box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+    }
+    .property-tools { display: flex; flex-wrap: wrap; gap: 10px; }
+    .property-meta-strip { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+    .property-meta-chip {
+      padding: 8px 10px; border-radius: 999px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); color: var(--muted); font-size: 0.86rem;
+    }
+    .client-shell {
+      display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 18px;
+    }
+    .client-summary-grid {
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px;
+    }
+    .client-summary-card {
+      padding: 16px; border-radius: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    }
+    .client-summary-card strong {
+      display: block; margin-top: 6px; font-family: 'Playfair Display', serif; font-size: 1.25rem;
+    }
+    .client-section {
+      margin-top: 10px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .client-section h3 {
+      font-size: 1rem; margin-bottom: 6px;
+    }
+    .client-section p {
+      color: var(--muted); line-height: 1.55; font-size: 0.92rem;
+    }
+    .client-visit-list {
+      display: grid; gap: 10px; margin-top: 12px;
+    }
+    .client-visit-card {
+      padding: 14px; border-radius: 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    }
+    .client-visit-card strong {
+      display: block; margin-bottom: 4px;
+    }
+    .client-visit-card span {
+      display: block; color: var(--muted); line-height: 1.5; font-size: 0.9rem;
+    }
+    .client-property-grid {
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 12px;
+    }
+    .client-property-card {
+      width: 100%; text-align: left; padding: 14px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.03); color: var(--text); cursor: pointer; font: inherit; transition: 0.2s ease;
+    }
+    .client-property-card:hover {
+      border-color: rgba(201,168,76,0.24); background: rgba(201,168,76,0.08);
+    }
+    .client-property-card strong {
+      display: block; margin-bottom: 4px;
+    }
+    .client-property-card small {
+      display: block; color: var(--muted); line-height: 1.45;
+    }
+    .client-campaign-row {
+      display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-top: 12px;
+      padding: 14px; border-radius: 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    }
+    .client-campaign-copy strong {
+      display: block; margin-bottom: 4px;
+    }
+    .client-campaign-copy span {
+      color: var(--muted); font-size: 0.9rem; line-height: 1.5;
+    }
+    .client-inline-actions {
+      display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px;
+    }
+    .visit-change-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .visit-highlight {
+      padding: 16px; border-radius: 18px; background: linear-gradient(180deg, rgba(201,168,76,0.1), rgba(255,255,255,0.03));
+      border: 1px solid rgba(201,168,76,0.18);
+    }
+    .visit-highlight-label { font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--gold-soft); margin-bottom: 8px; }
+    .visit-highlight strong { display: block; font-family: 'Playfair Display', serif; font-size: 1.35rem; margin-bottom: 6px; }
+    .visit-highlight span { color: var(--muted); line-height: 1.5; }
+    .visit-date-picker {
+      margin-top: 8px; padding: 11px; border-radius: 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    }
+    .visit-date-head {
+      display: flex; justify-content: space-between; gap: 8px; align-items: center; margin-bottom: 8px;
+    }
+    .visit-date-title { font-weight: 700; color: var(--text); font-size: 0.95rem; }
+    .visit-date-nav { display: flex; gap: 8px; }
+    .icon-btn {
+      width: 30px; height: 30px; border-radius: 9px; border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04); color: var(--text); cursor: pointer;
+    }
+    .visit-weekdays, .visit-days-grid {
+      display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px;
+    }
+    .visit-weekdays {
+      margin-bottom: 6px; color: var(--dim); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em;
+    }
+    .visit-day-btn {
+      min-height: 30px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.03);
+      color: var(--text); cursor: pointer; font: inherit; font-size: 0.88rem;
+    }
+    .visit-day-btn.muted { opacity: 0.4; }
+    .visit-day-btn.active { background: rgba(201,168,76,0.14); border-color: rgba(201,168,76,0.3); color: var(--gold-soft); }
+    .visit-day-btn:hover { border-color: rgba(201,168,76,0.2); }
+    .calendar-month-grid {
+      display: grid; grid-template-columns: repeat(7, minmax(140px, 1fr)); gap: 12px; min-width: 1040px;
+    }
+    .month-col-head {
+      padding: 0 4px 10px; color: var(--dim); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.14em;
+    }
+    .month-day {
+      min-height: 160px; padding: 14px; border-radius: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .month-day.muted { opacity: 0.45; }
+    .month-day.today { border-color: rgba(201,168,76,0.28); background: linear-gradient(180deg, rgba(201,168,76,0.12), rgba(255,255,255,0.03)); }
+    .month-day-num { font-family: 'Playfair Display', serif; font-size: 1.2rem; }
+    .month-day-events { display: grid; gap: 8px; }
+    .month-chip {
+      width: 100%; text-align: left; padding: 10px; border-radius: 12px; border: 1px solid rgba(201,168,76,0.16);
+      background: rgba(201,168,76,0.1); color: var(--text); font: inherit; cursor: pointer;
+    }
+    .month-chip.open-state {
+      border-color: rgba(220,159,49,0.24);
+      background: rgba(220,159,49,0.12);
+    }
+    .month-chip.done-state {
+      border-color: rgba(87,197,142,0.24);
+      background: rgba(87,197,142,0.14);
+    }
+    .month-chip.done-state small { color: #cbf0da; }
+    .month-chip small { display: block; color: var(--gold-soft); margin-bottom: 4px; }
+    .empty { padding: 24px; border-radius: 16px; border: 1px dashed rgba(255,255,255,0.1); color: var(--dim); text-align: center; }
+    .empty-actions { display: flex; justify-content: center; gap: 10px; margin-top: 14px; }
+    .drawer-overlay {
+      position: fixed; inset: 0; background: rgba(4,10,16,0.55); backdrop-filter: blur(4px);
+      opacity: 0; pointer-events: none; transition: 0.2s ease; z-index: 15;
+    }
+    .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+    .drawer {
+      position: fixed; top: 0; right: 0; width: min(430px, 100vw); height: 100vh; padding: 28px;
+      background: linear-gradient(180deg, rgba(8,18,29,0.98), rgba(12,24,38,0.98));
+      border-left: 1px solid var(--line); box-shadow: -20px 0 45px rgba(0,0,0,0.35);
+      transform: translateX(100%); transition: 0.25s ease; z-index: 16; overflow-y: auto;
+    }
+    .drawer.open { transform: translateX(0); }
+    .drawer-top { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; margin-bottom: 18px; }
+    .drawer-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; line-height: 1; }
+    .drawer-close {
+      width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--line); background: rgba(255,255,255,0.04);
+      color: var(--text); cursor: pointer;
+    }
+    .drawer-copy { color: var(--muted); line-height: 1.65; margin-bottom: 18px; }
+    .drawer-grid { display: grid; gap: 12px; margin-bottom: 18px; }
+    .drawer-stat { padding: 14px 16px; border-radius: 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); }
+    .drawer-stat strong { display: block; margin-top: 5px; color: var(--text); }
+    .drawer-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+    .visit-popover {
+      position: fixed;
+      z-index: 36;
+      min-width: 220px;
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(9,20,32,0.98);
+      border: 1px solid rgba(201,168,76,0.24);
+      box-shadow: 0 22px 44px rgba(0,0,0,0.34);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(8px);
+      transition: 0.18s ease;
+    }
+    .visit-popover.open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+    .visit-popover-head {
+      margin-bottom: 10px;
+    }
+    .visit-popover-title {
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .visit-popover-copy {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+    .visit-popover-actions {
+      display: grid;
+      gap: 8px;
+    }
+    .toast {
+      position: fixed; right: 26px; bottom: 26px; padding: 14px 18px; border-radius: 14px;
+      background: rgba(9,20,32,0.95); border: 1px solid rgba(201,168,76,0.2); color: var(--text);
+      box-shadow: var(--shadow); z-index: 20; opacity: 0; transform: translateY(10px); transition: 0.2s ease; pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    body[data-theme="light"] .sidebar {
+      background: linear-gradient(180deg, rgba(255,248,236,0.96), rgba(247,239,225,0.86));
+    }
+    body[data-theme="light"] .nav a:hover,
+    body[data-theme="light"] .nav a.active {
+      background: rgba(201,168,76,0.12);
+      color: var(--text);
+    }
+    body[data-theme="light"] .side-highlight,
+    body[data-theme="light"] .hero,
+    body[data-theme="light"] .calendar-shell,
+    body[data-theme="light"] .workspace-window,
+    body[data-theme="light"] .drawer {
+      background:
+        linear-gradient(135deg, rgba(201,168,76,0.12), transparent 48%),
+        linear-gradient(180deg, rgba(255,250,242,0.98), rgba(245,236,223,0.98));
+    }
+    body[data-theme="light"] .hero-box,
+    body[data-theme="light"] .hero-stat,
+    body[data-theme="light"] .item,
+    body[data-theme="light"] .mini-card,
+    body[data-theme="light"] .calendar-day,
+    body[data-theme="light"] .month-day,
+    body[data-theme="light"] .property-panel,
+    body[data-theme="light"] .property-card,
+    body[data-theme="light"] .client-summary-card,
+    body[data-theme="light"] .client-visit-card,
+    body[data-theme="light"] .client-property-card,
+    body[data-theme="light"] .client-campaign-row,
+    body[data-theme="light"] .drawer-stat,
+    body[data-theme="light"] .visit-date-picker,
+    body[data-theme="light"] .empty,
+    body[data-theme="light"] .calendar-empty,
+    body[data-theme="light"] .pill,
+    body[data-theme="light"] .window-topbar,
+    body[data-theme="light"] .time-toggle,
+    body[data-theme="light"] .time-menu,
+    body[data-theme="light"] .time-option,
+    body[data-theme="light"] .property-meta-chip,
+    body[data-theme="light"] .tag {
+      background: rgba(255,255,255,0.72);
+      border-color: rgba(74,59,32,0.12);
+      color: var(--text);
+    }
+    body[data-theme="light"] .hero-copy,
+    body[data-theme="light"] .window-topbar-copy,
+    body[data-theme="light"] .drawer-copy,
+    body[data-theme="light"] .calendar-head p,
+    body[data-theme="light"] .copy,
+    body[data-theme="light"] .side-value,
+    body[data-theme="light"] .mini-copy,
+    body[data-theme="light"] .stock-label,
+    body[data-theme="light"] .box-row,
+    body[data-theme="light"] .calendar-event-copy,
+    body[data-theme="light"] .item-copy,
+    body[data-theme="light"] .window-range span {
+      color: var(--muted);
+    }
+    body[data-theme="light"] .calendar-event.open-state,
+    body[data-theme="light"] .month-chip.open-state {
+      background: linear-gradient(180deg, rgba(220,159,49,0.3), rgba(255,244,225,0.98));
+      border-color: rgba(185,124,28,0.52);
+      box-shadow: 0 0 0 1px rgba(185,124,28,0.08), 0 10px 24px rgba(185,124,28,0.14);
+      color: #5c3804;
+      font-weight: 700;
+    }
+    body[data-theme="light"] .calendar-event.done-state,
+    body[data-theme="light"] .month-chip.done-state {
+      background: linear-gradient(180deg, rgba(87,197,142,0.34), rgba(235,253,242,0.98));
+      border-color: rgba(47,143,99,0.52);
+      box-shadow: 0 0 0 1px rgba(47,143,99,0.08), 0 10px 24px rgba(47,143,99,0.15);
+      color: #0f603b;
+      font-weight: 700;
+    }
+    body[data-theme="light"] .calendar-event.open-state .calendar-event-time,
+    body[data-theme="light"] .month-chip.open-state small {
+      color: #8a5408;
+      font-weight: 700;
+    }
+    body[data-theme="light"] .calendar-event.done-state .calendar-event-time,
+    body[data-theme="light"] .month-chip.done-state small {
+      color: #157448;
+      font-weight: 700;
+    }
+    body[data-theme="light"] .action-btn.ghost,
+    body[data-theme="light"] .mini-btn,
+    body[data-theme="light"] .icon-btn,
+    body[data-theme="light"] .drawer-close {
+      background: rgba(255,255,255,0.76);
+      color: var(--text);
+      border-color: rgba(74,59,32,0.14);
+    }
+    body[data-theme="light"] .visit-popover {
+      background: rgba(255,250,242,0.98);
+      border-color: rgba(201,168,76,0.28);
+    }
+    body[data-theme="light"] .window-overlay,
+    body[data-theme="light"] .drawer-overlay {
+      background: rgba(28,40,54,0.18);
+    }
+    body[data-theme="light"] .field input,
+    body[data-theme="light"] .field select,
+    body[data-theme="light"] .field textarea,
+    body[data-theme="light"] .window-select {
+      background: rgba(255,255,255,0.88);
+      color: var(--text);
+      border-color: rgba(74,59,32,0.14);
+    }
+    body[data-theme="light"] .field input[type="date"],
+    body[data-theme="light"] .field input[type="time"],
+    body[data-theme="light"] .window-select {
+      color-scheme: light;
+    }
+    body[data-theme="light"] .field input[type="date"]::-webkit-calendar-picker-indicator,
+    body[data-theme="light"] .field input[type="time"]::-webkit-calendar-picker-indicator {
+      filter: invert(0.2);
+    }
+    body[data-theme="light"] .window-select option {
+      background: #fff9ef;
+      color: var(--text);
+    }
+    body[data-theme="light"] .calendar-event,
+    body[data-theme="light"] .month-chip,
+    body[data-theme="light"] .visit-highlight,
+    body[data-theme="light"] .property-card.active,
+    body[data-theme="light"] .property-card:hover {
+      background: linear-gradient(180deg, rgba(201,168,76,0.16), rgba(255,255,255,0.72));
+      color: var(--text);
+      border-color: rgba(201,168,76,0.28);
+    }
+    body[data-theme="light"] .status.ok { color: #1f6b48; }
+    body[data-theme="light"] .status.pending { color: #8b5a10; }
+    body[data-theme="light"] .status.empty { color: var(--dim); }
+    body[data-theme="light"] .toast {
+      background: rgba(255,250,242,0.96);
+      color: var(--text);
+      border-color: rgba(201,168,76,0.26);
+    }
+    .foot { margin-top: 22px; color: var(--dim); font-size: 0.86rem; text-align: right; }
+    @media (max-width: 1140px) {
+      .shell { grid-template-columns: 1fr; }
+      .sidebar { position: relative; height: auto; border-right: none; border-bottom: 1px solid var(--line); }
+      .hero-grid, .kpis, .grid, .grid-3, .hero-insights { grid-template-columns: 1fr; }
+      .main { padding: 24px; }
+    }
+    @media (max-width: 900px) {
+      .kpis { grid-template-columns: repeat(2, 1fr); }
+      .top-actions { justify-content: flex-start; }
+      .workspace-window { inset: 14px; }
+      .window-actions { justify-content: flex-start; }
+      .property-shell, .client-shell, .client-summary-grid, .client-property-grid { grid-template-columns: 1fr; }
+      .visit-change-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 720px) {
+      .main, .sidebar { padding: 22px 18px; }
+      .topbar { flex-direction: column; }
+      .title { max-width: none; }
+      .activity { grid-template-columns: 1fr; }
+      .stock-row { grid-template-columns: 1fr; }
+      .stock-bar { width: 100%; }
+      .calendar-head { flex-direction: column; }
+      .workspace-window { inset: 10px; border-radius: 22px; }
+      .window-topbar, .window-range { flex-direction: column; align-items: flex-start; }
+      .panel, .hero, .calendar-shell { padding: 18px; }
+      .kpis { grid-template-columns: 1fr; }
+      .pill, .action-btn, .window-select { width: 100%; justify-content: center; }
+      .window-actions { width: 100%; }
+    }
+    @media (max-width: 560px) {
+      .sidebar { padding: 18px 14px; }
+      .main { padding: 16px 14px 24px; }
+      .workspace-window { inset: 6px; border-radius: 18px; }
+      .window-topbar, .window-body { padding: 16px; }
+      .drawer { width: 100vw; padding: 20px; }
+      .hero-title { max-width: none; }
+    }
+  </style>
+  <script>
+    (() => {
+      try {
+        const savedTheme = localStorage.getItem('inmoagentia-dashboard-theme');
+        if (savedTheme === 'light' || savedTheme === 'dark') {
+          document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+      } catch (error) {}
+    })();
+  </script>
+</head>
+<body data-theme="dark">
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand-title">Inmoagent<span>IA</span></div>
+      <div class="brand-sub">Dashboard comercial</div>
+
+      <div class="side-card">
+        <div class="side-label">Snapshot</div>
+        <div class="side-value" id="snapshotText">Actualizado hace un momento</div>
+      </div>
+
+      <nav class="nav">
+        <a class="active" href="#resumen"><i class="fa-solid fa-gauge-high"></i>Resumen</a>
+        <a href="#" data-action="open-calendar-window"><i class="fa-regular fa-calendar-days"></i>Calendario</a>
+        <a href="#visitas"><i class="fa-solid fa-calendar-check"></i>Próximas visitas</a>
+        <a href="#seguimiento"><i class="fa-solid fa-bullseye"></i>Seguimiento</a>
+        <a href="#" data-action="open-clients-window"><i class="fa-solid fa-address-book"></i>Clientes</a>
+        <a href="#" data-action="open-property-window"><i class="fa-solid fa-building"></i>Cartera</a>
+        <a href="#actividad"><i class="fa-solid fa-chart-line"></i>Actividad</a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <header class="topbar" id="resumen">
+        <div>
+          <div class="eyebrow">Centro de control comercial</div>
+          <h1 class="title">Visión clara de oportunidades, visitas y demanda.</h1>
+          <p class="copy">La portada mezcla estado actual del negocio, agenda inmediata, seguimiento pendiente y actividad reciente sin convertir el panel en una herramienta técnica.</p>
+        </div>
+        <div class="top-actions">
+          <div class="pill"><i class="fa-regular fa-calendar"></i><span id="todayText">09 abr 2026</span></div>
+          <button class="pill" type="button" id="refreshDashboardBtn"><i class="fa-solid fa-arrows-rotate"></i><strong id="updatedText">2026-04-09 11:52:55</strong></button>
+          <button class="action-btn ghost" type="button" id="themeToggleBtn"><i class="fa-regular fa-sun"></i>Vista clara</button>
+          <button class="action-btn ghost" type="button" id="copySummaryBtn"><i class="fa-regular fa-copy"></i>Compartir resumen</button>
+        </div>
+      </header>
+
+      <section class="hero">
+        <div class="hero-grid">
+          <div>
+            <div class="eyebrow">Pipeline comercial</div>
+            <h2 class="hero-title">Leads activos, visitas cerradas y foco inmediato en la siguiente conversión.</h2>
+            <p class="hero-copy" id="heroCopy">Resumen real del pipeline con el estado vivo de los leads y la agenda comercial.</p>
+            <div class="hero-insights" id="heroInsights"></div>
+            <div class="hero-tags" id="heroTags"></div>
+          </div>
+          <div class="hero-box">
+            <h3>Qué está ocurriendo ahora</h3>
+            <p>Resumen global del negocio para dirección comercial, sin necesidad de navegar todavía a vistas profundas.</p>
+            <div class="box-row"><span>Zona caliente</span><strong id="zoneTop"></strong></div>
+            <div class="box-row"><span>Piso con más interés</span><strong id="propertyTop"></strong></div>
+            <div class="box-row"><span>Conversión a visita</span><strong id="leadRate"></strong></div>
+            <div class="box-row"><span>Visitas futuras</span><strong id="futureVisits"></strong></div>
+            <div class="box-actions">
+              <button class="action-btn" type="button" data-action="open-calendar-window"><i class="fa-solid fa-calendar-check"></i>Abrir calendario</button>
+              <button class="action-btn ghost" type="button" data-scroll-target="seguimiento"><i class="fa-solid fa-list-check"></i>Ver seguimiento</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="kpis" id="summaryCards"></section>
+
+      <section class="calendar-shell" id="calendario">
+        <div class="calendar-head">
+          <div>
+            <div class="eyebrow">Agenda premium</div>
+            <h2 class="panel-title">Vista previa de agenda</h2>
+            <p>Una lectura rápida de los próximos dias. El calendario completo se abre en su propia ventana para moverte entre semanas y meses sin recargar la portada.</p>
+          </div>
+          <div class="calendar-badges">
+            <span class="calendar-badge" id="calendarRange"></span>
+            <span class="calendar-badge" id="calendarConfirmed"></span>
+            <button class="action-btn ghost" type="button" data-action="open-calendar-window"><i class="fa-solid fa-up-right-from-square"></i>Abrir calendario</button>
+          </div>
+        </div>
+        <div class="calendar-strip-wrap">
+          <div class="calendar-strip" id="calendarBoard"></div>
+        </div>
+      </section>
+
+      <section class="grid">
+        <article class="panel" id="visitas">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">Próximas visitas</div>
+              <div class="panel-sub">Agenda inmediata ordenada por fecha y hora</div>
+            </div>
+            <span class="badge" id="visitsBadge"></span>
+          </div>
+          <div class="list" id="upcomingVisits"></div>
+        </article>
+
+        <article class="panel" id="seguimiento">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">Seguimiento comercial</div>
+              <div class="panel-sub">Clientes que requieren acción humana o revisión</div>
+            </div>
+            <span class="badge" id="followBadge"></span>
+          </div>
+          <div class="list" id="followUpList"></div>
+        </article>
+      </section>
+
+      <section class="grid-3">
+        <article class="panel" id="cartera">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">Cartera actual</div>
+              <div class="panel-sub">Distribución del stock comercial</div>
+            </div>
+            <button class="action-btn ghost" type="button" data-action="open-property-window"><i class="fa-solid fa-pen-to-square"></i>Gestionar</button>
+          </div>
+          <div id="stockGrid"></div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">Demanda destacada</div>
+              <div class="panel-sub">Señales directas para priorizar captación y respuesta</div>
+            </div>
+          </div>
+          <div style="display:grid;gap:12px;">
+            <div class="mini-card">
+              <div class="mini-label">Zona caliente</div>
+              <div class="mini-value" id="zoneDemand"></div>
+              <div class="mini-copy">Es la zona que más se repite entre consultas e interés reciente.</div>
+            </div>
+            <div class="mini-card">
+              <div class="mini-label">Piso con más interés</div>
+              <div class="mini-value" id="propertyDemand"></div>
+              <div class="mini-copy">Inmueble que se repite con más frecuencia entre consultas y visitas activadas.</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="panel" id="actividad">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">Actividad reciente</div>
+              <div class="panel-sub">Pulso diario del sistema comercial</div>
+            </div>
+          </div>
+          <div class="activity" id="activityGrid"></div>
+        </article>
+      </section>
+
+      <div class="foot">Base de esta vista: kpis_generales, dashboard_kpis, visitas y lead_estado.</div>
+    </main>
+  </div>
+
+  <div class="drawer-overlay" id="drawerOverlay"></div>
+  <aside class="drawer" id="detailDrawer" aria-hidden="true">
+    <div class="drawer-top">
+      <div>
+        <div class="eyebrow" id="drawerEyebrow">Detalle</div>
+        <div class="drawer-title" id="drawerTitle">Ficha</div>
+      </div>
+      <button class="drawer-close" type="button" id="drawerClose"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <p class="drawer-copy" id="drawerCopy">Selecciona una tarjeta o una visita para ver acciones concretas.</p>
+    <div class="drawer-grid" id="drawerGrid"></div>
+    <div class="drawer-actions" id="drawerActions"></div>
+  </aside>
+  <div class="window-overlay" id="windowOverlay"></div>
+  <section class="workspace-window" id="calendarWindow" aria-hidden="true">
+    <div class="window-topbar">
+      <div>
+        <div class="eyebrow">Ventana</div>
+        <div class="drawer-title">Calendario de visitas</div>
+        <div class="window-topbar-copy">Navega por semana o mes, abre cada visita con contexto y vuelve al dashboard cuando quieras.</div>
+      </div>
+      <div class="window-actions">
+        <select class="window-select" id="calendarViewSelect">
+          <option value="week">Vista semanal</option>
+          <option value="month">Vista mensual</option>
+        </select>
+        <button class="action-btn ghost" type="button" id="calendarPrevBtn"><i class="fa-solid fa-chevron-left"></i>Anterior</button>
+        <button class="action-btn ghost" type="button" id="calendarTodayBtn"><i class="fa-regular fa-circle-dot"></i>Hoy</button>
+        <button class="action-btn ghost" type="button" id="calendarNextBtn">Siguiente<i class="fa-solid fa-chevron-right"></i></button>
+        <button class="action-btn" type="button" id="calendarWindowClose"><i class="fa-solid fa-xmark"></i>Cerrar</button>
+      </div>
+    </div>
+    <div class="window-body">
+      <div class="window-range">
+        <strong id="calendarWindowRange"></strong>
+        <span id="calendarWindowMeta"></span>
+      </div>
+      <div id="calendarWindowBoard"></div>
+    </div>
+  </section>
+  <section class="workspace-window" id="propertyWindow" aria-hidden="true">
+    <div class="window-topbar">
+      <div>
+        <div class="eyebrow">Ventana</div>
+        <div class="drawer-title">Cartera de pisos</div>
+        <div class="window-topbar-copy">El cliente de la agencia no necesita tocar hojas. Desde aquí puede revisar, crear, editar estado y características o eliminar inmuebles.</div>
+      </div>
+      <div class="window-actions">
+        <button class="action-btn ghost" type="button" id="newPropertyBtn"><i class="fa-solid fa-plus"></i>Nuevo piso</button>
+        <button class="action-btn" type="button" id="propertyWindowClose"><i class="fa-solid fa-xmark"></i>Cerrar</button>
+      </div>
+    </div>
+    <div class="window-body">
+      <div class="window-range">
+        <strong id="propertyWindowRange">Gestión de cartera</strong>
+        <span id="propertyWindowMeta"></span>
+      </div>
+      <div class="property-shell">
+        <div class="property-panel">
+          <div class="property-panel-head">
+            <div>
+              <div class="panel-title">Inventario</div>
+              <div class="panel-sub">Selecciona un piso para editar su ficha</div>
+            </div>
+          </div>
+          <div class="property-list" id="propertyList"></div>
+        </div>
+        <div class="property-panel">
+          <div class="property-panel-head">
+            <div>
+              <div class="panel-title">Ficha editable</div>
+              <div class="panel-sub">Cambios de estado, precio y características desde el dashboard</div>
+            </div>
+          </div>
+          <form class="property-form" id="propertyForm">
+            <div class="property-grid">
+              <div class="field">
+                <label for="propertyId">Referencia</label>
+                <input id="propertyId" name="propertyId" readonly>
+              </div>
+              <div class="field">
+                <label for="propertyStatus">Estado</label>
+                <select id="propertyStatus" name="status">
+                  <option value="disponible">Disponible</option>
+                  <option value="reservado">Reservado</option>
+                  <option value="vendido">Vendido</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="propertyZone">Zona</label>
+                <input id="propertyZone" name="zona" placeholder="Ej. Eixample Derecho">
+              </div>
+              <div class="field">
+                <label for="propertyPrice">Precio</label>
+                <input id="propertyPrice" name="precio" type="number" min="0" step="1000" placeholder="450000">
+              </div>
+              <div class="field">
+                <label for="propertyM2">Metros</label>
+                <input id="propertyM2" name="m2" type="number" min="0" step="1">
+              </div>
+              <div class="field">
+                <label for="propertyRooms">Habitaciones</label>
+                <input id="propertyRooms" name="habitaciones" type="number" min="0" step="1">
+              </div>
+            </div>
+            <div class="field">
+              <label for="propertyFeatures">Características</label>
+              <input id="propertyFeatures" name="caracteristicas" placeholder="Terraza, ascensor, balcón, parking">
+            </div>
+            <div class="field">
+              <label for="propertyDescription">Descripción</label>
+              <textarea id="propertyDescription" name="descripcion" placeholder="Notas comerciales o descripción breve"></textarea>
+            </div>
+            <div class="property-meta-strip" id="propertyMetaStrip"></div>
+            <div class="property-tools">
+              <button class="action-btn" type="submit"><i class="fa-solid fa-floppy-disk"></i>Guardar cambios</button>
+              <button class="action-btn ghost" type="button" id="deletePropertyBtn"><i class="fa-solid fa-trash"></i>Eliminar piso</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="workspace-window" id="clientsWindow" aria-hidden="true">
+    <div class="window-topbar">
+      <div>
+        <div class="eyebrow">Ventana</div>
+        <div class="drawer-title">Clientes</div>
+        <div class="window-topbar-copy">Listado comercial con ficha operativa, notas post-visita, pisos vinculados y activación rápida de campaña comercial.</div>
+      </div>
+      <div class="window-actions">
+        <button class="action-btn" type="button" id="clientsWindowClose"><i class="fa-solid fa-xmark"></i>Cerrar</button>
+      </div>
+    </div>
+    <div class="window-body">
+      <div class="window-range">
+        <strong id="clientsWindowRange">Clientes activos</strong>
+        <span id="clientsWindowMeta"></span>
+      </div>
+      <div class="client-shell">
+        <div class="property-panel">
+          <div class="property-panel-head">
+            <div>
+              <div class="panel-title">Registro de clientes</div>
+              <div class="panel-sub">Selecciona un cliente para abrir su ficha comercial</div>
+            </div>
+          </div>
+          <div class="property-list" id="clientList"></div>
+        </div>
+        <div class="property-panel">
+          <div class="property-panel-head">
+            <div>
+              <div class="panel-title">Ficha comercial</div>
+              <div class="panel-sub">Seguimiento, notas y activación de acciones comerciales</div>
+            </div>
+          </div>
+          <form class="property-form" id="clientForm">
+            <div class="property-grid">
+              <div class="field">
+                <label for="clientName">Cliente</label>
+                <input id="clientName" readonly>
+              </div>
+              <div class="field">
+                <label for="clientPipeline">Pipeline</label>
+                <input id="clientPipeline" readonly>
+              </div>
+              <div class="field">
+                <label for="clientPhone">Telefono</label>
+                <input id="clientPhone" readonly>
+              </div>
+              <div class="field">
+                <label for="clientEmail">Email</label>
+                <input id="clientEmail" readonly>
+              </div>
+            </div>
+            <div class="client-summary-grid" id="clientSummaryGrid"></div>
+            <div class="field">
+              <label for="clientNextAction">Proxima accion</label>
+              <input id="clientNextAction" readonly>
+            </div>
+            <div class="field">
+              <label for="clientNote">Notas comerciales</label>
+              <textarea id="clientNote" placeholder="Anotaciones post-visita, conclusiones comerciales o siguiente paso con este cliente."></textarea>
+            </div>
+            <div class="client-inline-actions">
+              <button class="action-btn" type="submit"><i class="fa-solid fa-floppy-disk"></i>Guardar nota</button>
+              <button class="action-btn ghost" type="button" data-action="open-client-latest-visit"><i class="fa-solid fa-calendar-check"></i>Ver ultima visita</button>
+            </div>
+            <div class="client-section">
+              <h3>Pisos vinculados y sugeridos</h3>
+              <p>Relación directa de inmuebles asociados a sus consultas, visitas o seguimiento comercial actual.</p>
+              <div class="client-property-grid" id="clientPropertyGrid"></div>
+            </div>
+            <div class="client-section">
+              <h3>Campaña comercial</h3>
+              <p>Activa una campaña de recontacto para este cliente y deja preparado el siguiente envío de inmuebles.</p>
+              <div class="client-campaign-row">
+                <div class="client-campaign-copy">
+                  <strong id="clientCampaignStatus">Campaña inactiva</strong>
+                  <span id="clientCampaignCopy">Todavía no hay una acción comercial lanzada para este cliente.</span>
+                </div>
+                <button class="mini-btn primary" type="button" data-action="toggle-client-campaign" id="clientCampaignToggle">Activar campaña</button>
+              </div>
+              <div class="client-inline-actions">
+                <button class="mini-btn" type="button" data-action="send-client-portfolio"><i class="fa-solid fa-paper-plane"></i>Enviar cartera</button>
+                <button class="mini-btn" type="button" data-action="send-client-suggestions"><i class="fa-solid fa-wand-magic-sparkles"></i>Enviar sugeridos</button>
+              </div>
+            </div>
+            <div class="client-section">
+              <h3>Visitas del cliente</h3>
+              <p>Histórico rápido de citas para enlazar seguimiento, notas y próxima acción comercial.</p>
+              <div class="client-visit-list" id="clientVisitList"></div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="workspace-window" id="visitWindow" aria-hidden="true">
+    <div class="window-topbar">
+      <div>
+        <div class="eyebrow">Ventana</div>
+        <div class="drawer-title">Reprogramar visita</div>
+        <div class="window-topbar-copy">Cambia fecha, hora y estado de la visita sin salir del dashboard. El calendario y la agenda se refrescan al momento.</div>
+      </div>
+      <div class="window-actions">
+        <button class="action-btn" type="button" id="visitWindowClose"><i class="fa-solid fa-xmark"></i>Cerrar</button>
+      </div>
+    </div>
+    <div class="window-body">
+      <div class="window-range">
+        <strong>Gestión de cita</strong>
+        <span id="visitWindowMeta"></span>
+      </div>
+      <form class="property-form" id="visitForm">
+        <div class="visit-change-grid">
+          <div class="visit-highlight">
+            <div class="visit-highlight-label">Horario actual</div>
+            <strong id="visitCurrentSlot">Sin horario</strong>
+            <span id="visitCurrentSummary">Todavía no hay una fecha cargada.</span>
+          </div>
+          <div class="visit-highlight">
+            <div class="visit-highlight-label">Nuevo horario</div>
+            <strong id="visitNewSlot">Pendiente de cambio</strong>
+            <span>Elige manualmente otra fecha y otra hora en los campos de la ficha.</span>
+          </div>
+        </div>
+        <div class="property-grid">
+          <div class="field">
+            <label for="visitClient">Cliente</label>
+            <input id="visitClient" readonly>
+          </div>
+          <div class="field">
+            <label for="visitProperty">Piso</label>
+            <input id="visitProperty" readonly>
+          </div>
+          <div class="field">
+            <label for="visitDate">Fecha</label>
+            <input id="visitDate" type="date" required>
+            <div class="visit-date-picker">
+              <div class="visit-date-head">
+                <div class="visit-date-title" id="visitPickerMonth"></div>
+                <div class="visit-date-nav">
+                  <button class="icon-btn" type="button" id="visitPickerPrev"><i class="fa-solid fa-chevron-left"></i></button>
+                  <button class="icon-btn" type="button" id="visitPickerNext"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+              </div>
+              <div class="visit-weekdays">
+                <span>Lun</span>
+                <span>Mar</span>
+                <span>Mie</span>
+                <span>Jue</span>
+                <span>Vie</span>
+                <span>Sab</span>
+                <span>Dom</span>
+              </div>
+              <div class="visit-days-grid" id="visitDaysGrid"></div>
+            </div>
+          </div>
+          <div class="field time-field">
+            <label for="visitTime">Hora</label>
+            <div class="time-input-wrap">
+              <input id="visitTime" type="text" inputmode="numeric" placeholder="12:00" pattern="^([01][0-9]|2[0-3]):[0-5][0-9]$" title="Usa formato HH:MM, por ejemplo 12:00 o 18:45" required>
+              <button class="time-toggle" type="button" id="visitTimeToggle" aria-label="Mostrar horas"><i class="fa-solid fa-chevron-down"></i></button>
+              <div class="time-menu" id="visitTimeMenu"></div>
+            </div>
+          </div>
+          <div class="field">
+            <label for="visitStatus">Estado</label>
+            <select id="visitStatus">
+              <option value="confirmada">Confirmada</option>
+              <option value="realizada">Realizada</option>
+              <option value="pendiente_nueva_hora">Pendiente nueva hora</option>
+              <option value="sin_hueco">Sin hueco</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="visitNotes">Notas</label>
+          <textarea id="visitNotes" placeholder="Ej. Cliente pide mover la visita por urgencia de última hora"></textarea>
+        </div>
+        <div class="property-tools">
+          <button class="action-btn" type="submit"><i class="fa-solid fa-calendar-check"></i>Guardar reprogramación</button>
+          <button class="action-btn ghost" type="button" id="openCalendarFromVisitBtn"><i class="fa-regular fa-calendar-days"></i>Abrir calendario</button>
+        </div>
+      </form>
+    </div>
+  </section>
+  <div class="toast" id="toast"></div>
+  <div class="visit-popover" id="visitPopover" aria-hidden="true">
+    <div class="visit-popover-head">
+      <div class="visit-popover-title" id="visitPopoverTitle">Visita</div>
+      <div class="visit-popover-copy" id="visitPopoverCopy">Acciones rápidas de la cita seleccionada.</div>
+    </div>
+    <div class="visit-popover-actions" id="visitPopoverActions"></div>
+  </div>
+
+  <script>
+    const uiState = {
+      calendarBaseDate: '',
+      calendarView: 'week',
+      selectedClientId: '',
+      selectedPropertyId: '',
+      selectedVisitId: '',
+      visitPickerBaseDate: '',
+      theme: document.documentElement.getAttribute('data-theme') || 'dark',
+      remoteDataState: 'loading',
+      visitPopoverId: ''
+    };
+
+    const clientWorkspaceStore = {
+      notes: {},
+      campaigns: {}
+    };
+
+    function updateThemeToggle() {
+      const button = document.getElementById('themeToggleBtn');
+      if (!button) return;
+      const isLight = uiState.theme === 'light';
+      button.innerHTML = isLight
+        ? '<i class="fa-regular fa-moon"></i>Vista oscura'
+        : '<i class="fa-regular fa-sun"></i>Vista clara';
+      button.setAttribute('aria-label', isLight ? 'Cambiar a vista oscura' : 'Cambiar a vista clara');
+    }
+
+    function applyTheme(theme) {
+      uiState.theme = theme === 'light' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', uiState.theme);
+      document.body.setAttribute('data-theme', uiState.theme);
+      try {
+        localStorage.setItem('inmoagentia-dashboard-theme', uiState.theme);
+      } catch (error) {}
+      updateThemeToggle();
+    }
+
+    function toggleTheme() {
+      applyTheme(uiState.theme === 'light' ? 'dark' : 'light');
+    }
+
+    const dashboardApi = {
+      // Endpoint completo del dashboard servido por N8N.
+      dashboardDataUrl: 'https://mauriciomeseguer.up.railway.app/webhook/dashboard-data'
+    };
+
+    function loadClientWorkspaceStore() {
+      try {
+        const stored = JSON.parse(localStorage.getItem('inmoagentia-client-workspace') || '{}');
+        clientWorkspaceStore.notes = stored.notes && typeof stored.notes === 'object' ? stored.notes : {};
+        clientWorkspaceStore.campaigns = stored.campaigns && typeof stored.campaigns === 'object' ? stored.campaigns : {};
+      } catch (error) {
+        clientWorkspaceStore.notes = {};
+        clientWorkspaceStore.campaigns = {};
+      }
+    }
+
+    function persistClientWorkspaceStore() {
+      try {
+        localStorage.setItem('inmoagentia-client-workspace', JSON.stringify(clientWorkspaceStore));
+      } catch (error) {}
+    }
+
+    function toNumber(value) {
+      if (value === null || value === undefined || value === '') return 0;
+      const parsed = Number(String(value).replace(',', '.'));
+      return Number.isFinite(parsed) ? parsed : 0;
+    }
+
+    function normalizeKpisGenerales(raw = {}) {
+      const numericFields = [
+        'leads_totales',
+        'clientes_activos',
+        'clientes_recurrentes',
+        'leads_con_visita',
+        'visitas_programadas',
+        'visitas_realizadas',
+        'visitas_confirmadas_futuras',
+        'pendientes_nueva_hora',
+        'sin_hueco',
+        'pisos_disponibles',
+        'pisos_reservados',
+        'pisos_vendidos',
+        'tasa_lead_a_visita',
+        'tasa_visita_programada'
+      ];
+
+      const normalized = { ...raw };
+      numericFields.forEach((field) => {
+        normalized[field] = toNumber(raw[field]);
+      });
+      return normalized;
+    }
+
+    function normalizeKpisDiarios(raw = {}) {
+      return {
+        ...raw,
+        interacciones_totales: toNumber(raw.interacciones_totales),
+        respuestas_enviadas: toNumber(raw.respuestas_enviadas),
+        solicitudes_visita: toNumber(raw.solicitudes_visita),
+        visitas_confirmadas: toNumber(raw.visitas_confirmadas)
+      };
+    }
+
+    function normalizeBoolean(value) {
+      if (typeof value === 'boolean') return value;
+      const text = String(value || '').trim().toLowerCase();
+      return ['true', '1', 'si', 'sí', 'yes'].includes(text);
+    }
+
+    function normalizeVisit(raw = {}) {
+      return {
+        ...raw,
+        cliente_nombre: raw.cliente_nombre || raw.cliente_id || '',
+        cliente_telefono: raw.cliente_telefono || '',
+        cliente_email: raw.cliente_email || '',
+        resultado_agenda: raw.resultado_agenda || '',
+        oculta_en_calendario: normalizeBoolean(raw.oculta_en_calendario)
+      };
+    }
+
+    function normalizeLead(raw = {}, visitIndex = {}) {
+      const relatedVisit = visitIndex[raw.cliente_id] || {};
+      return {
+        ...raw,
+        cliente_nombre: raw.cliente_nombre || relatedVisit.cliente_nombre || raw.cliente_id || '',
+        ultima_interaccion_fecha: raw.ultima_interaccion_fecha || raw.updated_at || relatedVisit.updated_at || relatedVisit.created_at || '',
+        ultima_accion: raw.ultima_accion || relatedVisit.resultado_agenda || '',
+        comercial_responsable: raw.comercial_responsable || relatedVisit.comercial_responsable || '',
+        requiere_seguimiento: normalizeBoolean(raw.requiere_seguimiento)
+      };
+    }
+
+    function normalizeInteraction(raw = {}) {
+      return {
+        ...raw,
+        cliente_id: raw.cliente_id || '',
+        piso_consultado_id: raw.piso_consultado_id || '',
+        pisos_sugeridos: raw.pisos_sugeridos || '',
+        respuesta_body: raw.respuesta_body || '',
+        texto_original: raw.texto_original || ''
+      };
+    }
+
+    function normalizeProperty(raw = {}) {
+      return {
+        ...raw,
+        precio: toNumber(raw.precio),
+        m2: toNumber(raw.m2),
+        habitaciones: toNumber(raw.habitaciones) || toNumber(raw.hab_totales)
+      };
+    }
+
+    const dashboardData = {
+      kpisGenerales: {
+        snapshot_id: '',
+        fecha_snapshot: '',
+        leads_totales: 0,
+        clientes_activos: 0,
+        clientes_recurrentes: 0,
+        leads_con_visita: 0,
+        visitas_programadas: 0,
+        visitas_realizadas: 0,
+        visitas_confirmadas_futuras: 0,
+        pendientes_nueva_hora: 0,
+        sin_hueco: 0,
+        pisos_disponibles: 0,
+        pisos_reservados: 0,
+        pisos_vendidos: 0,
+        tasa_lead_a_visita: 0,
+        tasa_visita_programada: 0,
+        piso_mas_consultado: '',
+        zona_mas_demandada: '',
+        updated_at: ''
+      },
+      kpisDiarios: {
+        fecha: '',
+        interacciones_totales: 0,
+        respuestas_enviadas: 0,
+        solicitudes_visita: 0,
+        visitas_confirmadas: 0
+      },
+      interacciones: [],
+      visitas: [],
+      leadEstado: [],
+      pisos: []
+    };
+
+    const monthFormatter = new Intl.DateTimeFormat('es-ES', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    });
+    const weekdayFormatter = new Intl.DateTimeFormat('es-ES', {
+      weekday: 'short'
+    });
+    const monthTitleFormatter = new Intl.DateTimeFormat('es-ES', {
+      month: 'long',
+      year: 'numeric'
+    });
+    const madridDateFormatter = new Intl.DateTimeFormat('es-ES', {
+      timeZone: 'Europe/Madrid',
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    });
+    const madridDateTimeFormatter = new Intl.DateTimeFormat('sv-SE', {
+      timeZone: 'Europe/Madrid',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    });
+    const madridNowPillFormatter = new Intl.DateTimeFormat('es-ES', {
+      timeZone: 'Europe/Madrid',
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+
+    function formatDate(dateString) {
+      if (!dateString) return 'Sin fecha';
+      const safeDate = new Date(`${dateString}T12:00:00`);
+      return monthFormatter.format(safeDate);
+    }
+
+    function formatDateTime(dateString, timeString) {
+      const dateText = formatDate(dateString);
+      return timeString ? `${dateText} · ${timeString}` : dateText;
+    }
+
+    function parseLocalDateTime(value) {
+      const text = String(value || '').trim();
+      const match = text.match(/^(\d{4}-\d{2}-\d{2})(?:[ T](\d{2}):(\d{2})(?::(\d{2}))?)?$/);
+      if (!match) return null;
+      const [, datePart, hours = '00', minutes = '00', seconds = '00'] = match;
+      return new Date(`${datePart}T${hours}:${minutes}:${seconds}`);
+    }
+
+    function formatMadridTimestamp(value) {
+      const parsed = parseLocalDateTime(value);
+      if (!parsed || Number.isNaN(parsed.getTime())) return value || 'Sin hora';
+      return madridDateTimeFormatter.format(parsed).replace(',', '');
+    }
+
+    function formatMadridNow() {
+      return madridNowPillFormatter.format(new Date()).replace(',', '');
+    }
+
+    function toDateParts(dateString) {
+      const date = new Date(`${dateString}T12:00:00`);
+      return {
+        label: weekdayFormatter.format(date).replace('.', ''),
+        day: String(date.getDate()).padStart(2, '0')
+      };
+    }
+
+    function addDays(dateString, days) {
+      const date = new Date(`${dateString}T12:00:00`);
+      date.setDate(date.getDate() + days);
+      return date.toISOString().slice(0, 10);
+    }
+
+    function addMonths(dateString, months) {
+      const date = new Date(`${dateString}T12:00:00`);
+      const originalDay = date.getDate();
+      date.setDate(1);
+      date.setMonth(date.getMonth() + months);
+      const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+      date.setDate(Math.min(originalDay, lastDay));
+      return date.toISOString().slice(0, 10);
+    }
+
+    function startOfWeek(dateString) {
+      const date = new Date(`${dateString}T12:00:00`);
+      const day = (date.getDay() + 6) % 7;
+      date.setDate(date.getDate() - day);
+      return date.toISOString().slice(0, 10);
+    }
+
+    function startOfMonthGrid(dateString) {
+      const date = new Date(`${dateString}T12:00:00`);
+      date.setDate(1);
+      const day = (date.getDay() + 6) % 7;
+      date.setDate(date.getDate() - day);
+      return date.toISOString().slice(0, 10);
+    }
+
+    function isSameMonth(dayA, dayB) {
+      return dayA.slice(0, 7) === dayB.slice(0, 7);
+    }
+
+    function formatMonthTitle(dateString) {
+      return monthTitleFormatter.format(new Date(`${dateString}T12:00:00`));
+    }
+
+    function startOfMonth(dateString) {
+      return `${dateString.slice(0, 7)}-01`;
+    }
+
+    function buildTimeSlots(startHour = 8, endHour = 20, stepMinutes = 15) {
+      const slots = [];
+      for (let hour = startHour; hour <= endHour; hour += 1) {
+        for (let minute = 0; minute < 60; minute += stepMinutes) {
+          if (hour === endHour && minute > 0) continue;
+          slots.push(`${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`);
+        }
+      }
+      return slots;
+    }
+
+    function formatPrice(value) {
+      return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(Number(value || 0));
+    }
+
+    function parseVisitDateTime(dateString, timeString) {
+      if (!dateString) return null;
+      const time = timeString && /^\d{2}:\d{2}$/.test(String(timeString)) ? String(timeString) : '23:59';
+      const date = new Date(`${dateString}T${time}:00`);
+      return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    function sortVisitsBySchedule(visits, direction = 'asc') {
+      return visits.slice().sort((a, b) => {
+        const left = parseVisitDateTime(a.fecha_confirmada || a.fecha_solicitada, a.hora_confirmada || a.hora_solicitada)?.getTime() || 0;
+        const right = parseVisitDateTime(b.fecha_confirmada || b.fecha_solicitada, b.hora_confirmada || b.hora_solicitada)?.getTime() || 0;
+        return direction === 'desc' ? right - left : left - right;
+      });
+    }
+
+    function getVisitDisplayState(visit) {
+      const rawState = String(visit?.estado_visita || '').trim().toLowerCase();
+      const scheduledAt = parseVisitDateTime(
+        visit?.fecha_confirmada || visit?.fecha_solicitada,
+        visit?.hora_confirmada || visit?.hora_solicitada
+      );
+
+      if (rawState === 'realizada') {
+        return {
+          key: 'realizada',
+          label: 'Realizada',
+          className: 'ok',
+          accentClass: 'done-state',
+          icon: 'fa-check'
+        };
+      }
+
+      if (rawState === 'confirmada') {
+        if (scheduledAt && scheduledAt < new Date()) {
+          return {
+            key: 'pendiente_confirmacion',
+            label: 'Pendiente cierre',
+            className: 'pending',
+            accentClass: 'open-state',
+            icon: 'fa-clock'
+          };
+        }
+        return {
+          key: 'programada',
+          label: 'Programada',
+          className: 'pending',
+          accentClass: 'open-state',
+          icon: 'fa-clock'
+        };
+      }
+
+      if (rawState === 'pendiente_nueva_hora') {
+        return {
+          key: 'pendiente_nueva_hora',
+          label: 'Pendiente nueva hora',
+          className: 'pending',
+          accentClass: 'open-state',
+          icon: 'fa-clock'
+        };
+      }
+
+      return {
+        key: rawState || 'pendiente',
+        label: rawState ? rawState.replaceAll('_', ' ') : 'Pendiente',
+        className: 'pending',
+        accentClass: 'open-state',
+        icon: 'fa-clock'
+      };
+    }
+
+    function getActionableVisits() {
+      return sortVisitsBySchedule(
+        dashboardData.visitas.filter((visit) => {
+          const state = String(visit.estado_visita || '').trim().toLowerCase();
+          return ['confirmada', 'pendiente_nueva_hora', 'realizada'].includes(state);
+        })
+      );
+    }
+
+    function getOpenVisits() {
+      return sortVisitsBySchedule(
+        getActionableVisits().filter((visit) => getVisitDisplayState(visit).key !== 'realizada')
+      );
+    }
+
+    function getFutureScheduledVisits() {
+      return sortVisitsBySchedule(
+        getActionableVisits().filter((visit) => getVisitDisplayState(visit).key === 'programada' || getVisitDisplayState(visit).key === 'pendiente_nueva_hora')
+      );
+    }
+
+    function getCompletedVisits() {
+      return sortVisitsBySchedule(
+        getActionableVisits().filter((visit) => getVisitDisplayState(visit).key === 'realizada'),
+        'desc'
+      );
+    }
+
+    function getLeadVisitList() {
+      const completed = getCompletedVisits();
+      const open = getOpenVisits();
+      return [...open, ...completed];
+    }
+
+    function getUpcomingScheduledVisits() {
+      return getOpenVisits();
+    }
+
+    function getCalendarVisits() {
+      return sortVisitsBySchedule(
+        dashboardData.visitas.filter((visit) => (visit.fecha_confirmada || visit.fecha_solicitada) && !visit.oculta_en_calendario)
+      );
+    }
+
+    function getPremiumAgendaDates() {
+      return [...new Set(getOpenVisits().map((visit) => visit.fecha_confirmada || visit.fecha_solicitada).filter(Boolean))].slice(0, 3);
+    }
+
+    function getClientDisplayName(entity = {}) {
+      const name = String(entity.cliente_nombre || entity.nombre || '').trim();
+      if (name && name !== String(entity.cliente_id || '').trim()) return name;
+      return entity.cliente_id ? `Cliente ${entity.cliente_id}` : 'Cliente sin nombre';
+    }
+
+    function getVisitHeadline(visit) {
+      return `${visit.piso_id || 'Piso sin ref.'} · ${formatDate(visit.fecha_confirmada || visit.fecha_solicitada)} · ${visit.hora_confirmada || visit.hora_solicitada || 'Hora pendiente'}`;
+    }
+
+    function getPendingFollowUps() {
+      return dashboardData.leadEstado.filter((lead) => lead.requiere_seguimiento);
+    }
+
+    function extractPropertyIds(value) {
+      if (Array.isArray(value)) {
+        return value.flatMap((entry) => extractPropertyIds(entry));
+      }
+
+      const text = String(value || '').trim();
+      if (!text) return [];
+
+      const matches = text.match(/BCN-\d+/gi);
+      if (matches?.length) {
+        return matches.map((match) => match.toUpperCase());
+      }
+
+      return text
+        .split(/[|,;\n]/)
+        .map((item) => item.trim().toUpperCase())
+        .filter((item) => /^BCN-\d+$/.test(item));
+    }
+
+    function getClientRecords() {
+      const leadIndex = dashboardData.leadEstado.reduce((acc, lead) => {
+        if (lead.cliente_id) acc[lead.cliente_id] = lead;
+        return acc;
+      }, {});
+      const interactionGroups = dashboardData.interacciones.reduce((acc, interaction) => {
+        if (!interaction.cliente_id) return acc;
+        if (!acc[interaction.cliente_id]) acc[interaction.cliente_id] = [];
+        acc[interaction.cliente_id].push(interaction);
+        return acc;
+      }, {});
+      const visitGroups = dashboardData.visitas.reduce((acc, visit) => {
+        if (!visit.cliente_id) return acc;
+        if (!acc[visit.cliente_id]) acc[visit.cliente_id] = [];
+        acc[visit.cliente_id].push(visit);
+        return acc;
+      }, {});
+      const propertyIndex = dashboardData.pisos.reduce((acc, property) => {
+        if (property.piso_id) acc[property.piso_id] = property;
+        return acc;
+      }, {});
+
+      const clientIds = [...new Set([
+        ...dashboardData.leadEstado.map((lead) => String(lead.cliente_id || '').trim()),
+        ...dashboardData.interacciones.map((interaction) => String(interaction.cliente_id || '').trim()),
+        ...dashboardData.visitas.map((visit) => String(visit.cliente_id || '').trim())
+      ].filter(Boolean))];
+
+      return clientIds.map((clientId) => {
+        const lead = leadIndex[clientId] || {};
+        const interactions = interactionGroups[clientId] || [];
+        const visits = sortVisitsBySchedule(visitGroups[clientId] || [], 'desc');
+        const latestVisit = visits[0] || null;
+        const nextVisit = getFutureScheduledVisits().find((visit) => visit.cliente_id === clientId) || null;
+        const openVisit = getOpenVisits().find((visit) => visit.cliente_id === clientId) || null;
+        const latestTouch = parseLocalDateTime(
+          lead.ultima_interaccion_fecha || lead.updated_at || interactions[0]?.fecha || latestVisit?.updated_at || latestVisit?.created_at || ''
+        )?.getTime() || 0;
+        const propertySources = new Map();
+        const registerPropertyIds = (values, sourceLabel) => {
+          extractPropertyIds(values).forEach((propertyId) => {
+            if (!propertyIndex[propertyId]) return;
+            if (!propertySources.has(propertyId)) {
+              propertySources.set(propertyId, new Set());
+            }
+            propertySources.get(propertyId).add(sourceLabel);
+          });
+        };
+
+        registerPropertyIds(lead.ultimo_piso_consultado, 'Consulta');
+        registerPropertyIds(lead.piso_consultado_id, 'Consulta');
+        registerPropertyIds(lead.pisos_sugeridos, 'Sugerido');
+        registerPropertyIds(lead.pisos_recomendados, 'Sugerido');
+        registerPropertyIds(lead.pisos_relacionados, 'Sugerido');
+        registerPropertyIds(lead.pisos_interes, 'Sugerido');
+        registerPropertyIds(lead.pisos_campana, 'Campaña');
+        registerPropertyIds(lead.respuesta_body, 'Sugerido');
+        registerPropertyIds(lead.respuesta_comercial, 'Sugerido');
+        registerPropertyIds(lead.ultima_accion, 'Sugerido');
+        registerPropertyIds(lead.texto_original, 'Consulta');
+        registerPropertyIds(lead.sugerencias, 'Sugerido');
+        registerPropertyIds(lead.ultimos_sugeridos, 'Sugerido');
+        interactions.forEach((interaction) => {
+          registerPropertyIds(interaction.piso_consultado_id, 'Consulta');
+          registerPropertyIds(interaction.pisos_sugeridos, 'Sugerido');
+          registerPropertyIds(interaction.respuesta_body, 'Sugerido');
+          registerPropertyIds(interaction.texto_original, 'Consulta');
+        });
+        visits.forEach((visit) => registerPropertyIds(visit.piso_id, 'Visita'));
+        visits.forEach((visit) => registerPropertyIds(visit.resultado_agenda, 'Visita'));
+
+        const linkedProperties = [...propertySources.entries()].map(([propertyId, sources]) => ({
+          ...propertyIndex[propertyId],
+          sourceLabel: [...sources].join(' · ')
+        }));
+        const campaign = clientWorkspaceStore.campaigns[clientId] || { active: false, lastAction: '', lastSentAt: '' };
+
+        return {
+          cliente_id: clientId,
+          cliente_nombre: getClientDisplayName({
+            cliente_id: clientId,
+            cliente_nombre: lead.cliente_nombre || latestVisit?.cliente_nombre || ''
+          }),
+          cliente_telefono: String(lead.cliente_telefono || latestVisit?.cliente_telefono || '').trim(),
+          cliente_email: String(lead.cliente_email || latestVisit?.cliente_email || '').trim(),
+          estado_pipeline: lead.estado_pipeline || (latestVisit ? getVisitDisplayState(latestVisit).label : 'En gestión'),
+          proxima_accion: lead.proxima_accion || (nextVisit ? 'Preparar visita' : 'Revisar oportunidad'),
+          ultima_accion: lead.ultima_accion || latestVisit?.resultado_agenda || '',
+          ultima_interaccion_fecha: lead.ultima_interaccion_fecha || lead.updated_at || latestVisit?.updated_at || latestVisit?.created_at || '',
+          requiere_seguimiento: Boolean(lead.requiere_seguimiento),
+          motivo_seguimiento: lead.motivo_seguimiento || '',
+          latestTouch,
+          nextVisit,
+          openVisit,
+          latestVisit,
+          visits,
+          linkedProperties,
+          note: clientWorkspaceStore.notes[clientId] || '',
+          campaign
+        };
+      }).sort((a, b) => {
+        if (Number(b.requiere_seguimiento) !== Number(a.requiere_seguimiento)) {
+          return Number(b.requiere_seguimiento) - Number(a.requiere_seguimiento);
+        }
+        return b.latestTouch - a.latestTouch;
+      });
+    }
+
+    function getClientById(clientId) {
+      return getClientRecords().find((client) => client.cliente_id === clientId);
+    }
+
+    function isAnyWorkspaceOpen() {
+      return ['calendarWindow', 'propertyWindow', 'clientsWindow', 'visitWindow']
+        .some((windowId) => document.getElementById(windowId).classList.contains('open'));
+    }
+
+    function syncWindowOverlay() {
+      document.getElementById('windowOverlay').classList.toggle('open', isAnyWorkspaceOpen());
+    }
+
+    function setText(id, value) {
+      const element = document.getElementById(id);
+      if (element) element.textContent = value;
+    }
+
+    function scrollToSection(id) {
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function refreshDashboardData() {
+      syncKpisWithProperties();
+      syncKpisWithVisits();
+      renderHero();
+      renderSummaryCards();
+      renderCalendar();
+      renderUpcomingVisits();
+      renderFollowUp();
+      renderStock();
+      renderActivity();
+      renderPropertyWindow();
+      if (document.getElementById('clientsWindow').classList.contains('open')) {
+        renderClientsWindow();
+      }
+
+      if (document.getElementById('calendarWindow').classList.contains('open')) {
+        renderCalendarWindow();
+      }
+      if (document.getElementById('visitWindow').classList.contains('open')) {
+        renderVisitWindow();
+      }
+    }
+
+    async function loadDashboardData() {
+      if (!dashboardApi.dashboardDataUrl) return;
+
+      try {
+        uiState.remoteDataState = 'loading';
+        refreshDashboardData();
+        const response = await fetch(dashboardApi.dashboardDataUrl, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json'
+          },
+          cache: 'no-store'
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const rawPayload = await response.json();
+        const payload = Array.isArray(rawPayload) ? (rawPayload[0] || {}) : rawPayload;
+        dashboardData.kpisGenerales = {
+          ...dashboardData.kpisGenerales,
+          ...normalizeKpisGenerales(payload.kpisGenerales || {})
+        };
+        dashboardData.kpisDiarios = {
+          ...dashboardData.kpisDiarios,
+          ...normalizeKpisDiarios(payload.kpisDiarios || {})
+        };
+        dashboardData.interacciones = Array.isArray(payload.interacciones)
+          ? payload.interacciones.map(normalizeInteraction)
+          : dashboardData.interacciones;
+        dashboardData.visitas = Array.isArray(payload.visitas)
+          ? payload.visitas.map(normalizeVisit)
+          : dashboardData.visitas;
+        const visitIndex = dashboardData.visitas.reduce((acc, visit) => {
+          if (visit.cliente_id) acc[visit.cliente_id] = visit;
+          return acc;
+        }, {});
+        dashboardData.leadEstado = Array.isArray(payload.leadEstado)
+          ? payload.leadEstado.map((lead) => normalizeLead(lead, visitIndex))
+          : dashboardData.leadEstado;
+        dashboardData.pisos = Array.isArray(payload.pisos)
+          ? payload.pisos.map(normalizeProperty)
+          : dashboardData.pisos;
+
+        uiState.calendarBaseDate = dashboardData.kpisGenerales.fecha_snapshot || uiState.calendarBaseDate;
+        uiState.selectedPropertyId = dashboardData.pisos.find((item) => item.piso_id === uiState.selectedPropertyId)?.piso_id
+          || dashboardData.pisos[0]?.piso_id
+          || '';
+        uiState.selectedVisitId = dashboardData.visitas.find((item) => item.visita_id === uiState.selectedVisitId)?.visita_id
+          || dashboardData.visitas[0]?.visita_id
+          || '';
+        uiState.selectedClientId = getClientRecords().find((item) => item.cliente_id === uiState.selectedClientId)?.cliente_id
+          || getClientRecords()[0]?.cliente_id
+          || '';
+
+        uiState.remoteDataState = 'ready';
+        refreshDashboardData();
+        showToast(`Datos reales cargados · ${dashboardData.kpisGenerales.snapshot_id || 'snapshot activo'}`);
+      } catch (error) {
+        uiState.remoteDataState = 'error';
+        refreshDashboardData();
+        console.warn('No se pudieron cargar los datos remotos del dashboard.', error);
+        showToast('No se pudo conectar con N8N. El dashboard queda en espera de datos reales.');
+      }
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove('show'), 2400);
+    }
+
+    function openDrawer({ eyebrow, title, copy, stats = [], actions = [], bodyHtml = '' }) {
+      setText('drawerEyebrow', eyebrow || 'Detalle');
+      setText('drawerTitle', title || 'Ficha');
+      setText('drawerCopy', copy || '');
+      document.getElementById('drawerGrid').innerHTML = bodyHtml || stats.map((stat) => `
+        <div class="drawer-stat">${stat.label}<strong>${stat.value}</strong></div>
+      `).join('');
+      document.getElementById('drawerActions').innerHTML = actions.map((action) => `
+        <button class="action-btn ${action.ghost ? 'ghost' : ''}" type="button" data-action="${action.type}" data-id="${action.id || ''}">${action.icon ? `<i class="fa-solid ${action.icon}"></i>` : ''}${action.label}</button>
+      `).join('');
+      document.getElementById('detailDrawer').classList.add('open');
+      document.getElementById('drawerOverlay').classList.add('open');
+      document.getElementById('detailDrawer').setAttribute('aria-hidden', 'false');
+    }
+
+    function closeDrawer() {
+      document.getElementById('detailDrawer').classList.remove('open');
+      document.getElementById('drawerOverlay').classList.remove('open');
+      document.getElementById('detailDrawer').setAttribute('aria-hidden', 'true');
+    }
+
+    function closeVisitPopover() {
+      const popover = document.getElementById('visitPopover');
+      popover.classList.remove('open');
+      popover.setAttribute('aria-hidden', 'true');
+      uiState.visitPopoverId = '';
+    }
+
+    function openVisitPopover(visitId, anchorElement) {
+      const visit = getVisitById(visitId);
+      if (!visit || !anchorElement) return;
+      const visitState = getVisitDisplayState(visit);
+      const popover = document.getElementById('visitPopover');
+      const actions = visitState.key === 'realizada'
+        ? [{ type: 'hide-visit-from-calendar', label: 'Quitar del calendario', icon: 'fa-eye-slash' }]
+        : visitState.key === 'pendiente_confirmacion'
+          ? [{ type: 'mark-visit-done', label: 'Confirmar visita', icon: 'fa-check-circle' }]
+          : [{ type: 'reprogram-visit', label: 'Modificar visita', icon: 'fa-pen-to-square' }];
+
+      setText('visitPopoverTitle', visit.cliente_nombre || visit.cliente_id || visit.visita_id);
+      setText(
+        'visitPopoverCopy',
+        visitState.key === 'realizada'
+          ? 'La visita ya está cerrada. Puedes retirarla de la vista del calendario.'
+          : visitState.key === 'pendiente_confirmacion'
+            ? 'La cita ya ha pasado. Solo falta confirmarla como realizada.'
+            : 'La visita sigue abierta. Puedes ir directamente a la ficha para modificarla.'
+      );
+      document.getElementById('visitPopoverActions').innerHTML = actions.map((action) => `
+        <button class="mini-btn ${action.type !== 'hide-visit-from-calendar' ? 'primary' : ''}" type="button" data-action="${action.type}" data-id="${visit.visita_id}">
+          <i class="fa-solid ${action.icon}"></i> ${action.label}
+        </button>
+      `).join('');
+
+      popover.style.left = '0px';
+      popover.style.top = '0px';
+      popover.classList.add('open');
+      popover.setAttribute('aria-hidden', 'false');
+      uiState.visitPopoverId = visit.visita_id;
+
+      const rect = anchorElement.getBoundingClientRect();
+      const popoverRect = popover.getBoundingClientRect();
+      const gap = 10;
+      let left = rect.right + gap;
+      let top = rect.top;
+
+      if (left + popoverRect.width > window.innerWidth - 12) {
+        left = rect.left - popoverRect.width - gap;
+      }
+      if (left < 12) {
+        left = Math.max(12, window.innerWidth - popoverRect.width - 12);
+      }
+      if (top + popoverRect.height > window.innerHeight - 12) {
+        top = Math.max(12, window.innerHeight - popoverRect.height - 12);
+      }
+
+      popover.style.left = `${left}px`;
+      popover.style.top = `${top}px`;
+    }
+
+    function buildVisitListHtml(visits, { includeCompletedAction = false } = {}) {
+      if (!visits.length) {
+        return '<div class="empty">No hay visitas que mostrar en este bloque.</div>';
+      }
+
+      return `<div class="list">${visits.map((visit) => {
+        const visitState = getVisitDisplayState(visit);
+        const canMarkDone = includeCompletedAction && visitState.key !== 'realizada' && parseVisitDateTime(
+          visit.fecha_confirmada || visit.fecha_solicitada,
+          visit.hora_confirmada || visit.hora_solicitada
+        ) < new Date();
+
+        return `
+          <div class="item">
+            <div class="item-row">
+              <div class="item-title">${getClientDisplayName(visit)}</div>
+              <span class="status ${visitState.className}"><i class="fa-solid ${visitState.icon}"></i>${visitState.label}</span>
+            </div>
+            <div class="item-copy">${getVisitHeadline(visit)}</div>
+            <div class="item-copy">${visit.resultado_agenda || 'Sin nota comercial'}</div>
+            <div class="item-actions">
+              <button class="mini-btn primary" type="button" data-action="view-visit" data-id="${visit.visita_id}">Ver ficha</button>
+              ${canMarkDone ? `<button class="mini-btn" type="button" data-action="mark-visit-done" data-id="${visit.visita_id}">Confirmar realizada</button>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('')}</div>`;
+    }
+
+    function openCalendarWindow() {
+      document.getElementById('calendarWindow').classList.add('open');
+      document.getElementById('calendarWindow').setAttribute('aria-hidden', 'false');
+      syncWindowOverlay();
+      renderCalendarWindow();
+    }
+
+    function closeCalendarWindow() {
+      document.getElementById('calendarWindow').classList.remove('open');
+      document.getElementById('calendarWindow').setAttribute('aria-hidden', 'true');
+      syncWindowOverlay();
+    }
+
+    function getPropertyCounts() {
+      return dashboardData.pisos.reduce((acc, property) => {
+        acc[property.estado] = (acc[property.estado] || 0) + 1;
+        return acc;
+      }, { disponible: 0, reservado: 0, vendido: 0 });
+    }
+
+    function syncKpisWithProperties() {
+      const counts = getPropertyCounts();
+      dashboardData.kpisGenerales.pisos_disponibles = counts.disponible;
+      dashboardData.kpisGenerales.pisos_reservados = counts.reservado;
+      dashboardData.kpisGenerales.pisos_vendidos = counts.vendido;
+    }
+
+    function syncKpisWithVisits() {
+      const openVisits = getOpenVisits();
+      const completedVisits = getCompletedVisits();
+      dashboardData.kpisGenerales.visitas_programadas = openVisits.length;
+      dashboardData.kpisGenerales.visitas_confirmadas_futuras = openVisits.filter((visit) => getVisitDisplayState(visit).key === 'programada').length;
+      dashboardData.kpisGenerales.visitas_realizadas = completedVisits.length;
+      dashboardData.kpisGenerales.pendientes_nueva_hora = openVisits.filter((visit) => getVisitDisplayState(visit).key === 'pendiente_nueva_hora').length;
+    }
+
+    function getPropertyById(propertyId) {
+      return dashboardData.pisos.find((item) => item.piso_id === propertyId);
+    }
+
+    function openPropertyWindow() {
+      if (!uiState.selectedPropertyId && dashboardData.pisos.length) {
+        uiState.selectedPropertyId = dashboardData.pisos[0].piso_id;
+      }
+      renderPropertyWindow();
+      document.getElementById('propertyWindow').classList.add('open');
+      document.getElementById('propertyWindow').setAttribute('aria-hidden', 'false');
+      syncWindowOverlay();
+    }
+
+    function closePropertyWindow() {
+      document.getElementById('propertyWindow').classList.remove('open');
+      document.getElementById('propertyWindow').setAttribute('aria-hidden', 'true');
+      syncWindowOverlay();
+    }
+
+    function openClientsWindow(clientId = '') {
+      const clients = getClientRecords();
+      uiState.selectedClientId = clients.find((client) => client.cliente_id === clientId)?.cliente_id
+        || uiState.selectedClientId
+        || clients[0]?.cliente_id
+        || '';
+      renderClientsWindow();
+      document.getElementById('clientsWindow').classList.add('open');
+      document.getElementById('clientsWindow').setAttribute('aria-hidden', 'false');
+      syncWindowOverlay();
+    }
+
+    function closeClientsWindow() {
+      document.getElementById('clientsWindow').classList.remove('open');
+      document.getElementById('clientsWindow').setAttribute('aria-hidden', 'true');
+      syncWindowOverlay();
+    }
+
+    function getVisitById(visitId) {
+      return dashboardData.visitas.find((item) => item.visita_id === visitId);
+    }
+
+    function openVisitWindow(visitId) {
+      const visit = getVisitById(visitId || uiState.selectedVisitId);
+      if (!visit) return;
+      uiState.selectedVisitId = visit.visita_id;
+      renderVisitWindow();
+      document.getElementById('visitWindow').classList.add('open');
+      document.getElementById('visitWindow').setAttribute('aria-hidden', 'false');
+      syncWindowOverlay();
+    }
+
+    function closeVisitWindow() {
+      document.getElementById('visitWindow').classList.remove('open');
+      document.getElementById('visitWindow').setAttribute('aria-hidden', 'true');
+      syncWindowOverlay();
+    }
+
+    function renderVisitWindow() {
+      const visit = getVisitById(uiState.selectedVisitId);
+      if (!visit) return;
+      const currentVisitDate = visit.fecha_confirmada || visit.fecha_solicitada || dashboardData.kpisGenerales.fecha_snapshot;
+      uiState.visitPickerBaseDate = startOfMonth(currentVisitDate);
+      setText('visitWindowMeta', `${visit.cliente_nombre || visit.cliente_id} · ${visit.piso_id}`);
+      document.getElementById('visitClient').value = visit.cliente_nombre || visit.cliente_id || '';
+      document.getElementById('visitProperty').value = visit.piso_id || '';
+      document.getElementById('visitDate').value = visit.fecha_confirmada || visit.fecha_solicitada || '';
+      document.getElementById('visitTime').value = visit.hora_confirmada || visit.hora_solicitada || '';
+      document.getElementById('visitStatus').value = visit.estado_visita || 'confirmada';
+      document.getElementById('visitNotes').value = visit.resultado_agenda || '';
+      setText('visitCurrentSlot', formatDateTime(visit.fecha_confirmada || visit.fecha_solicitada, visit.hora_confirmada || visit.hora_solicitada));
+      setText('visitCurrentSummary', `${visit.estado_visita} · ${visit.resultado_agenda || 'Sin nota adicional'}`);
+      setText('visitNewSlot', formatDateTime(document.getElementById('visitDate').value, document.getElementById('visitTime').value));
+      renderVisitDatePicker();
+    }
+
+    function refreshVisitPreview() {
+      setText('visitNewSlot', formatDateTime(
+        document.getElementById('visitDate').value,
+        document.getElementById('visitTime').value
+      ));
+      renderVisitDatePicker();
+    }
+
+    function renderVisitTimeMenu(filter = '') {
+      const normalized = filter.trim();
+      const options = buildTimeSlots().filter((slot) => !normalized || slot.startsWith(normalized));
+      const menu = document.getElementById('visitTimeMenu');
+      menu.innerHTML = options.map((slot) => `
+        <button class="time-option" type="button" data-action="pick-visit-time" data-id="${slot}">${slot}</button>
+      `).join('');
+    }
+
+    function openVisitTimeMenu(showAll = true) {
+      renderVisitTimeMenu(showAll ? '' : (document.getElementById('visitTime').value || ''));
+      document.getElementById('visitTimeMenu').classList.add('open');
+    }
+
+    function closeVisitTimeMenu() {
+      document.getElementById('visitTimeMenu').classList.remove('open');
+    }
+
+    function renderVisitDatePicker() {
+      const baseDate = uiState.visitPickerBaseDate || startOfMonth(document.getElementById('visitDate').value || dashboardData.kpisGenerales.fecha_snapshot);
+      const gridStart = startOfMonthGrid(baseDate);
+      const selectedDate = document.getElementById('visitDate').value;
+
+      setText('visitPickerMonth', formatMonthTitle(baseDate));
+      document.getElementById('visitDaysGrid').innerHTML = Array.from({ length: 42 }, (_, index) => addDays(gridStart, index)).map((day) => `
+        <button
+          class="visit-day-btn ${!isSameMonth(day, baseDate) ? 'muted' : ''} ${day === selectedDate ? 'active' : ''}"
+          type="button"
+          data-action="pick-visit-date"
+          data-id="${day}"
+        >
+          ${day.slice(-2)}
+        </button>
+      `).join('');
+    }
+
+    function setPropertyForm(property) {
+      if (!property) return;
+      document.getElementById('propertyId').value = property.piso_id || '';
+      document.getElementById('propertyStatus').value = property.estado || 'disponible';
+      document.getElementById('propertyZone').value = property.zona || '';
+      document.getElementById('propertyPrice').value = property.precio || '';
+      document.getElementById('propertyM2').value = property.m2 || '';
+      document.getElementById('propertyRooms').value = property.habitaciones || '';
+      document.getElementById('propertyFeatures').value = property.caracteristicas || '';
+      document.getElementById('propertyDescription').value = property.descripcion || '';
+      document.getElementById('propertyMetaStrip').innerHTML = `
+        <span class="property-meta-chip">${property.piso_id}</span>
+        <span class="property-meta-chip">${formatPrice(property.precio)}</span>
+        <span class="property-meta-chip">${property.m2} m2</span>
+        <span class="property-meta-chip">${property.habitaciones} hab.</span>
+      `;
+    }
+
+    function renderPropertyWindow() {
+      syncKpisWithProperties();
+      const selected = getPropertyById(uiState.selectedPropertyId) || dashboardData.pisos[0] || null;
+      if (selected) uiState.selectedPropertyId = selected.piso_id;
+      setText('propertyWindowMeta', `${dashboardData.pisos.length} pisos gestionables desde el dashboard`);
+
+      document.getElementById('propertyList').innerHTML = dashboardData.pisos
+        .slice()
+        .sort((a, b) => a.piso_id.localeCompare(b.piso_id))
+        .map((property) => `
+          <button class="property-card ${property.piso_id === uiState.selectedPropertyId ? 'active' : ''}" type="button" data-action="select-property" data-id="${property.piso_id}">
+            <strong>${property.piso_id}</strong>
+            <small>${property.zona} · ${formatPrice(property.precio)}</small>
+            <small>${property.m2} m2 · ${property.habitaciones} hab.</small>
+            <span class="property-badge ${property.estado}">${property.estado}</span>
+          </button>
+        `).join('');
+
+      if (selected) {
+        setPropertyForm(selected);
+      }
+
+      renderStock();
+    }
+
+    function renderClientsWindow() {
+      const clients = getClientRecords();
+      const selected = clients.find((client) => client.cliente_id === uiState.selectedClientId) || clients[0] || null;
+      uiState.selectedClientId = selected?.cliente_id || '';
+      setText('clientsWindowMeta', `${clients.length} clientes con contexto comercial cargado`);
+
+      const clientList = document.getElementById('clientList');
+      const summaryGrid = document.getElementById('clientSummaryGrid');
+      const propertyGrid = document.getElementById('clientPropertyGrid');
+      const visitList = document.getElementById('clientVisitList');
+
+      if (uiState.remoteDataState === 'loading') {
+        clientList.innerHTML = '<div class="empty">Cargando clientes desde el backend...</div>';
+        summaryGrid.innerHTML = '';
+        propertyGrid.innerHTML = '<div class="empty">Esperando datos reales del cliente.</div>';
+        visitList.innerHTML = '<div class="empty">Sincronizando historial de visitas.</div>';
+        document.getElementById('clientName').value = '';
+        document.getElementById('clientPipeline').value = '';
+        document.getElementById('clientPhone').value = '';
+        document.getElementById('clientEmail').value = '';
+        document.getElementById('clientNextAction').value = '';
+        document.getElementById('clientNote').value = '';
+        setText('clientsWindowRange', 'Sincronizando clientes');
+        setText('clientCampaignStatus', 'Campaña en espera');
+        setText('clientCampaignCopy', 'Todavía no se ha cargado información suficiente del cliente.');
+        return;
+      }
+
+      if (uiState.remoteDataState === 'error' || !clients.length || !selected) {
+        clientList.innerHTML = '<div class="empty">No hay clientes disponibles para mostrar en esta vista.</div>';
+        summaryGrid.innerHTML = '';
+        propertyGrid.innerHTML = '<div class="empty">Sin clientes cargados.</div>';
+        visitList.innerHTML = '<div class="empty">No hay historial disponible.</div>';
+        document.getElementById('clientName').value = '';
+        document.getElementById('clientPipeline').value = '';
+        document.getElementById('clientPhone').value = '';
+        document.getElementById('clientEmail').value = '';
+        document.getElementById('clientNextAction').value = '';
+        document.getElementById('clientNote').value = '';
+        setText('clientsWindowRange', 'Clientes sin datos');
+        setText('clientCampaignStatus', 'Campaña inactiva');
+        setText('clientCampaignCopy', 'No hay suficiente información para construir la ficha comercial.');
+        return;
+      }
+
+      setText('clientsWindowRange', selected.cliente_nombre);
+      clientList.innerHTML = clients.map((client) => `
+        <button class="property-card ${client.cliente_id === uiState.selectedClientId ? 'active' : ''}" type="button" data-action="open-client" data-id="${client.cliente_id}">
+          <strong>${client.cliente_nombre}</strong>
+          <small>${client.estado_pipeline || 'En gestión'}${client.requiere_seguimiento ? ' · Seguimiento abierto' : ''}</small>
+          <small>${client.nextVisit ? getVisitHeadline(client.nextVisit) : client.latestVisit ? getVisitHeadline(client.latestVisit) : 'Sin visita registrada'}</small>
+        </button>
+      `).join('');
+
+      document.getElementById('clientName').value = selected.cliente_nombre || '';
+      document.getElementById('clientPipeline').value = selected.estado_pipeline || 'En gestión';
+      document.getElementById('clientPhone').value = selected.cliente_telefono || 'Sin dato';
+      document.getElementById('clientEmail').value = selected.cliente_email || 'Sin dato';
+      document.getElementById('clientNextAction').value = selected.proxima_accion || 'Revisar oportunidad';
+      document.getElementById('clientNote').value = selected.note || '';
+
+      summaryGrid.innerHTML = [
+        {
+          label: 'Ultima interaccion',
+          value: selected.ultima_interaccion_fecha ? formatMadridTimestamp(selected.ultima_interaccion_fecha) : 'Sin registro'
+        },
+        {
+          label: 'Siguiente visita',
+          value: selected.nextVisit ? getVisitHeadline(selected.nextVisit) : 'Sin visita futura'
+        },
+        {
+          label: 'Seguimiento',
+          value: selected.requiere_seguimiento ? (selected.motivo_seguimiento || 'Pendiente de acción comercial') : 'Sin bloqueo'
+        },
+        {
+          label: 'Ultima accion',
+          value: selected.ultima_accion || 'Sin acción registrada'
+        }
+      ].map((item) => `
+        <div class="client-summary-card">
+          <div class="mini-label">${item.label}</div>
+          <strong>${item.value}</strong>
+        </div>
+      `).join('');
+
+      if (selected.linkedProperties.length) {
+        propertyGrid.innerHTML = selected.linkedProperties.map((property) => `
+          <button class="client-property-card" type="button" data-action="open-linked-property" data-id="${property.piso_id}">
+            <strong>${property.piso_id}</strong>
+            <small>${property.zona || 'Zona pendiente'} · ${formatPrice(property.precio)}</small>
+            <small>${property.m2 || 0} m2 · ${property.habitaciones || 0} hab. · ${property.estado || 'disponible'}</small>
+            <small>${property.sourceLabel || 'Vinculado al cliente'}</small>
+          </button>
+        `).join('');
+      } else {
+        propertyGrid.innerHTML = '<div class="empty">Todavía no hay pisos vinculados a este cliente en el dashboard.</div>';
+      }
+
+      if (selected.visits.length) {
+        visitList.innerHTML = selected.visits.map((visit) => {
+          const visitState = getVisitDisplayState(visit);
+          return `
+            <div class="client-visit-card">
+              <strong>${getVisitHeadline(visit)}</strong>
+              <span>${visit.resultado_agenda || 'Sin nota comercial'}</span>
+              <div class="client-inline-actions">
+                <button class="mini-btn primary" type="button" data-action="view-visit" data-id="${visit.visita_id}">Abrir visita</button>
+                <span class="status ${visitState.className}"><i class="fa-solid ${visitState.icon}"></i>${visitState.label}</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } else {
+        visitList.innerHTML = '<div class="empty">Este cliente aún no tiene visitas registradas.</div>';
+      }
+
+      const campaignActive = Boolean(selected.campaign.active);
+      setText('clientCampaignStatus', campaignActive ? 'Campaña comercial activa' : 'Campaña comercial inactiva');
+      setText(
+        'clientCampaignCopy',
+        campaignActive
+          ? `${selected.campaign.lastAction || 'Lista para enviar nueva cartera'}${selected.campaign.lastSentAt ? ` · ${formatMadridTimestamp(selected.campaign.lastSentAt)}` : ''}`
+          : 'Todavía no hay una acción comercial lanzada para este cliente.'
+      );
+      document.getElementById('clientCampaignToggle').textContent = campaignActive ? 'Pausar campaña' : 'Activar campaña';
+    }
+
+    function handleAction(type, id, triggerElement = null) {
+      if (type === 'scroll-visits') {
+        closeDrawer();
+        scrollToSection('visitas');
+        return;
+      }
+      if (type === 'scroll-follow') {
+        closeDrawer();
+        scrollToSection('seguimiento');
+        return;
+      }
+      if (type === 'copy-summary') {
+        const { kpisGenerales } = dashboardData;
+        const text = `InmoagentIA · ${kpisGenerales.leads_totales} leads, ${kpisGenerales.leads_con_visita} con visita, ${kpisGenerales.visitas_programadas} visitas programadas y ${kpisGenerales.pendientes_nueva_hora} seguimientos pendientes.`;
+        navigator.clipboard?.writeText(text);
+        showToast('Resumen copiado al portapapeles.');
+        return;
+      }
+      if (type === 'open-calendar-window') {
+        openCalendarWindow();
+        return;
+      }
+      if (type === 'open-property-window') {
+        openPropertyWindow();
+        return;
+      }
+      if (type === 'open-clients-window') {
+        openClientsWindow(id);
+        return;
+      }
+      if (type === 'open-client') {
+        closeDrawer();
+        closeVisitPopover();
+        uiState.selectedClientId = id;
+        if (!document.getElementById('clientsWindow').classList.contains('open')) {
+          openClientsWindow(id);
+        } else {
+          renderClientsWindow();
+        }
+        return;
+      }
+      if (type === 'open-visit-popover') {
+        openVisitPopover(id, triggerElement);
+        return;
+      }
+      if (type === 'view-visit') {
+        const visit = dashboardData.visitas.find((item) => item.visita_id === id);
+        if (!visit) return;
+        uiState.selectedVisitId = visit.visita_id;
+        const visitState = getVisitDisplayState(visit);
+        const canMarkDone = visitState.key !== 'realizada'
+          && (parseVisitDateTime(visit.fecha_confirmada || visit.fecha_solicitada, visit.hora_confirmada || visit.hora_solicitada)?.getTime() || 0) < Date.now();
+        const calendarActions = visitState.key === 'realizada'
+          ? [{ type: 'hide-visit-from-calendar', id, label: 'Quitar del calendario', icon: 'fa-eye-slash' }]
+          : [{ type: 'reprogram-visit', id, label: 'Modificar visita', icon: 'fa-pen-to-square' }];
+        openDrawer({
+          eyebrow: visitState.key === 'realizada' ? 'Visita realizada' : 'Visita en gestión',
+          title: visit.cliente_nombre || visit.cliente_id,
+          copy: visit.resultado_agenda,
+          stats: [
+            { label: 'Piso', value: visit.piso_id },
+            { label: 'Fecha y hora', value: formatDateTime(visit.fecha_confirmada || visit.fecha_solicitada, visit.hora_confirmada || visit.hora_solicitada) },
+            { label: 'Teléfono', value: visit.cliente_telefono || 'Sin dato' },
+            { label: 'Email', value: visit.cliente_email || 'Sin dato' }
+          ],
+          actions: [
+            ...(canMarkDone ? [{ type: 'mark-visit-done', id, label: 'Confirmar realizada', icon: 'fa-check-circle' }] : []),
+            ...calendarActions,
+            { type: 'open-client', id: visit.cliente_id, label: 'Abrir cliente', icon: 'fa-address-book', ghost: true },
+            { type: 'copy-summary', id, label: 'Compartir resumen', icon: 'fa-copy', ghost: true }
+          ]
+        });
+        return;
+      }
+      if (type === 'reprogram-visit') {
+        closeVisitPopover();
+        closeDrawer();
+        openVisitWindow(id);
+        return;
+      }
+      if (type === 'open-linked-property') {
+        closeClientsWindow();
+        uiState.selectedPropertyId = id;
+        openPropertyWindow();
+        showToast(`Abriendo ficha del piso ${id}.`);
+        return;
+      }
+      if (type === 'open-client-latest-visit') {
+        const client = getClientById(uiState.selectedClientId);
+        const targetVisit = client?.nextVisit || client?.openVisit || client?.latestVisit;
+        if (!targetVisit) {
+          showToast('Este cliente todavía no tiene visitas registradas.');
+          return;
+        }
+        closeClientsWindow();
+        openVisitWindow(targetVisit.visita_id);
+        return;
+      }
+      if (type === 'mark-visit-done') {
+        const visit = dashboardData.visitas.find((item) => item.visita_id === id);
+        if (!visit) return;
+        visit.estado_visita = 'realizada';
+        visit.resultado_agenda = visit.resultado_agenda || 'Visita realizada';
+        const lead = dashboardData.leadEstado.find((item) => item.cliente_id === visit.cliente_id);
+        if (lead) {
+          lead.estado_pipeline = 'Visita realizada';
+          lead.proxima_accion = 'Registrar seguimiento post-visita';
+          lead.requiere_seguimiento = true;
+          lead.motivo_seguimiento = 'Pendiente de anotar conclusiones y siguiente propuesta comercial';
+        }
+        syncKpisWithVisits();
+        refreshDashboardData();
+        renderCalendarWindow();
+        renderVisitWindow();
+        closeVisitPopover();
+        closeDrawer();
+        showToast(`Visita ${visit.visita_id} marcada como realizada.`);
+        return;
+      }
+      if (type === 'toggle-client-campaign') {
+        const client = getClientById(uiState.selectedClientId);
+        if (!client) return;
+        const currentCampaign = clientWorkspaceStore.campaigns[client.cliente_id] || { active: false, lastAction: '', lastSentAt: '' };
+        clientWorkspaceStore.campaigns[client.cliente_id] = {
+          ...currentCampaign,
+          active: !currentCampaign.active,
+          lastAction: !currentCampaign.active ? 'Campaña activada para nuevos inmuebles y sugeridos' : 'Campaña pausada manualmente'
+        };
+        persistClientWorkspaceStore();
+        renderClientsWindow();
+        showToast(!currentCampaign.active
+          ? `Campaña activada para ${client.cliente_nombre}.`
+          : `Campaña pausada para ${client.cliente_nombre}.`);
+        return;
+      }
+      if (type === 'send-client-portfolio' || type === 'send-client-suggestions') {
+        const client = getClientById(uiState.selectedClientId);
+        if (!client) return;
+        const actionLabel = type === 'send-client-portfolio'
+          ? 'Envio de cartera preparado desde dashboard'
+          : 'Envio de sugeridos preparado desde dashboard';
+        clientWorkspaceStore.campaigns[client.cliente_id] = {
+          active: true,
+          lastAction: actionLabel,
+          lastSentAt: madridDateTimeFormatter.format(new Date()).replace(',', '')
+        };
+        persistClientWorkspaceStore();
+        renderClientsWindow();
+        showToast(type === 'send-client-portfolio'
+          ? `Cartera preparada para ${client.cliente_nombre}.`
+          : `Sugeridos preparados para ${client.cliente_nombre}.`);
+        return;
+      }
+      if (type === 'hide-visit-from-calendar') {
+        const visit = dashboardData.visitas.find((item) => item.visita_id === id);
+        if (!visit) return;
+        visit.oculta_en_calendario = true;
+        closeVisitPopover();
+        renderCalendarWindow();
+        closeDrawer();
+        showToast(`Visita ${visit.visita_id} retirada de la vista del calendario.`);
+        return;
+      }
+      if (type === 'pick-visit-date') {
+        document.getElementById('visitDate').value = id;
+        refreshVisitPreview();
+        return;
+      }
+      if (type === 'pick-visit-time') {
+        document.getElementById('visitTime').value = id;
+        refreshVisitPreview();
+        closeVisitTimeMenu();
+        return;
+      }
+      if (type === 'card-leads') {
+        openDrawer({
+          eyebrow: 'Leads',
+          title: 'Base comercial activa',
+          copy: 'Vista pensada para dirección: cuánto volumen hay, cuánto es recurrente y cuántos ya avanzaron a visita.',
+          stats: [
+            { label: 'Leads totales', value: dashboardData.kpisGenerales.leads_totales },
+            { label: 'Clientes recurrentes', value: dashboardData.kpisGenerales.clientes_recurrentes },
+            { label: 'Clientes activos', value: dashboardData.kpisGenerales.clientes_activos }
+          ],
+          actions: [
+            { type: 'open-clients-window', label: 'Abrir clientes', icon: 'fa-address-book' },
+            { type: 'scroll-follow', label: 'Ir a seguimiento', icon: 'fa-bullseye' },
+            { type: 'copy-summary', label: 'Compartir resumen', icon: 'fa-copy', ghost: true }
+          ]
+        });
+        return;
+      }
+      if (type === 'card-leads-visits') {
+        openDrawer({
+          eyebrow: 'Leads con visita',
+          title: 'Visitas abiertas y realizadas',
+          copy: 'Verde para las ya realizadas. Naranja para las pendientes, programadas o a falta de cierre post-visita.',
+          bodyHtml: buildVisitListHtml(getLeadVisitList(), { includeCompletedAction: true }),
+          actions: [
+            { type: 'open-calendar-window', label: 'Abrir calendario', icon: 'fa-calendar-days' }
+          ]
+        });
+        return;
+      }
+      if (type === 'card-programmed-visits') {
+        openDrawer({
+          eyebrow: 'Visitas programadas',
+          title: 'Agenda pendiente de realizar',
+          copy: 'Aquí solo aparecen las visitas que todavía no se han marcado como realizadas.',
+          bodyHtml: buildVisitListHtml(getOpenVisits(), { includeCompletedAction: true }),
+          actions: [
+            { type: 'open-calendar-window', label: 'Abrir calendario', icon: 'fa-calendar-days' }
+          ]
+        });
+        return;
+      }
+      if (type === 'card-visits') {
+        openCalendarWindow();
+        showToast('Abriendo calendario general de visitas.');
+        return;
+      }
+      if (type === 'card-follow') {
+        const firstPending = getPendingFollowUps()[0];
+        openClientsWindow(firstPending?.cliente_id || '');
+        showToast('Abriendo ficha de clientes con seguimiento comercial.');
+        return;
+      }
+      if (type === 'card-stock') {
+        openPropertyWindow();
+        showToast('Abriendo cartera de pisos.');
+        return;
+      }
+      if (type === 'select-property') {
+        uiState.selectedPropertyId = id;
+        renderPropertyWindow();
+        return;
+      }
+    }
+
+    function renderHero() {
+      const { kpisGenerales, kpisDiarios } = dashboardData;
+      if (uiState.remoteDataState === 'loading') {
+        document.getElementById('heroInsights').innerHTML = `
+          <article class="hero-stat">
+            <div class="hero-stat-label">Estado</div>
+            <div class="hero-stat-value">Cargando</div>
+            <div class="hero-stat-copy">Conectando con N8N para traer visitas, leads y cartera reales.</div>
+          </article>
+          <article class="hero-stat">
+            <div class="hero-stat-label">Fuente</div>
+            <div class="hero-stat-value">N8N</div>
+            <div class="hero-stat-copy">La portada no enseña datos de ejemplo mientras espera la sincronización.</div>
+          </article>
+        `;
+        document.getElementById('heroTags').innerHTML = '';
+        setText('heroCopy', 'Sincronizando datos comerciales reales. En cuanto responda el backend, la portada se actualizará automáticamente.');
+        setText('zoneTop', 'Cargando');
+        setText('propertyTop', 'Cargando');
+        setText('leadRate', '--');
+        setText('futureVisits', 'Sincronizando');
+        setText('updatedText', 'Sincronizando...');
+        setText('snapshotText', 'Conectando con N8N...');
+        setText('todayText', formatMadridNow());
+        return;
+      }
+      if (uiState.remoteDataState === 'error') {
+        document.getElementById('heroInsights').innerHTML = `
+          <article class="hero-stat">
+            <div class="hero-stat-label">Estado</div>
+            <div class="hero-stat-value">Sin datos</div>
+            <div class="hero-stat-copy">No ha sido posible cargar el dashboard desde N8N.</div>
+          </article>
+          <article class="hero-stat">
+            <div class="hero-stat-label">Acción</div>
+            <div class="hero-stat-value">Reintentar</div>
+            <div class="hero-stat-copy">Recarga la página o revisa el webhook si esta vista tarda demasiado.</div>
+          </article>
+        `;
+        document.getElementById('heroTags').innerHTML = '';
+        setText('heroCopy', 'El dashboard está esperando una respuesta válida del backend antes de enseñar métricas comerciales.');
+        setText('zoneTop', 'Sin datos');
+        setText('propertyTop', 'Sin datos');
+        setText('leadRate', '--');
+        setText('futureVisits', 'Sin datos');
+        setText('updatedText', 'Sin conexión');
+        setText('snapshotText', 'Sin datos remotos');
+        setText('todayText', formatMadridNow());
+        return;
+      }
+      const upcomingScheduledVisits = getUpcomingScheduledVisits();
+      const futureScheduledVisits = getFutureScheduledVisits();
+      const completedVisits = getCompletedVisits();
+      const pendingFollowUps = getPendingFollowUps();
+      const leadsWithoutVisit = Math.max(0, Number(kpisGenerales.leads_totales || 0) - Number(kpisGenerales.leads_con_visita || 0));
+      const nextVisit = futureScheduledVisits[0] || null;
+      const latestLead = [...dashboardData.leadEstado]
+        .sort((a, b) => {
+          const left = parseLocalDateTime(a.ultima_interaccion_fecha || a.updated_at)?.getTime() || 0;
+          const right = parseLocalDateTime(b.ultima_interaccion_fecha || b.updated_at)?.getTime() || 0;
+          return right - left;
+        })[0] || null;
+      const heroInsights = [
+        {
+          label: 'Leads Sin Visita',
+          value: leadsWithoutVisit,
+          copy: leadsWithoutVisit === 0
+            ? 'Toda la base activa ya ha dado el salto a agenda.'
+            : 'Clientes que todavía necesitan propuesta comercial o cierre de cita.'
+        },
+        {
+          label: 'Siguiente Visita',
+          value: nextVisit ? `${nextVisit.hora_confirmada || nextVisit.hora_solicitada}` : 'Sin cita',
+          copy: nextVisit
+            ? `${getClientDisplayName(nextVisit)} · ${getVisitHeadline(nextVisit)}`
+            : 'No hay visitas futuras en agenda.'
+        },
+        {
+          label: 'Ultimo Lead Activo',
+          value: latestLead ? getClientDisplayName(latestLead) : 'Sin dato',
+          copy: latestLead
+            ? `${latestLead.ultimo_piso_consultado || 'Sin piso'} · ${latestLead.proxima_accion || latestLead.estado_pipeline || 'En gestión'}`
+            : 'No hay interacción reciente registrada.'
+        },
+        {
+          label: 'Seguimiento Abierto',
+          value: pendingFollowUps.length,
+          copy: pendingFollowUps.length === 0
+            ? 'La bandeja comercial está limpia ahora mismo.'
+            : 'Clientes que necesitan llamada, nueva franja o propuesta adicional.'
+        }
+      ];
+      const heroTags = [
+        `${kpisGenerales.leads_totales} leads en cartera`,
+        `${kpisGenerales.leads_con_visita} lead con visita`,
+        `${upcomingScheduledVisits.length} visita programada`,
+        `${completedVisits.length} visita realizada`,
+        `${pendingFollowUps.length} seguimientos abiertos`,
+        `${kpisDiarios.interacciones_totales} interacciones hoy`
+      ];
+
+      document.getElementById('heroTags').innerHTML = heroTags
+        .map((tag) => `<span class="tag"><strong>${tag.split(' ')[0]}</strong> ${tag.substring(tag.indexOf(' ') + 1)}</span>`)
+        .join('');
+      document.getElementById('heroInsights').innerHTML = heroInsights.map((item) => `
+        <article class="hero-stat">
+          <div class="hero-stat-label">${item.label}</div>
+          <div class="hero-stat-value">${item.value}</div>
+          <div class="hero-stat-copy">${item.copy}</div>
+        </article>
+      `).join('');
+      setText(
+        'heroCopy',
+        `${kpisGenerales.leads_totales} leads en cartera, ${upcomingScheduledVisits.length} visitas futuras y ${completedVisits.length} ya celebradas. El bloque superior ahora prioriza datos reales del pipeline en vez de texto genérico.`
+      );
+
+      setText('zoneTop', kpisGenerales.zona_mas_demandada || 'Sin señal clara');
+      setText('propertyTop', kpisGenerales.piso_mas_consultado || 'Sin dato suficiente');
+      setText('leadRate', `${kpisGenerales.tasa_lead_a_visita}%`);
+      setText('futureVisits', `${upcomingScheduledVisits.length} programadas · ${completedVisits.length} realizadas`);
+      setText('updatedText', 'Dashboard en vivo');
+      setText('snapshotText', `Snapshot ${kpisGenerales.snapshot_id} · ${formatMadridTimestamp(kpisGenerales.updated_at)} Madrid`);
+      setText('todayText', formatMadridNow());
+      setText('zoneDemand', kpisGenerales.zona_mas_demandada || 'Sin señal clara');
+      setText('propertyDemand', kpisGenerales.piso_mas_consultado || 'Sin dato suficiente');
+    }
+
+    function renderSummaryCards() {
+      if (uiState.remoteDataState !== 'ready') {
+        document.getElementById('summaryCards').innerHTML = ['Leads Totales', 'Leads Con Visita', 'Visitas Programadas', 'Seguimiento Pendiente'].map((label) => `
+          <article class="kpi">
+            <div class="kpi-icon"><i class="fa-solid fa-hourglass-half"></i></div>
+            <div class="kpi-label">${label}</div>
+            <div class="kpi-value">...</div>
+            <div class="kpi-meta">Esperando datos reales del backend.</div>
+          </article>
+        `).join('');
+        return;
+      }
+      const { kpisGenerales } = dashboardData;
+      const upcomingScheduledVisits = getOpenVisits();
+      const completedVisits = getCompletedVisits();
+      const pendingFollowUps = getPendingFollowUps();
+      const cards = [
+        {
+          icon: 'fa-users',
+          label: 'Leads Totales',
+          value: kpisGenerales.leads_totales,
+          meta: `${kpisGenerales.clientes_recurrentes} clientes recurrentes en la base.`,
+          action: 'card-leads'
+        },
+        {
+          icon: 'fa-house-circle-check',
+          label: 'Leads Con Visita',
+          value: kpisGenerales.leads_con_visita,
+          meta: `${kpisGenerales.tasa_lead_a_visita}% de conversión desde lead a visita.`,
+          action: 'card-leads-visits'
+        },
+        {
+          icon: 'fa-calendar-days',
+          label: 'Visitas Programadas',
+          value: upcomingScheduledVisits.length,
+          meta: `${completedVisits.length} realizadas en verde y ${upcomingScheduledVisits.length} abiertas en naranja.`,
+          action: 'card-programmed-visits'
+        },
+        {
+          icon: 'fa-bullseye',
+          label: 'Seguimiento Pendiente',
+          value: pendingFollowUps.length,
+          meta: pendingFollowUps.length === 0
+            ? 'La agenda está limpia y sin bloqueos comerciales.'
+            : 'Clientes que necesitan una nueva propuesta de hora.',
+          action: pendingFollowUps.length === 0 ? 'card-stock' : 'card-follow'
+        }
+      ];
+
+      document.getElementById('summaryCards').innerHTML = cards.map((card) => `
+        <article class="kpi">
+          <button class="kpi-button" type="button" data-action="${card.action}">
+            <div class="kpi-icon"><i class="fa-solid ${card.icon}"></i></div>
+            <div class="kpi-label">${card.label}</div>
+            <div class="kpi-value">${card.value}</div>
+            <div class="kpi-meta">${card.meta}</div>
+          </button>
+        </article>
+      `).join('');
+    }
+
+    function renderUpcomingVisits() {
+      const list = document.getElementById('upcomingVisits');
+      if (uiState.remoteDataState === 'loading') {
+        setText('visitsBadge', 'Sincronizando');
+        list.innerHTML = '<div class="empty">Cargando agenda comercial desde N8N...</div>';
+        return;
+      }
+      if (uiState.remoteDataState === 'error') {
+        setText('visitsBadge', 'Sin datos');
+        list.innerHTML = '<div class="empty">No se ha podido cargar la agenda desde el backend.</div>';
+        return;
+      }
+      const visits = getUpcomingScheduledVisits();
+
+      setText('visitsBadge', `${visits.length} en agenda`);
+
+      if (!visits.length) {
+        list.innerHTML = '<div class="empty">Todavía no hay visitas futuras en agenda.</div>';
+        return;
+      }
+
+      list.innerHTML = visits.map((visit) => `
+        <div class="item">
+          <div class="item-row">
+            <div class="item-title">${visit.cliente_nombre || visit.cliente_id}</div>
+            <span class="status ${getVisitDisplayState(visit).className}"><i class="fa-solid ${getVisitDisplayState(visit).icon}"></i>${getVisitDisplayState(visit).label}</span>
+          </div>
+          <div class="item-copy">
+            ${visit.piso_id} · ${formatDateTime(visit.fecha_confirmada || visit.fecha_solicitada, visit.hora_confirmada || visit.hora_solicitada)}
+          </div>
+          <div class="item-actions">
+            <button class="mini-btn primary" type="button" data-action="view-visit" data-id="${visit.visita_id}">Ver ficha</button>
+            ${getVisitDisplayState(visit).key === 'pendiente_confirmacion' ? `<button class="mini-btn" type="button" data-action="mark-visit-done" data-id="${visit.visita_id}">Confirmar realizada</button>` : ''}
+            <button class="mini-btn" type="button" data-action="reprogram-visit" data-id="${visit.visita_id}">Reprogramar</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderCalendar() {
+      if (uiState.remoteDataState === 'loading') {
+        setText('calendarRange', 'Sincronizando agenda');
+        setText('calendarConfirmed', 'Cargando');
+        document.getElementById('calendarBoard').innerHTML = '<div class="calendar-empty">Cargando agenda comercial desde N8N...</div>';
+        return;
+      }
+      if (uiState.remoteDataState === 'error') {
+        setText('calendarRange', 'Sin datos');
+        setText('calendarConfirmed', 'Sin conexión');
+        document.getElementById('calendarBoard').innerHTML = '<div class="calendar-empty">No se ha podido cargar la agenda desde el backend.</div>';
+        return;
+      }
+      const scheduledVisits = getOpenVisits();
+      const days = getPremiumAgendaDates();
+
+      if (!days.length) {
+        setText('calendarRange', 'Sin citas abiertas');
+        setText('calendarConfirmed', '0 visitas');
+        document.getElementById('calendarBoard').innerHTML = '<div class="calendar-empty">No hay visitas pendientes o programadas para mostrar en la agenda premium.</div>';
+        return;
+      }
+
+      setText('calendarRange', `${formatDate(days[0])}${days[1] ? ` - ${formatDate(days[days.length - 1])}` : ''}`);
+      setText('calendarConfirmed', `${scheduledVisits.length} visitas abiertas`);
+
+      document.getElementById('calendarBoard').innerHTML = days.map((day) => {
+        const parts = toDateParts(day);
+        const visitsForDay = scheduledVisits
+          .filter((visit) => (visit.fecha_confirmada || visit.fecha_solicitada) === day)
+          .sort((a, b) => String(a.hora_confirmada || a.hora_solicitada).localeCompare(String(b.hora_confirmada || b.hora_solicitada)));
+
+        return `
+          <article class="calendar-day ${day === (dashboardData.kpisGenerales.fecha_snapshot || toMadridDateParts().ymd) ? 'today' : ''}">
+            <div class="calendar-day-head">
+              <div class="calendar-day-name">${parts.label}</div>
+              <div class="calendar-day-date">${parts.day}</div>
+            </div>
+            <div class="calendar-stack">
+              ${visitsForDay.length ? visitsForDay.map((visit) => `
+                <button class="calendar-event ${getVisitDisplayState(visit).accentClass}" type="button" data-action="view-visit" data-id="${visit.visita_id}">
+                  <div class="calendar-event-time">${visit.hora_confirmada || visit.hora_solicitada || 'Hora pendiente'}</div>
+                  <div class="calendar-event-title">${visit.cliente_nombre || visit.cliente_id}</div>
+                  <div class="calendar-event-copy">${visit.piso_id} · ${getVisitDisplayState(visit).label}</div>
+                </button>
+              `).join('') : '<div class="calendar-empty">Sin visitas programadas. Buen bloque para captar, llamar o preparar próximas citas.</div>'}
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function renderCalendarWindow() {
+      if (uiState.remoteDataState === 'loading') {
+        setText('calendarWindowRange', 'Sincronizando agenda');
+        setText('calendarWindowMeta', 'Cargando visitas desde N8N');
+        document.getElementById('calendarWindowBoard').innerHTML = '<div class="calendar-empty">Cargando calendario...</div>';
+        return;
+      }
+      if (uiState.remoteDataState === 'error') {
+        setText('calendarWindowRange', 'Sin datos');
+        setText('calendarWindowMeta', 'No se ha podido cargar el calendario');
+        document.getElementById('calendarWindowBoard').innerHTML = '<div class="calendar-empty">No se ha podido cargar el calendario desde el backend.</div>';
+        return;
+      }
+      const scheduledVisits = getCalendarVisits();
+      const view = uiState.calendarView;
+      const baseDate = uiState.calendarBaseDate || dashboardData.kpisGenerales.fecha_snapshot || toMadridDateParts().ymd;
+
+      if (view === 'week') {
+        const weekStart = startOfWeek(baseDate);
+        const days = Array.from({ length: 7 }, (_, index) => addDays(weekStart, index));
+        setText('calendarWindowRange', `${formatDate(days[0])} - ${formatDate(days[6])}`);
+        setText('calendarWindowMeta', `${scheduledVisits.length} visitas visibles en agenda`);
+
+        document.getElementById('calendarWindowBoard').innerHTML = `
+          <div class="calendar-strip-wrap">
+            <div class="calendar-strip">
+            ${days.map((day) => {
+              const parts = toDateParts(day);
+              const visitsForDay = scheduledVisits
+                .filter((visit) => (visit.fecha_confirmada || visit.fecha_solicitada) === day)
+                .sort((a, b) => String(a.hora_confirmada || a.hora_solicitada).localeCompare(String(b.hora_confirmada || b.hora_solicitada)));
+
+              return `
+                <article class="calendar-day ${day === dashboardData.kpisGenerales.fecha_snapshot ? 'today' : ''}">
+                  <div class="calendar-day-head">
+                    <div class="calendar-day-name">${parts.label}</div>
+                    <div class="calendar-day-date">${parts.day}</div>
+                  </div>
+                  <div class="calendar-stack">
+                    ${visitsForDay.length ? visitsForDay.map((visit) => `
+                      <button class="calendar-event ${getVisitDisplayState(visit).accentClass}" type="button" data-action="open-visit-popover" data-id="${visit.visita_id}">
+                        <div class="calendar-event-time">${visit.hora_confirmada || visit.hora_solicitada || 'Hora pendiente'}</div>
+                        <div class="calendar-event-title">${getClientDisplayName(visit)}</div>
+                        <div class="calendar-event-copy">${visit.piso_id || 'Sin ref.'} · ${getVisitDisplayState(visit).label}</div>
+                      </button>
+                    `).join('') : '<div class="calendar-empty">Sin visitas programadas.</div>'}
+                  </div>
+                </article>
+              `;
+            }).join('')}
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      const monthStart = startOfMonthGrid(baseDate);
+      const monthDays = Array.from({ length: 42 }, (_, index) => addDays(monthStart, index));
+      setText('calendarWindowRange', formatMonthTitle(baseDate));
+      setText('calendarWindowMeta', `${scheduledVisits.length} visitas en el periodo actual`);
+
+      document.getElementById('calendarWindowBoard').innerHTML = `
+        <div class="calendar-month-wrap">
+          <div class="calendar-month-grid">
+          ${['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'].map((day) => `<div class="month-col-head">${day}</div>`).join('')}
+          ${monthDays.map((day) => {
+            const visitsForDay = scheduledVisits
+              .filter((visit) => (visit.fecha_confirmada || visit.fecha_solicitada) === day)
+              .sort((a, b) => String(a.hora_confirmada || a.hora_solicitada).localeCompare(String(b.hora_confirmada || b.hora_solicitada)));
+
+            return `
+              <article class="month-day ${!isSameMonth(day, baseDate) ? 'muted' : ''} ${day === dashboardData.kpisGenerales.fecha_snapshot ? 'today' : ''}">
+                <div class="month-day-num">${day.slice(-2)}</div>
+                <div class="month-day-events">
+                  ${visitsForDay.length ? visitsForDay.map((visit) => `
+                    <button class="month-chip ${getVisitDisplayState(visit).accentClass}" type="button" data-action="open-visit-popover" data-id="${visit.visita_id}">
+                      <small>${visit.hora_confirmada || visit.hora_solicitada || 'Hora pendiente'} · ${visit.piso_id || 'Sin ref.'}</small>
+                      ${getClientDisplayName(visit)}
+                    </button>
+                  `).join('') : ''}
+                </div>
+              </article>
+            `;
+          }).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderFollowUp() {
+      const list = document.getElementById('followUpList');
+      if (uiState.remoteDataState === 'loading') {
+        setText('followBadge', 'Sincronizando');
+        list.innerHTML = '<div class="empty">Cargando seguimiento comercial...</div>';
+        return;
+      }
+      if (uiState.remoteDataState === 'error') {
+        setText('followBadge', 'Sin datos');
+        list.innerHTML = '<div class="empty">No se ha podido cargar el seguimiento desde N8N.</div>';
+        return;
+      }
+      const followUps = dashboardData.leadEstado.filter((lead) => lead.requiere_seguimiento);
+
+      setText('followBadge', `${followUps.length} abiertos`);
+
+      if (!followUps.length) {
+        list.innerHTML = `
+          <div class="empty">
+            No hay seguimientos pendientes. La agencia puede centrarse en visitas y captación.
+            <div class="empty-actions">
+              <button class="mini-btn primary" type="button" data-action="scroll-visits">Ir a agenda</button>
+              <button class="mini-btn" type="button" data-action="open-clients-window">Abrir clientes</button>
+              <button class="mini-btn" type="button" data-action="copy-summary">Compartir resumen</button>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      list.innerHTML = followUps.map((lead) => `
+        <div class="item">
+          <div class="item-row">
+            <div class="item-title">${getClientDisplayName(lead)}</div>
+            <span class="status pending"><i class="fa-solid fa-clock"></i>${lead.estado_pipeline}</span>
+          </div>
+          <div class="item-copy">${lead.proxima_accion || 'Revisar oportunidad'}${lead.motivo_seguimiento ? ` · ${lead.motivo_seguimiento}` : ''}</div>
+          <div class="item-copy">${lead.ultima_accion || 'Sin última acción registrada'}${lead.ultima_interaccion_fecha ? ` · ${lead.ultima_interaccion_fecha}` : ''}</div>
+          <div class="item-actions">
+            <button class="mini-btn primary" type="button" data-action="open-client" data-id="${lead.cliente_id}">Abrir cliente</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderStock() {
+      if (uiState.remoteDataState === 'loading') {
+        document.getElementById('stockGrid').innerHTML = '<div class="empty">Cargando cartera de pisos...</div>';
+        return;
+      }
+      if (uiState.remoteDataState === 'error') {
+        document.getElementById('stockGrid').innerHTML = '<div class="empty">No se ha podido cargar la cartera desde N8N.</div>';
+        return;
+      }
+      syncKpisWithProperties();
+      const { pisos_disponibles, pisos_reservados, pisos_vendidos } = dashboardData.kpisGenerales;
+      const total = pisos_disponibles + pisos_reservados + pisos_vendidos || 1;
+      const rows = [
+        { label: 'Disponibles', value: pisos_disponibles },
+        { label: 'Reservados', value: pisos_reservados },
+        { label: 'Vendidos', value: pisos_vendidos }
+      ];
+
+      document.getElementById('stockGrid').innerHTML = rows.map((row) => `
+        <div class="stock-row">
+          <div class="stock-label">${row.label}</div>
+          <div class="stock-bar"><div class="stock-fill" style="width:${(row.value / total) * 100}%"></div></div>
+          <div class="stock-value">${row.value}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderActivity() {
+      if (uiState.remoteDataState === 'loading') {
+        document.getElementById('activityGrid').innerHTML = `
+          <div class="mini-card"><div class="mini-label">Actividad</div><div class="mini-value">...</div><div class="mini-copy">Sincronizando métricas diarias.</div></div>
+          <div class="mini-card"><div class="mini-label">Backend</div><div class="mini-value">N8N</div><div class="mini-copy">Esperando respuesta del workflow.</div></div>
+        `;
+        return;
+      }
+      if (uiState.remoteDataState === 'error') {
+        document.getElementById('activityGrid').innerHTML = `
+          <div class="mini-card"><div class="mini-label">Actividad</div><div class="mini-value">Sin datos</div><div class="mini-copy">No se han podido cargar las métricas diarias.</div></div>
+          <div class="mini-card"><div class="mini-label">Acción</div><div class="mini-value">Revisar</div><div class="mini-copy">Comprueba el webhook y vuelve a cargar.</div></div>
+        `;
+        return;
+      }
+      const { kpisDiarios } = dashboardData;
+      const metrics = [
+        {
+          label: 'Interacciones Hoy',
+          value: kpisDiarios.interacciones_totales,
+          copy: 'Entradas procesadas durante la jornada.'
+        },
+        {
+          label: 'Respuestas Enviadas',
+          value: kpisDiarios.respuestas_enviadas,
+          copy: 'Respuestas comerciales despachadas hoy.'
+        },
+        {
+          label: 'Solicitudes De Visita',
+          value: kpisDiarios.solicitudes_visita,
+          copy: 'Solicitudes recibidas desde formulario o flujo comercial.'
+        },
+        {
+          label: 'Visitas Confirmadas',
+          value: kpisDiarios.visitas_confirmadas,
+          copy: 'Cierres positivos logrados en la agenda diaria.'
+        }
+      ];
+
+      document.getElementById('activityGrid').innerHTML = metrics.map((metric) => `
+        <div class="mini-card">
+          <div class="mini-label">${metric.label}</div>
+          <div class="mini-value">${metric.value}</div>
+          <div class="mini-copy">${metric.copy}</div>
+        </div>
+      `).join('');
+    }
+
+    loadClientWorkspaceStore();
+    applyTheme(uiState.theme);
+    renderHero();
+    renderSummaryCards();
+    renderCalendar();
+    renderUpcomingVisits();
+    renderFollowUp();
+    renderStock();
+    renderActivity();
+    uiState.calendarBaseDate = dashboardData.kpisGenerales.fecha_snapshot;
+    uiState.selectedPropertyId = dashboardData.pisos[0]?.piso_id || '';
+    uiState.selectedVisitId = dashboardData.visitas[0]?.visita_id || '';
+    renderCalendarWindow();
+    renderPropertyWindow();
+    loadDashboardData();
+
+    document.addEventListener('click', (event) => {
+      const actionTarget = event.target.closest('[data-action]');
+      if (actionTarget) {
+        if (actionTarget.getAttribute('href') === '#') event.preventDefault();
+        handleAction(actionTarget.dataset.action, actionTarget.dataset.id || '', actionTarget);
+      }
+
+      const scrollTarget = event.target.closest('[data-scroll-target]');
+      if (scrollTarget) {
+        scrollToSection(scrollTarget.dataset.scrollTarget);
+      }
+
+      if (!event.target.closest('#visitPopover') && !event.target.closest('[data-action="open-visit-popover"]')) {
+        closeVisitPopover();
+      }
+    });
+
+    document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme);
+    document.getElementById('copySummaryBtn').addEventListener('click', () => handleAction('copy-summary'));
+    document.getElementById('refreshDashboardBtn').addEventListener('click', () => window.location.reload());
+    document.getElementById('drawerClose').addEventListener('click', closeDrawer);
+    document.getElementById('drawerOverlay').addEventListener('click', closeDrawer);
+    document.getElementById('windowOverlay').addEventListener('click', () => {
+      closeCalendarWindow();
+      closePropertyWindow();
+      closeClientsWindow();
+      closeVisitWindow();
+    });
+    document.getElementById('calendarWindowClose').addEventListener('click', closeCalendarWindow);
+    document.getElementById('propertyWindowClose').addEventListener('click', closePropertyWindow);
+    document.getElementById('clientsWindowClose').addEventListener('click', closeClientsWindow);
+    document.getElementById('visitWindowClose').addEventListener('click', closeVisitWindow);
+    document.getElementById('openCalendarFromVisitBtn').addEventListener('click', () => {
+      closeVisitWindow();
+      openCalendarWindow();
+    });
+    document.getElementById('newPropertyBtn').addEventListener('click', () => {
+      const nextNumber = dashboardData.pisos.length + 1;
+      const newProperty = {
+        piso_id: `BCN-${String(nextNumber).padStart(3, '0')}`,
+        zona: 'Nueva captación',
+        precio: 0,
+        m2: 0,
+        habitaciones: 0,
+        estado: 'disponible',
+        caracteristicas: '',
+        descripcion: 'Nueva ficha creada desde dashboard.'
+      };
+      dashboardData.pisos.unshift(newProperty);
+      uiState.selectedPropertyId = newProperty.piso_id;
+      renderPropertyWindow();
+      showToast(`Nuevo piso ${newProperty.piso_id} creado en borrador.`);
+    });
+    document.getElementById('deletePropertyBtn').addEventListener('click', () => {
+      if (!uiState.selectedPropertyId) return;
+      const propertyId = uiState.selectedPropertyId;
+      dashboardData.pisos = dashboardData.pisos.filter((item) => item.piso_id !== propertyId);
+      uiState.selectedPropertyId = dashboardData.pisos[0]?.piso_id || '';
+      renderPropertyWindow();
+      showToast(`Piso ${propertyId} eliminado de la cartera.`);
+    });
+    document.getElementById('propertyForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const property = getPropertyById(uiState.selectedPropertyId);
+      if (!property) return;
+      property.estado = document.getElementById('propertyStatus').value;
+      property.zona = document.getElementById('propertyZone').value.trim();
+      property.precio = Number(document.getElementById('propertyPrice').value || 0);
+      property.m2 = Number(document.getElementById('propertyM2').value || 0);
+      property.habitaciones = Number(document.getElementById('propertyRooms').value || 0);
+      property.caracteristicas = document.getElementById('propertyFeatures').value.trim();
+      property.descripcion = document.getElementById('propertyDescription').value.trim();
+      renderPropertyWindow();
+      showToast(`Ficha ${property.piso_id} actualizada.`);
+    });
+    document.getElementById('clientForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const client = getClientById(uiState.selectedClientId);
+      if (!client) return;
+      clientWorkspaceStore.notes[client.cliente_id] = document.getElementById('clientNote').value.trim();
+      persistClientWorkspaceStore();
+      renderClientsWindow();
+      showToast(`Nota guardada para ${client.cliente_nombre}.`);
+    });
+    document.getElementById('visitForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const visit = getVisitById(uiState.selectedVisitId);
+      if (!visit) return;
+      visit.fecha_confirmada = document.getElementById('visitDate').value;
+      visit.hora_confirmada = document.getElementById('visitTime').value;
+      visit.estado_visita = document.getElementById('visitStatus').value;
+      visit.resultado_agenda = document.getElementById('visitNotes').value.trim() || `Visita ${visit.estado_visita.replaceAll('_', ' ')}`;
+      const lead = dashboardData.leadEstado.find((item) => item.cliente_id === visit.cliente_id);
+      if (lead) {
+        lead.estado_pipeline = visit.estado_visita === 'realizada' ? 'Visita realizada' : 'Visita confirmada';
+        lead.proxima_accion = visit.estado_visita === 'realizada' ? 'Registrar seguimiento post-visita' : 'Preparar visita';
+        lead.requiere_seguimiento = visit.estado_visita === 'realizada';
+        lead.motivo_seguimiento = visit.estado_visita === 'realizada'
+          ? 'Pendiente de anotar conclusiones y siguiente propuesta comercial'
+          : '';
+      }
+      syncKpisWithVisits();
+      refreshDashboardData();
+      renderCalendarWindow();
+      renderVisitWindow();
+      showToast(`Visita ${visit.visita_id} reprogramada para ${formatDateTime(visit.fecha_confirmada, visit.hora_confirmada)}.`);
+    });
+    document.getElementById('visitDate').addEventListener('input', refreshVisitPreview);
+    document.getElementById('visitTime').addEventListener('input', () => {
+      refreshVisitPreview();
+      openVisitTimeMenu(false);
+    });
+    document.getElementById('visitTime').addEventListener('focus', () => openVisitTimeMenu(true));
+    document.getElementById('visitTime').addEventListener('click', () => openVisitTimeMenu(true));
+    document.getElementById('visitTimeToggle').addEventListener('click', (event) => {
+      event.stopPropagation();
+      const menu = document.getElementById('visitTimeMenu');
+      if (menu.classList.contains('open')) {
+        closeVisitTimeMenu();
+      } else {
+        openVisitTimeMenu(true);
+      }
+    });
+    document.getElementById('visitPickerPrev').addEventListener('click', () => {
+      uiState.visitPickerBaseDate = addMonths(uiState.visitPickerBaseDate || dashboardData.kpisGenerales.fecha_snapshot, -1);
+      renderVisitDatePicker();
+    });
+    document.getElementById('visitPickerNext').addEventListener('click', () => {
+      uiState.visitPickerBaseDate = addMonths(uiState.visitPickerBaseDate || dashboardData.kpisGenerales.fecha_snapshot, 1);
+      renderVisitDatePicker();
+    });
+    document.getElementById('calendarViewSelect').addEventListener('change', (event) => {
+      uiState.calendarView = event.target.value;
+      renderCalendarWindow();
+    });
+    document.getElementById('calendarPrevBtn').addEventListener('click', () => {
+      uiState.calendarBaseDate = uiState.calendarView === 'week'
+        ? addDays(uiState.calendarBaseDate, -7)
+        : addMonths(uiState.calendarBaseDate, -1);
+      renderCalendarWindow();
+    });
+    document.getElementById('calendarNextBtn').addEventListener('click', () => {
+      uiState.calendarBaseDate = uiState.calendarView === 'week'
+        ? addDays(uiState.calendarBaseDate, 7)
+        : addMonths(uiState.calendarBaseDate, 1);
+      renderCalendarWindow();
+    });
+    document.getElementById('calendarTodayBtn').addEventListener('click', () => {
+      uiState.calendarBaseDate = dashboardData.kpisGenerales.fecha_snapshot;
+      renderCalendarWindow();
+    });
+    document.addEventListener('click', (event) => {
+      if (!event.target.closest('.time-input-wrap')) {
+        closeVisitTimeMenu();
+      }
+    });
+    window.addEventListener('resize', closeVisitPopover);
+  </script>
+</body>
+</html>
