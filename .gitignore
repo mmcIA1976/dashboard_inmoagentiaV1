@@ -1,6 +1,5 @@
-server.err.log
-server.out.log
-server_stderr.log
-server_stdout.log
-dashboard-data.json
-__pycache__/
+*
+!.gitignore
+!dashboard.html
+!server.py
+!Procfile
