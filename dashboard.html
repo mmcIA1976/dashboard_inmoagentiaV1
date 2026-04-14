@@ -243,10 +243,15 @@
       border-color: rgba(220,159,49,0.28);
       background: linear-gradient(180deg, rgba(220,159,49,0.14), rgba(255,255,255,0.03));
     }
+    .calendar-event.scheduled-state {
+      border-color: rgba(77,146,255,0.34);
+      background: linear-gradient(180deg, rgba(77,146,255,0.18), rgba(255,255,255,0.03));
+    }
     .calendar-event.done-state {
       border-color: rgba(87,197,142,0.28);
       background: linear-gradient(180deg, rgba(87,197,142,0.16), rgba(255,255,255,0.03));
     }
+    .calendar-event.scheduled-state .calendar-event-time { color: #9ec5ff; }
     .calendar-event.done-state .calendar-event-time { color: #cbf0da; }
     .calendar-event-time { font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold-soft); margin-bottom: 8px; }
     .calendar-event-title { font-weight: 700; margin-bottom: 4px; }
@@ -262,6 +267,7 @@
       z-index: 25; display: none; overflow: hidden;
     }
     .workspace-window.open { display: flex; flex-direction: column; }
+    #visitWindow { z-index: 31; }
     .window-topbar {
       display: flex; justify-content: space-between; gap: 16px; align-items: center; padding: 22px 24px;
       border-bottom: 1px solid var(--line); background: rgba(255,255,255,0.02);
@@ -313,10 +319,12 @@
     .property-badge {
       display: inline-flex; align-items: center; padding: 6px 10px; border-radius: 999px; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em;
       margin-top: 8px;
+      border: 1px solid transparent;
+      font-weight: 700;
     }
-    .property-badge.disponible { background: rgba(87,197,142,0.12); color: #cbf0da; }
-    .property-badge.reservado { background: rgba(220,159,49,0.14); color: #f4d7a4; }
-    .property-badge.vendido { background: rgba(255,255,255,0.09); color: var(--text); }
+    .property-badge.disponible { background: rgba(87,197,142,0.16); border-color: rgba(87,197,142,0.28); color: #cbf0da; }
+    .property-badge.reservado { background: rgba(220,159,49,0.18); border-color: rgba(220,159,49,0.3); color: #f4d7a4; }
+    .property-badge.vendido { background: rgba(163,88,26,0.24); border-color: rgba(201,115,45,0.36); color: #ffd9b5; }
     .property-form { display: grid; gap: 14px; }
     .property-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
     .field { display: grid; gap: 7px; }
@@ -408,6 +416,9 @@
       width: 100%; text-align: left; padding: 14px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.06);
       background: rgba(255,255,255,0.03); color: var(--text); cursor: pointer; font: inherit; transition: 0.2s ease;
     }
+    .client-property-head {
+      display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; margin-bottom: 4px;
+    }
     .client-property-card:hover {
       border-color: rgba(201,168,76,0.24); background: rgba(201,168,76,0.08);
     }
@@ -485,10 +496,15 @@
       border-color: rgba(220,159,49,0.24);
       background: rgba(220,159,49,0.12);
     }
+    .month-chip.scheduled-state {
+      border-color: rgba(77,146,255,0.28);
+      background: rgba(77,146,255,0.14);
+    }
     .month-chip.done-state {
       border-color: rgba(87,197,142,0.24);
       background: rgba(87,197,142,0.14);
     }
+    .month-chip.scheduled-state small { color: #9ec5ff; }
     .month-chip.done-state small { color: #cbf0da; }
     .month-chip small { display: block; color: var(--gold-soft); margin-bottom: 4px; }
     .empty { padding: 24px; border-radius: 16px; border: 1px dashed rgba(255,255,255,0.1); color: var(--dim); text-align: center; }
@@ -623,6 +639,14 @@
       color: #5c3804;
       font-weight: 700;
     }
+    body[data-theme="light"] .calendar-event.scheduled-state,
+    body[data-theme="light"] .month-chip.scheduled-state {
+      background: linear-gradient(180deg, rgba(77,146,255,0.22), rgba(241,247,255,0.98));
+      border-color: rgba(45,96,182,0.46);
+      box-shadow: 0 0 0 1px rgba(45,96,182,0.08), 0 10px 24px rgba(45,96,182,0.12);
+      color: #1f4f96;
+      font-weight: 700;
+    }
     body[data-theme="light"] .calendar-event.done-state,
     body[data-theme="light"] .month-chip.done-state {
       background: linear-gradient(180deg, rgba(87,197,142,0.34), rgba(235,253,242,0.98));
@@ -634,6 +658,11 @@
     body[data-theme="light"] .calendar-event.open-state .calendar-event-time,
     body[data-theme="light"] .month-chip.open-state small {
       color: #8a5408;
+      font-weight: 700;
+    }
+    body[data-theme="light"] .calendar-event.scheduled-state .calendar-event-time,
+    body[data-theme="light"] .month-chip.scheduled-state small {
+      color: #2d60b6;
       font-weight: 700;
     }
     body[data-theme="light"] .calendar-event.done-state .calendar-event-time,
@@ -694,6 +723,21 @@
       background: rgba(255,250,242,0.96);
       color: var(--text);
       border-color: rgba(201,168,76,0.26);
+    }
+    body[data-theme="light"] .property-badge.disponible {
+      background: rgba(87,197,142,0.24);
+      border-color: rgba(41,146,93,0.34);
+      color: #155d3a;
+    }
+    body[data-theme="light"] .property-badge.reservado {
+      background: rgba(220,159,49,0.28);
+      border-color: rgba(176,118,21,0.36);
+      color: #7a4a05;
+    }
+    body[data-theme="light"] .property-badge.vendido {
+      background: rgba(177,96,29,0.24);
+      border-color: rgba(146,72,18,0.34);
+      color: #7a3700;
     }
     .foot { margin-top: 22px; color: var(--dim); font-size: 0.86rem; text-align: right; }
     @media (max-width: 1140px) {
@@ -1079,12 +1123,83 @@
               <label for="clientNextAction">Proxima accion</label>
               <input id="clientNextAction" readonly>
             </div>
+            <div class="client-section">
+              <h3>Preferencias de busqueda</h3>
+              <p>Criterios iniciales del cliente para zona, presupuesto y tipologia. Puedes afinarlos desde esta ficha.</p>
+              <div class="property-grid">
+                <div class="field">
+                  <label for="clientSearchZone">Zona</label>
+                  <input id="clientSearchZone" placeholder="Ej. Gràcia, Eixample Derecho">
+                </div>
+                <div class="field">
+                  <label for="clientSearchBudget">Presupuesto maximo</label>
+                  <input id="clientSearchBudget" type="number" min="0" step="1000" placeholder="Ej. 450000">
+                </div>
+                <div class="field">
+                  <label for="clientSearchSurface">Superficie minima</label>
+                  <input id="clientSearchSurface" type="number" min="0" step="1" placeholder="Ej. 80">
+                </div>
+                <div class="field">
+                  <label for="clientSearchRooms">Habitaciones minimas</label>
+                  <input id="clientSearchRooms" type="number" min="0" step="1" placeholder="Ej. 3">
+                </div>
+                <div class="field">
+                  <label for="clientSearchBuilding">Finca preferida</label>
+                  <input id="clientSearchBuilding" placeholder="Ej. Reformada, Nueva, Semi-nueva">
+                </div>
+                <div class="field">
+                  <label for="clientSearchType">Tipo de consulta</label>
+                  <input id="clientSearchType" placeholder="Ej. REFERENCIA, CARACTERISTICAS, MIXTA">
+                </div>
+                <div class="field">
+                  <label for="clientSearchLift">Ascensor</label>
+                  <select id="clientSearchLift" class="window-select">
+                    <option value="">Sin definir</option>
+                    <option value="Sí">Sí</option>
+                    <option value="No">No</option>
+                    <option value="Indiferente">Indiferente</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="clientSearchBalcony">Balcon</label>
+                  <select id="clientSearchBalcony" class="window-select">
+                    <option value="">Sin definir</option>
+                    <option value="Sí">Sí</option>
+                    <option value="No">No</option>
+                    <option value="Indiferente">Indiferente</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="clientSearchTerrace">Terraza</label>
+                  <select id="clientSearchTerrace" class="window-select">
+                    <option value="">Sin definir</option>
+                    <option value="Sí">Sí</option>
+                    <option value="No">No</option>
+                    <option value="Indiferente">Indiferente</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="clientSearchParking">Parking</label>
+                  <select id="clientSearchParking" class="window-select">
+                    <option value="">Sin definir</option>
+                    <option value="Sí">Sí</option>
+                    <option value="No">No</option>
+                    <option value="Indiferente">Indiferente</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="client-section" id="clientPreferenceShiftSection" hidden>
+              <h3>Posible variacion de busqueda</h3>
+              <p>Nueva señal comercial detectada en la última consulta del cliente.</p>
+              <div id="clientPreferenceShift"></div>
+            </div>
             <div class="field">
               <label for="clientNote">Notas comerciales</label>
               <textarea id="clientNote" placeholder="Anotaciones post-visita, conclusiones comerciales o siguiente paso con este cliente."></textarea>
             </div>
             <div class="client-inline-actions">
-              <button class="action-btn" type="submit"><i class="fa-solid fa-floppy-disk"></i>Guardar nota</button>
+              <button class="action-btn" type="submit"><i class="fa-solid fa-floppy-disk"></i>Guardar ficha</button>
               <button class="action-btn ghost" type="button" data-action="open-client-latest-visit"><i class="fa-solid fa-calendar-check"></i>Ver ultima visita</button>
             </div>
             <div class="client-section">
@@ -1201,8 +1316,10 @@
           <textarea id="visitNotes" placeholder="Ej. Cliente pide mover la visita por urgencia de última hora"></textarea>
         </div>
         <div class="property-tools">
-          <button class="action-btn" type="submit"><i class="fa-solid fa-calendar-check"></i>Guardar reprogramación</button>
+          <button class="action-btn" type="submit"><i class="fa-solid fa-calendar-check"></i>Guardar cambios</button>
+          <button class="action-btn ghost" type="button" id="markVisitDoneFromWindow"><i class="fa-solid fa-check-circle"></i>Confirmar visita realizada</button>
           <button class="action-btn ghost" type="button" id="openCalendarFromVisitBtn"><i class="fa-regular fa-calendar-days"></i>Abrir calendario</button>
+          <button class="action-btn ghost" type="button" id="deleteVisitBtn"><i class="fa-solid fa-trash"></i>Eliminar visita</button>
         </div>
       </form>
     </div>
@@ -1231,7 +1348,8 @@
 
     const clientWorkspaceStore = {
       notes: {},
-      campaigns: {}
+      campaigns: {},
+      preferences: {}
     };
 
     function updateThemeToggle() {
@@ -1268,9 +1386,11 @@
         const stored = JSON.parse(localStorage.getItem('inmoagentia-client-workspace') || '{}');
         clientWorkspaceStore.notes = stored.notes && typeof stored.notes === 'object' ? stored.notes : {};
         clientWorkspaceStore.campaigns = stored.campaigns && typeof stored.campaigns === 'object' ? stored.campaigns : {};
+        clientWorkspaceStore.preferences = stored.preferences && typeof stored.preferences === 'object' ? stored.preferences : {};
       } catch (error) {
         clientWorkspaceStore.notes = {};
         clientWorkspaceStore.campaigns = {};
+        clientWorkspaceStore.preferences = {};
       }
     }
 
@@ -1372,8 +1492,14 @@
     }
 
     function normalizeProperty(raw = {}) {
+      const normalizedStatus = normalizeState(raw.estado);
+      const status = ['disponible', 'reservado', 'vendido'].includes(normalizedStatus)
+        ? normalizedStatus
+        : 'disponible';
+
       return {
         ...raw,
+        estado: status,
         precio: toNumber(raw.precio),
         m2: toNumber(raw.m2),
         habitaciones: toNumber(raw.habitaciones) || toNumber(raw.hab_totales)
@@ -1559,6 +1685,38 @@
       };
     }
 
+    function getCalendarAnchorDate() {
+      const today = toMadridDateParts().ymd;
+      if (uiState.calendarView === 'week') {
+        return uiState.calendarBaseDate || today;
+      }
+      return uiState.calendarBaseDate || dashboardData.kpisGenerales.fecha_snapshot || today;
+    }
+
+    function getMadridNowDateTimeKey(date = new Date()) {
+      const parts = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'Europe/Madrid',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      }).formatToParts(date);
+
+      const map = {};
+      for (const part of parts) map[part.type] = part.value;
+
+      return `${map.year}-${map.month}-${map.day} ${map.hour}:${map.minute}`;
+    }
+
+    function getVisitDateTimeKey(dateString, timeString) {
+      const date = normalizeDashboardDate(dateString);
+      if (!date) return '';
+      const time = timeString && /^\d{2}:\d{2}$/.test(String(timeString).trim()) ? String(timeString).trim() : '23:59';
+      return `${date} ${time}`;
+    }
+
     function toDateParts(dateString) {
       const date = new Date(`${dateString}T12:00:00`);
       return {
@@ -1642,10 +1800,12 @@
 
     function getVisitDisplayState(visit) {
       const rawState = String(visit?.estado_visita || '').trim().toLowerCase();
-      const scheduledAt = parseVisitDateTime(
+      const hasRequestDetails = hasVisitRequestDetails(visit);
+      const scheduledAtKey = getVisitDateTimeKey(
         visit?.fecha_confirmada || visit?.fecha_solicitada,
         visit?.hora_confirmada || visit?.hora_solicitada
       );
+      const madridNowKey = getMadridNowDateTimeKey();
 
       if (rawState === 'realizada') {
         return {
@@ -1657,8 +1817,8 @@
         };
       }
 
-      if (rawState === 'confirmada') {
-        if (scheduledAt && scheduledAt < new Date()) {
+      if (rawState === 'confirmada' || (rawState === 'pendiente_nueva_hora' && hasRequestDetails)) {
+        if (scheduledAtKey && scheduledAtKey < madridNowKey) {
           return {
             key: 'pendiente_confirmacion',
             label: 'Pendiente cierre',
@@ -1671,7 +1831,7 @@
           key: 'programada',
           label: 'Programada',
           className: 'pending',
-          accentClass: 'open-state',
+          accentClass: 'scheduled-state',
           icon: 'fa-clock'
         };
       }
@@ -1699,7 +1859,8 @@
       return sortVisitsBySchedule(
         dashboardData.visitas.filter((visit) => {
           const state = String(visit.estado_visita || '').trim().toLowerCase();
-          return ['confirmada', 'pendiente_nueva_hora', 'realizada'].includes(state);
+          if (!['confirmada', 'pendiente_nueva_hora', 'realizada'].includes(state)) return false;
+          return hasVisitRequestDetails(visit);
         })
       );
     }
@@ -1730,7 +1891,7 @@
     }
 
     function getUpcomingScheduledVisits() {
-      return getOpenVisits();
+      return getFutureScheduledVisits();
     }
 
     function getCalendarVisits() {
@@ -1740,7 +1901,7 @@
     }
 
     function getPremiumAgendaDates() {
-      return [...new Set(getOpenVisits().map((visit) => visit.fecha_confirmada || visit.fecha_solicitada).filter(Boolean))].slice(0, 3);
+      return [...new Set(getFutureScheduledVisits().map((visit) => visit.fecha_confirmada || visit.fecha_solicitada).filter(Boolean))].slice(0, 3);
     }
 
     function getClientDisplayName(entity = {}) {
@@ -1753,8 +1914,59 @@
       return `${visit.piso_id || 'Piso sin ref.'} · ${formatDate(visit.fecha_confirmada || visit.fecha_solicitada)} · ${visit.hora_confirmada || visit.hora_solicitada || 'Hora pendiente'}`;
     }
 
+    function canMarkVisitDoneBySchedule(visit = {}, dateValue = '', timeValue = '') {
+      const scheduledAtKey = getVisitDateTimeKey(
+        dateValue || visit.fecha_confirmada || visit.fecha_solicitada,
+        timeValue || visit.hora_confirmada || visit.hora_solicitada
+      );
+      return Boolean(scheduledAtKey && scheduledAtKey < getMadridNowDateTimeKey());
+    }
+
+    function hasScheduledVisitDetails(visit = {}) {
+      return Boolean(normalizeDashboardDate(visit.fecha_confirmada || visit.fecha_solicitada));
+    }
+
+    function hasVisitRequestDetails(visit = {}) {
+      const date = normalizeDashboardDate(visit.fecha_confirmada || visit.fecha_solicitada);
+      const time = String(visit.hora_confirmada || visit.hora_solicitada || '').trim();
+      return Boolean(date && /^\d{2}:\d{2}$/.test(time));
+    }
+
     function getPendingFollowUps() {
-      return dashboardData.leadEstado.filter((lead) => lead.requiere_seguimiento);
+      const openVisitClientIds = new Set(
+        getOpenVisits()
+          .map((visit) => String(visit.cliente_id || '').trim())
+          .filter(Boolean)
+      );
+
+      return dashboardData.leadEstado.filter((lead) => {
+        if (!lead.requiere_seguimiento) return false;
+
+        const clientId = String(lead.cliente_id || '').trim();
+        const combinedText = [
+          lead.estado_pipeline,
+          lead.proxima_accion,
+          lead.motivo_seguimiento,
+          lead.ultima_accion
+        ].join(' ').toLowerCase();
+
+        const isVisitOperationalText = combinedText.includes('pendiente nueva hora')
+          || combinedText.includes('visita confirmada')
+          || combinedText.includes('preparar visita');
+        const isPostVisitFollowUp = combinedText.includes('post-visita')
+          || combinedText.includes('post visita')
+          || combinedText.includes('anotar conclusiones');
+
+        if (isPostVisitFollowUp) {
+          return true;
+        }
+
+        if (isVisitOperationalText && openVisitClientIds.has(clientId)) {
+          return false;
+        }
+
+        return true;
+      });
     }
 
     function getPendingConfirmationVisits() {
@@ -1791,6 +2003,335 @@
       const clientId = String(record.cliente_id || '').trim();
       if (clientId) return `Cliente ${clientId}`;
       return 'Lead sin identificar';
+    }
+
+    function getClientDisplayLabel(entity = {}) {
+      const baseName = String(entity.cliente_nombre || entity.nombre || '').trim();
+      const clientId = String(entity.cliente_id || '').trim();
+      const email = String(entity.cliente_email || entity.email || '').trim();
+
+      if (baseName && clientId && baseName !== clientId) return `${baseName} · ${clientId}`;
+      if (baseName) return baseName;
+      if (clientId) return clientId;
+      if (email) return email;
+      return 'Cliente sin identificar';
+    }
+
+    function normalizePreferenceField(value, { preserveZero = false } = {}) {
+      if (value === null || value === undefined) return '';
+      const text = String(value).trim();
+      if (!text) return '';
+      if (!preserveZero && Number(text) === 0) return '';
+      return text;
+    }
+
+    function normalizePreferenceChoice(value) {
+      const normalized = normalizeState(value);
+      if (!normalized) return '';
+      if (['si', 'sí', 'yes', 'true', '1'].includes(normalized)) return 'Sí';
+      if (['no', 'false', '0'].includes(normalized)) return 'No';
+      if (normalized === 'indiferente') return 'Indiferente';
+      return '';
+    }
+
+    function setFieldValue(fieldId, value = '') {
+      const field = document.getElementById(fieldId);
+      if (!field) return;
+      field.value = value ?? '';
+    }
+
+    function buildClientPreferences(
+      lead = {},
+      latestInteraction = null,
+      storedPreferences = {},
+      interactions = [],
+      visits = [],
+      propertyIndex = {}
+    ) {
+      const sortedInteractions = interactions.slice().sort((a, b) => {
+        const leftDate = normalizeDashboardDate(a.fecha);
+        const rightDate = normalizeDashboardDate(b.fecha);
+        const left = parseLocalDateTime(leftDate ? `${leftDate} 12:00:00` : '')?.getTime() || 0;
+        const right = parseLocalDateTime(rightDate ? `${rightDate} 12:00:00` : '')?.getTime() || 0;
+        if (right !== left) return right - left;
+        return String(b.interaccion_id || '').localeCompare(String(a.interaccion_id || ''));
+      });
+
+      const sortedVisits = sortVisitsBySchedule(visits || [], 'desc');
+      const chronologicalVisits = sortVisitsBySchedule(visits || [], 'asc');
+      const firstRealizedVisit = chronologicalVisits.find((visit) => getVisitDisplayState(visit).key === 'realizada') || null;
+      const firstRealizedProperty = firstRealizedVisit
+        ? propertyIndex[String(firstRealizedVisit.piso_id || '').trim()] || null
+        : null;
+      const firstScheduledProperty = chronologicalVisits
+        .map((visit) => propertyIndex[String(visit.piso_id || '').trim()] || null)
+        .find(Boolean) || null;
+      const latestVisitedProperty = sortedVisits
+        .map((visit) => propertyIndex[String(visit.piso_id || '').trim()] || null)
+        .find(Boolean) || null;
+      const primaryVisitedProperty = firstRealizedProperty || firstScheduledProperty || null;
+
+      const pickInteractionText = (...keys) => {
+        for (const interaction of sortedInteractions) {
+          for (const key of keys) {
+            const text = normalizePreferenceField(interaction?.[key]);
+            if (text) return text;
+          }
+        }
+        return '';
+      };
+
+      const pickInteractionNumber = (...keys) => {
+        for (const interaction of sortedInteractions) {
+          for (const key of keys) {
+            const value = normalizePreferenceField(interaction?.[key]);
+            if (value) return value;
+          }
+        }
+        return '';
+      };
+
+      const pickInteractionChoice = (...keys) => {
+        for (const interaction of sortedInteractions) {
+          for (const key of keys) {
+            const choice = normalizePreferenceChoice(interaction?.[key]);
+            if (choice) return choice;
+          }
+        }
+        return '';
+      };
+
+      const stored = storedPreferences && typeof storedPreferences === 'object' ? storedPreferences : {};
+
+      const basePreferences = {
+        zona: normalizePreferenceField(
+          primaryVisitedProperty?.zona
+          || pickInteractionText('zona')
+          || latestInteraction?.zona
+          || lead.zona
+          || latestVisitedProperty?.zona
+          || ''
+        ),
+        precio_max: normalizePreferenceField(
+          primaryVisitedProperty?.precio
+          || pickInteractionNumber('precio_max')
+          || latestInteraction?.precio_max
+          || lead.precio_max
+          || latestVisitedProperty?.precio
+          || ''
+        ),
+        m2_min: normalizePreferenceField(
+          primaryVisitedProperty?.m2
+          || pickInteractionNumber('m2_min')
+          || latestInteraction?.m2_min
+          || lead.m2_min
+          || latestVisitedProperty?.m2
+          || ''
+        ),
+        hab_min: normalizePreferenceField(
+          primaryVisitedProperty?.hab_totales
+          || primaryVisitedProperty?.habitaciones
+          || pickInteractionNumber('hab_min')
+          || latestInteraction?.hab_min
+          || lead.hab_min
+          || latestVisitedProperty?.hab_totales
+          || latestVisitedProperty?.habitaciones
+          || ''
+        ),
+        finca_pref: normalizePreferenceField(
+          primaryVisitedProperty?.finca
+          || pickInteractionText('finca_pref')
+          || latestInteraction?.finca_pref
+          || lead.finca_pref
+          || latestVisitedProperty?.finca
+          || ''
+        ),
+        tipo_busqueda: normalizePreferenceField(
+          pickInteractionText('tipo')
+          || latestInteraction?.tipo
+          || lead.tipo
+          || ''
+        ),
+        ascensor_pref: normalizePreferenceChoice(
+          primaryVisitedProperty?.ascensor
+          || pickInteractionChoice('ascensor_pref', 'ascensor')
+          || latestInteraction?.ascensor_pref
+          || latestInteraction?.ascensor
+          || lead.ascensor_pref
+          || lead.ascensor
+          || latestVisitedProperty?.ascensor
+          || ''
+        ),
+        balcon_pref: normalizePreferenceChoice(
+          primaryVisitedProperty?.balcon
+          || pickInteractionChoice('balcon_pref', 'balcon')
+          || latestInteraction?.balcon_pref
+          || latestInteraction?.balcon
+          || lead.balcon_pref
+          || lead.balcon
+          || latestVisitedProperty?.balcon
+          || ''
+        ),
+        terraza_pref: normalizePreferenceChoice(
+          primaryVisitedProperty?.terraza
+          || pickInteractionChoice('terraza_pref', 'terraza')
+          || latestInteraction?.terraza_pref
+          || latestInteraction?.terraza
+          || lead.terraza_pref
+          || lead.terraza
+          || latestVisitedProperty?.terraza
+          || ''
+        ),
+        parking_pref: normalizePreferenceChoice(
+          primaryVisitedProperty?.parking
+          || pickInteractionChoice('parking_pref', 'parking')
+          || latestInteraction?.parking_pref
+          || latestInteraction?.parking
+          || lead.parking_pref
+          || lead.parking
+          || latestVisitedProperty?.parking
+          || ''
+        )
+      };
+
+      return {
+        zona: normalizePreferenceField(stored.zona || basePreferences.zona),
+        precio_max: normalizePreferenceField(stored.precio_max || basePreferences.precio_max),
+        m2_min: normalizePreferenceField(stored.m2_min || basePreferences.m2_min),
+        hab_min: normalizePreferenceField(stored.hab_min || basePreferences.hab_min),
+        finca_pref: normalizePreferenceField(stored.finca_pref || basePreferences.finca_pref),
+        tipo_busqueda: normalizePreferenceField(stored.tipo_busqueda || basePreferences.tipo_busqueda),
+        ascensor_pref: normalizePreferenceChoice(stored.ascensor_pref || basePreferences.ascensor_pref),
+        balcon_pref: normalizePreferenceChoice(stored.balcon_pref || basePreferences.balcon_pref),
+        terraza_pref: normalizePreferenceChoice(stored.terraza_pref || basePreferences.terraza_pref),
+        parking_pref: normalizePreferenceChoice(stored.parking_pref || basePreferences.parking_pref)
+      };
+    }
+
+    function buildInteractionPreferences(interaction = {}, propertyIndex = {}) {
+      const consultedProperty = propertyIndex[String(interaction.piso_consultado_id || '').trim()] || {};
+
+      return {
+        zona: normalizePreferenceField(interaction.zona || consultedProperty.zona || ''),
+        precio_max: normalizePreferenceField(interaction.precio_max || consultedProperty.precio || ''),
+        m2_min: normalizePreferenceField(interaction.m2_min || consultedProperty.m2 || ''),
+        hab_min: normalizePreferenceField(interaction.hab_min || consultedProperty.hab_totales || consultedProperty.habitaciones || ''),
+        finca_pref: normalizePreferenceField(interaction.finca_pref || consultedProperty.finca || ''),
+        tipo_busqueda: normalizePreferenceField(interaction.tipo || ''),
+        ascensor_pref: normalizePreferenceChoice(interaction.ascensor_pref || interaction.ascensor || consultedProperty.ascensor || ''),
+        balcon_pref: normalizePreferenceChoice(interaction.balcon_pref || interaction.balcon || consultedProperty.balcon || ''),
+        terraza_pref: normalizePreferenceChoice(interaction.terraza_pref || interaction.terraza || consultedProperty.terraza || ''),
+        parking_pref: normalizePreferenceChoice(interaction.parking_pref || interaction.parking || consultedProperty.parking || '')
+      };
+    }
+
+    function buildClientPreferenceVariation(basePreferences = {}, latestInteraction = null, interactions = [], visits = [], propertyIndex = {}) {
+      if (!latestInteraction) return null;
+
+      const interactionIds = [...new Set(
+        interactions
+          .map((interaction) => String(interaction.interaccion_id || '').trim())
+          .filter(Boolean)
+      )];
+      const visitedPropertyIds = [...new Set(
+        visits
+          .map((visit) => String(visit.piso_id || '').trim())
+          .filter(Boolean)
+      )];
+
+      const hasSearchEvolutionSignal = interactionIds.length > 1 || visitedPropertyIds.length > 1;
+      if (!hasSearchEvolutionSignal) return null;
+
+      const interactionPreferences = buildInteractionPreferences(latestInteraction, propertyIndex);
+      const linkedVisit = visits.find((visit) =>
+        String(visit.interaccion_id || '').trim()
+          && String(visit.interaccion_id || '').trim() === String(latestInteraction.interaccion_id || '').trim()
+          && hasScheduledVisitDetails(visit)
+      ) || null;
+      const linkedVisitState = linkedVisit ? getVisitDisplayState(linkedVisit).key : '';
+
+      const comparisonFields = [
+        { key: 'zona', label: 'Zona' },
+        { key: 'precio_max', label: 'Presupuesto' },
+        { key: 'm2_min', label: 'Superficie' },
+        { key: 'hab_min', label: 'Habitaciones' },
+        { key: 'finca_pref', label: 'Finca' },
+        { key: 'ascensor_pref', label: 'Ascensor' },
+        { key: 'balcon_pref', label: 'Balcon' },
+        { key: 'terraza_pref', label: 'Terraza' },
+        { key: 'parking_pref', label: 'Parking' }
+      ];
+
+      const changes = comparisonFields.map(({ key, label }) => {
+        const currentValue = String(basePreferences?.[key] || '').trim();
+        const latestValue = String(interactionPreferences?.[key] || '').trim();
+
+        if (!latestValue) return null;
+        if (!currentValue) return { label, latestValue };
+        if (currentValue === latestValue) return null;
+
+        return { label, latestValue };
+      }).filter(Boolean);
+
+      if (!changes.length) return null;
+
+      const suggestedCount = extractPropertyIds(latestInteraction.pisos_sugeridos || latestInteraction.respuesta_body).length;
+      const level = linkedVisitState === 'realizada'
+        ? 'relevante'
+        : linkedVisit
+          ? 'media'
+          : 'baja';
+      const levelConfig = {
+        relevante: {
+          label: 'Señal relevante',
+          className: 'ok',
+          icon: 'fa-bolt',
+          copy: 'La variación ya quedó respaldada por una visita realizada, pero el ajuste del perfil debe decidirse manualmente.'
+        },
+        media: {
+          label: 'Interés medio',
+          className: 'pending',
+          icon: 'fa-compass',
+          copy: 'La nueva señal ya ha convertido en visita programada y merece seguimiento.'
+        },
+        baja: {
+          label: 'Interés bajo',
+          className: 'empty',
+          icon: 'fa-wave-square',
+          copy: 'Se detecta una posible variación, pero todavía es una señal débil sin cita programada.'
+        }
+      };
+
+      return {
+        ...levelConfig[level],
+        changes,
+        interactionDate: normalizeDashboardDate(latestInteraction.fecha),
+        interactionId: latestInteraction.interaccion_id || '',
+        hasVisit: Boolean(linkedVisit),
+        suggestedCount
+      };
+    }
+
+    function getClientPropertyBadge(property = {}) {
+      if (property.completedPropertyVisit) {
+        return { className: 'ok', icon: 'fa-check', label: 'Visitado' };
+      }
+
+      if (property.openPropertyVisit && property.propertyVisitState) {
+        return property.propertyVisitState.key === 'realizada'
+          ? { className: 'ok', icon: 'fa-check', label: 'Visitado' }
+          : { className: 'pending', icon: 'fa-clock', label: 'Visita agendada' };
+      }
+
+      const sourceLabel = String(property.sourceLabel || '');
+      if (sourceLabel.includes('Consulta')) {
+        return { className: 'empty', icon: 'fa-user-clock', label: 'Lead sin visita' };
+      }
+      if (sourceLabel.includes('Sugerido')) {
+        return { className: 'empty', icon: 'fa-wand-magic-sparkles', label: 'Sugerido' };
+      }
+
+      return null;
     }
 
     function getLeadsWithoutVisitRecords() {
@@ -1946,13 +2487,26 @@
 
       return clientIds.map((clientId) => {
         const lead = leadIndex[clientId] || {};
-        const interactions = interactionGroups[clientId] || [];
+        const interactions = (interactionGroups[clientId] || []).slice().sort((a, b) => {
+          const leftDate = normalizeDashboardDate(a.fecha);
+          const rightDate = normalizeDashboardDate(b.fecha);
+          const left = parseLocalDateTime(leftDate ? `${leftDate} 12:00:00` : '')?.getTime() || 0;
+          const right = parseLocalDateTime(rightDate ? `${rightDate} 12:00:00` : '')?.getTime() || 0;
+          if (right !== left) return right - left;
+          return String(b.interaccion_id || '').localeCompare(String(a.interaccion_id || ''));
+        });
         const visits = sortVisitsBySchedule(visitGroups[clientId] || [], 'desc');
         const latestVisit = visits[0] || null;
+        const latestInteraction = interactions[0] || null;
         const nextVisit = getFutureScheduledVisits().find((visit) => visit.cliente_id === clientId) || null;
         const openVisit = getOpenVisits().find((visit) => visit.cliente_id === clientId) || null;
         const latestTouch = parseLocalDateTime(
-          lead.ultima_interaccion_fecha || lead.updated_at || interactions[0]?.fecha || latestVisit?.updated_at || latestVisit?.created_at || ''
+          lead.ultima_interaccion_fecha
+          || lead.updated_at
+          || (normalizeDashboardDate(latestInteraction?.fecha) ? `${normalizeDashboardDate(latestInteraction?.fecha)} 12:00:00` : '')
+          || latestVisit?.updated_at
+          || latestVisit?.created_at
+          || ''
         )?.getTime() || 0;
         const propertySources = new Map();
         const registerPropertyIds = (values, sourceLabel) => {
@@ -1984,39 +2538,94 @@
           registerPropertyIds(interaction.respuesta_body, 'Sugerido');
           registerPropertyIds(interaction.texto_original, 'Consulta');
         });
-        visits.forEach((visit) => registerPropertyIds(visit.piso_id, 'Visita'));
-        visits.forEach((visit) => registerPropertyIds(visit.resultado_agenda, 'Visita'));
+        visits
+          .filter((visit) => hasScheduledVisitDetails(visit))
+          .forEach((visit) => registerPropertyIds(visit.piso_id, 'Visita'));
 
-        const linkedProperties = [...propertySources.entries()].map(([propertyId, sources]) => ({
-          ...propertyIndex[propertyId],
-          sourceLabel: [...sources].join(' · ')
-        }));
+        const linkedProperties = [...propertySources.entries()].map(([propertyId, sources]) => {
+          const propertyVisits = sortVisitsBySchedule(
+            visits.filter((visit) =>
+              String(visit.piso_id || '').trim() === propertyId
+              && hasScheduledVisitDetails(visit)
+            ),
+            'desc'
+          );
+          const completedPropertyVisit = propertyVisits.find((visit) => getVisitDisplayState(visit).key === 'realizada') || null;
+          const openPropertyVisit = propertyVisits.find((visit) => getVisitDisplayState(visit).key !== 'realizada') || null;
+          const latestPropertyVisit = openPropertyVisit || completedPropertyVisit || null;
+          const propertyVisitState = latestPropertyVisit ? getVisitDisplayState(latestPropertyVisit) : null;
+
+          return {
+            ...propertyIndex[propertyId],
+            sourceLabel: [...sources].join(' · '),
+            openPropertyVisit,
+            completedPropertyVisit,
+            latestPropertyVisit,
+            propertyVisitState
+          };
+        });
         const campaign = clientWorkspaceStore.campaigns[clientId] || { active: false, lastAction: '', lastSentAt: '' };
+        const preferences = buildClientPreferences(
+          lead,
+          latestInteraction,
+          clientWorkspaceStore.preferences[clientId],
+          interactions,
+          visits,
+          propertyIndex
+        );
+        const preferenceVariation = buildClientPreferenceVariation(
+          preferences,
+          latestInteraction,
+          interactions,
+          visits,
+          propertyIndex
+        );
+        const clientName = getClientDisplayName({
+          cliente_id: clientId,
+          cliente_nombre: lead.cliente_nombre || latestInteraction?.nombre || latestVisit?.cliente_nombre || ''
+        });
+        const clientPhone = String(
+          lead.cliente_telefono
+          || latestInteraction?.telefono
+          || latestVisit?.cliente_telefono
+          || ''
+        ).trim();
+        const clientEmail = String(
+          lead.cliente_email
+          || latestInteraction?.email
+          || latestVisit?.cliente_email
+          || ''
+        ).trim();
 
         return {
           cliente_id: clientId,
-          cliente_nombre: getClientDisplayName({
+          cliente_nombre: clientName,
+          cliente_label: getClientDisplayLabel({
             cliente_id: clientId,
-            cliente_nombre: lead.cliente_nombre || latestVisit?.cliente_nombre || ''
+            cliente_nombre: clientName,
+            cliente_email: clientEmail
           }),
-          cliente_telefono: String(lead.cliente_telefono || latestVisit?.cliente_telefono || '').trim(),
-          cliente_email: String(lead.cliente_email || latestVisit?.cliente_email || '').trim(),
+          cliente_telefono: clientPhone,
+          cliente_email: clientEmail,
           estado_pipeline: lead.estado_pipeline || (latestVisit ? getVisitDisplayState(latestVisit).label : 'En gestión'),
           proxima_accion: lead.proxima_accion || (nextVisit ? 'Preparar visita' : 'Revisar oportunidad'),
-          ultima_accion: lead.ultima_accion || latestVisit?.resultado_agenda || '',
-          ultima_interaccion_fecha: lead.ultima_interaccion_fecha || lead.updated_at || latestVisit?.updated_at || latestVisit?.created_at || '',
+          ultima_accion: lead.ultima_accion || latestVisit?.resultado_agenda || latestInteraction?.respuesta_subject || '',
+          ultima_interaccion_fecha: lead.ultima_interaccion_fecha || lead.updated_at || normalizeDashboardDate(latestInteraction?.fecha) || latestVisit?.updated_at || latestVisit?.created_at || '',
           requiere_seguimiento: Boolean(lead.requiere_seguimiento),
           motivo_seguimiento: lead.motivo_seguimiento || '',
           latestTouch,
           nextVisit,
           openVisit,
           latestVisit,
-          visits,
-          linkedProperties,
-          note: clientWorkspaceStore.notes[clientId] || '',
-          campaign
-        };
-      }).sort((a, b) => {
+            latestInteraction,
+            visits,
+            linkedProperties,
+            preferences,
+            preferenceVariation,
+            note: clientWorkspaceStore.notes[clientId] || '',
+            campaign
+          };
+        }).sort((a, b) => {
         if (Number(b.requiere_seguimiento) !== Number(a.requiere_seguimiento)) {
           return Number(b.requiere_seguimiento) - Number(a.requiere_seguimiento);
         }
@@ -2114,7 +2723,9 @@
           ? payload.pisos.map(normalizeProperty)
           : dashboardData.pisos;
 
-        uiState.calendarBaseDate = dashboardData.kpisGenerales.fecha_snapshot || uiState.calendarBaseDate;
+        uiState.calendarBaseDate = uiState.calendarView === 'week'
+          ? toMadridDateParts().ymd
+          : (uiState.calendarBaseDate || dashboardData.kpisGenerales.fecha_snapshot || toMadridDateParts().ymd);
         uiState.selectedPropertyId = dashboardData.pisos.find((item) => item.piso_id === uiState.selectedPropertyId)?.piso_id
           || dashboardData.pisos[0]?.piso_id
           || '';
@@ -2231,10 +2842,15 @@
 
       return `<div class="list">${visits.map((visit) => {
         const visitState = getVisitDisplayState(visit);
-        const canMarkDone = includeCompletedAction && visitState.key !== 'realizada' && parseVisitDateTime(
-          visit.fecha_confirmada || visit.fecha_solicitada,
-          visit.hora_confirmada || visit.hora_solicitada
-        ) < new Date();
+        const canMarkDone = includeCompletedAction
+          && visitState.key !== 'realizada'
+          && (() => {
+            const scheduledAtKey = getVisitDateTimeKey(
+              visit.fecha_confirmada || visit.fecha_solicitada,
+              visit.hora_confirmada || visit.hora_solicitada
+            );
+            return scheduledAtKey && scheduledAtKey < getMadridNowDateTimeKey();
+          })();
 
         return `
           <div class="item">
@@ -2298,9 +2914,10 @@
 
     function syncKpisWithVisits() {
       const openVisits = getOpenVisits();
+      const futureScheduledVisits = getFutureScheduledVisits();
       const completedVisits = getCompletedVisits();
-      dashboardData.kpisGenerales.visitas_programadas = openVisits.length;
-      dashboardData.kpisGenerales.visitas_confirmadas_futuras = openVisits.filter((visit) => getVisitDisplayState(visit).key === 'programada').length;
+      dashboardData.kpisGenerales.visitas_programadas = futureScheduledVisits.length;
+      dashboardData.kpisGenerales.visitas_confirmadas_futuras = futureScheduledVisits.filter((visit) => getVisitDisplayState(visit).key === 'programada').length;
       dashboardData.kpisGenerales.visitas_realizadas = completedVisits.length;
       dashboardData.kpisGenerales.pendientes_nueva_hora = openVisits.filter((visit) => getVisitDisplayState(visit).key === 'pendiente_nueva_hora').length;
       const mostVisitedPropertyId = getMostVisitedPropertyId();
@@ -2373,6 +2990,7 @@
       const visit = getVisitById(uiState.selectedVisitId);
       if (!visit) return;
       const currentVisitDate = visit.fecha_confirmada || visit.fecha_solicitada || dashboardData.kpisGenerales.fecha_snapshot;
+      const canMarkDone = canMarkVisitDoneBySchedule(visit);
       uiState.visitPickerBaseDate = startOfMonth(currentVisitDate);
       setText('visitWindowMeta', `${visit.cliente_nombre || visit.cliente_id} · ${visit.piso_id}`);
       document.getElementById('visitClient').value = visit.cliente_nombre || visit.cliente_id || '';
@@ -2381,10 +2999,72 @@
       document.getElementById('visitTime').value = visit.hora_confirmada || visit.hora_solicitada || '';
       document.getElementById('visitStatus').value = visit.estado_visita || 'confirmada';
       document.getElementById('visitNotes').value = visit.resultado_agenda || '';
+      const visitStatusSelect = document.getElementById('visitStatus');
+      const realizedOption = visitStatusSelect.querySelector('option[value="realizada"]');
+      if (realizedOption) {
+        realizedOption.disabled = visit.estado_visita !== 'realizada' && !canMarkDone;
+      }
+      if (visit.estado_visita !== 'realizada' && !canMarkDone && visitStatusSelect.value === 'realizada') {
+        visitStatusSelect.value = 'confirmada';
+      }
+      document.getElementById('markVisitDoneFromWindow').hidden = visit.estado_visita === 'realizada' || !canMarkDone;
       setText('visitCurrentSlot', formatDateTime(visit.fecha_confirmada || visit.fecha_solicitada, visit.hora_confirmada || visit.hora_solicitada));
       setText('visitCurrentSummary', `${visit.estado_visita} · ${visit.resultado_agenda || 'Sin nota adicional'}`);
       setText('visitNewSlot', formatDateTime(document.getElementById('visitDate').value, document.getElementById('visitTime').value));
       renderVisitDatePicker();
+    }
+
+    function saveVisitFromForm({ forceStatus = '', closeAfterSave = false } = {}) {
+      const visit = getVisitById(uiState.selectedVisitId);
+      if (!visit) return false;
+
+      const movementTimestamp = madridDateTimeFormatter.format(new Date()).replace(',', '');
+      const nextVisitDate = document.getElementById('visitDate').value;
+      const nextVisitTime = document.getElementById('visitTime').value;
+      const nextVisitStatus = forceStatus || document.getElementById('visitStatus').value;
+
+      if (nextVisitStatus === 'realizada' && !canMarkVisitDoneBySchedule(visit, nextVisitDate, nextVisitTime)) {
+        showToast('Esta visita todavía no puede marcarse como realizada porque su hora no ha pasado.');
+        document.getElementById('visitStatus').value = visit.estado_visita === 'realizada' ? 'realizada' : 'confirmada';
+        renderVisitWindow();
+        return false;
+      }
+
+      visit.fecha_confirmada = nextVisitDate;
+      visit.hora_confirmada = nextVisitTime;
+      visit.estado_visita = nextVisitStatus;
+      visit.resultado_agenda = document.getElementById('visitNotes').value.trim() || `Visita ${visit.estado_visita.replaceAll('_', ' ')}`;
+      visit.updated_at = movementTimestamp;
+
+      const lead = dashboardData.leadEstado.find((item) => item.cliente_id === visit.cliente_id);
+      if (lead) {
+        lead.estado_pipeline = visit.estado_visita === 'realizada' ? 'Seguimiento post-visita' : 'Visita confirmada';
+        lead.proxima_accion = visit.estado_visita === 'realizada' ? 'Registrar seguimiento post-visita' : 'Preparar visita';
+        lead.requiere_seguimiento = visit.estado_visita === 'realizada';
+        lead.motivo_seguimiento = visit.estado_visita === 'realizada'
+          ? 'Pendiente de anotar conclusiones y siguiente propuesta comercial'
+          : '';
+        lead.ultima_accion = visit.resultado_agenda;
+        lead.ultima_interaccion_fecha = movementTimestamp;
+        lead.updated_at = movementTimestamp;
+      }
+
+      syncKpisWithVisits();
+      refreshDashboardData();
+      renderCalendarWindow();
+      renderVisitWindow();
+
+      if (closeAfterSave) {
+        closeVisitWindow();
+      }
+
+      showToast(
+        visit.estado_visita === 'realizada'
+          ? `Visita ${visit.visita_id} confirmada como realizada.`
+          : `Visita ${visit.visita_id} actualizada para ${formatDateTime(visit.fecha_confirmada, visit.hora_confirmada)}.`
+      );
+
+      return true;
     }
 
     function refreshVisitPreview() {
@@ -2484,17 +3164,31 @@
       const summaryGrid = document.getElementById('clientSummaryGrid');
       const propertyGrid = document.getElementById('clientPropertyGrid');
       const visitList = document.getElementById('clientVisitList');
+      const preferenceShift = document.getElementById('clientPreferenceShift');
+      const preferenceShiftSection = document.getElementById('clientPreferenceShiftSection');
 
       if (uiState.remoteDataState === 'loading') {
         clientList.innerHTML = '<div class="empty">Cargando clientes desde el backend...</div>';
         summaryGrid.innerHTML = '';
         propertyGrid.innerHTML = '<div class="empty">Esperando datos reales del cliente.</div>';
         visitList.innerHTML = '<div class="empty">Sincronizando historial de visitas.</div>';
+        preferenceShiftSection.hidden = true;
+        preferenceShift.innerHTML = '';
         document.getElementById('clientName').value = '';
         document.getElementById('clientPipeline').value = '';
         document.getElementById('clientPhone').value = '';
         document.getElementById('clientEmail').value = '';
         document.getElementById('clientNextAction').value = '';
+        setFieldValue('clientSearchZone');
+        setFieldValue('clientSearchBudget');
+        setFieldValue('clientSearchSurface');
+        setFieldValue('clientSearchRooms');
+        setFieldValue('clientSearchBuilding');
+        setFieldValue('clientSearchType');
+        setFieldValue('clientSearchLift');
+        setFieldValue('clientSearchBalcony');
+        setFieldValue('clientSearchTerrace');
+        setFieldValue('clientSearchParking');
         document.getElementById('clientNote').value = '';
         setText('clientsWindowRange', 'Sincronizando clientes');
         setText('clientCampaignStatus', 'Campaña en espera');
@@ -2507,11 +3201,23 @@
         summaryGrid.innerHTML = '';
         propertyGrid.innerHTML = '<div class="empty">Sin clientes cargados.</div>';
         visitList.innerHTML = '<div class="empty">No hay historial disponible.</div>';
+        preferenceShiftSection.hidden = true;
+        preferenceShift.innerHTML = '';
         document.getElementById('clientName').value = '';
         document.getElementById('clientPipeline').value = '';
         document.getElementById('clientPhone').value = '';
         document.getElementById('clientEmail').value = '';
         document.getElementById('clientNextAction').value = '';
+        setFieldValue('clientSearchZone');
+        setFieldValue('clientSearchBudget');
+        setFieldValue('clientSearchSurface');
+        setFieldValue('clientSearchRooms');
+        setFieldValue('clientSearchBuilding');
+        setFieldValue('clientSearchType');
+        setFieldValue('clientSearchLift');
+        setFieldValue('clientSearchBalcony');
+        setFieldValue('clientSearchTerrace');
+        setFieldValue('clientSearchParking');
         document.getElementById('clientNote').value = '';
         setText('clientsWindowRange', 'Clientes sin datos');
         setText('clientCampaignStatus', 'Campaña inactiva');
@@ -2519,21 +3225,55 @@
         return;
       }
 
-      setText('clientsWindowRange', selected.cliente_nombre);
+      setText('clientsWindowRange', selected.cliente_label || selected.cliente_nombre || selected.cliente_id);
       clientList.innerHTML = clients.map((client) => `
         <button class="property-card ${client.cliente_id === uiState.selectedClientId ? 'active' : ''}" type="button" data-action="open-client" data-id="${client.cliente_id}">
-          <strong>${client.cliente_nombre}</strong>
+          <strong>${client.cliente_label || client.cliente_nombre || client.cliente_id}</strong>
           <small>${client.estado_pipeline || 'En gestión'}${client.requiere_seguimiento ? ' · Seguimiento abierto' : ''}</small>
           <small>${client.nextVisit ? getVisitHeadline(client.nextVisit) : client.latestVisit ? getVisitHeadline(client.latestVisit) : 'Sin visita registrada'}</small>
         </button>
       `).join('');
 
-      document.getElementById('clientName').value = selected.cliente_nombre || '';
+      document.getElementById('clientName').value = selected.cliente_label || selected.cliente_nombre || selected.cliente_id || '';
       document.getElementById('clientPipeline').value = selected.estado_pipeline || 'En gestión';
       document.getElementById('clientPhone').value = selected.cliente_telefono || 'Sin dato';
       document.getElementById('clientEmail').value = selected.cliente_email || 'Sin dato';
       document.getElementById('clientNextAction').value = selected.proxima_accion || 'Revisar oportunidad';
+      setFieldValue('clientSearchZone', selected.preferences?.zona || '');
+      setFieldValue('clientSearchBudget', selected.preferences?.precio_max || '');
+      setFieldValue('clientSearchSurface', selected.preferences?.m2_min || '');
+      setFieldValue('clientSearchRooms', selected.preferences?.hab_min || '');
+      setFieldValue('clientSearchBuilding', selected.preferences?.finca_pref || '');
+      setFieldValue('clientSearchType', selected.preferences?.tipo_busqueda || '');
+      setFieldValue('clientSearchLift', normalizePreferenceChoice(selected.preferences?.ascensor_pref || ''));
+      setFieldValue('clientSearchBalcony', normalizePreferenceChoice(selected.preferences?.balcon_pref || ''));
+      setFieldValue('clientSearchTerrace', normalizePreferenceChoice(selected.preferences?.terraza_pref || ''));
+      setFieldValue('clientSearchParking', normalizePreferenceChoice(selected.preferences?.parking_pref || ''));
       document.getElementById('clientNote').value = selected.note || '';
+
+      if (selected.preferenceVariation) {
+        preferenceShiftSection.hidden = false;
+        preferenceShift.innerHTML = `
+          <div class="client-campaign-row">
+            <div class="client-campaign-copy">
+              <strong><span class="status ${selected.preferenceVariation.className}"><i class="fa-solid ${selected.preferenceVariation.icon}"></i>${selected.preferenceVariation.label}</span></strong>
+              <span>${selected.preferenceVariation.copy}${selected.preferenceVariation.interactionDate ? ` · Última señal: ${formatDate(selected.preferenceVariation.interactionDate)}` : ''}</span>
+            </div>
+          </div>
+          <div class="client-summary-grid">
+            ${selected.preferenceVariation.changes.map((change) => `
+              <div class="client-summary-card">
+                <div class="mini-label">${change.label}</div>
+                <strong>${change.latestValue}</strong>
+                <small>Nueva señal detectada</small>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } else {
+        preferenceShiftSection.hidden = true;
+        preferenceShift.innerHTML = '';
+      }
 
       summaryGrid.innerHTML = [
         {
@@ -2562,12 +3302,21 @@
       if (selected.linkedProperties.length) {
         propertyGrid.innerHTML = selected.linkedProperties.map((property) => `
           <button class="client-property-card" type="button" data-action="open-linked-property" data-id="${property.piso_id}">
-            <strong>${property.piso_id}</strong>
+            <div class="client-property-head">
+              <strong>${property.piso_id}</strong>
+              ${(() => {
+                const badge = getClientPropertyBadge(property);
+                return badge
+                  ? `<span class="status ${badge.className}"><i class="fa-solid ${badge.icon}"></i>${badge.label}</span>`
+                  : '';
+              })()}
+            </div>
             <small>${property.zona || 'Zona pendiente'} · ${formatPrice(property.precio)}</small>
             <small>${property.m2 || 0} m2 · ${property.habitaciones || 0} hab. · ${property.estado || 'disponible'}</small>
-            <small>${property.sourceLabel || 'Vinculado al cliente'}</small>
-          </button>
-        `).join('');
+              <small>${property.sourceLabel || 'Vinculado al cliente'}</small>
+              ${property.latestPropertyVisit && hasScheduledVisitDetails(property.latestPropertyVisit) ? `<small>${getVisitHeadline(property.latestPropertyVisit)}</small>` : ''}
+            </button>
+          `).join('');
       } else {
         propertyGrid.innerHTML = '<div class="empty">Todavía no hay pisos vinculados a este cliente en el dashboard.</div>';
       }
@@ -2580,7 +3329,7 @@
               <strong>${getVisitHeadline(visit)}</strong>
               <span>${visit.resultado_agenda || 'Sin nota comercial'}</span>
               <div class="client-inline-actions">
-                <button class="mini-btn primary" type="button" data-action="view-visit" data-id="${visit.visita_id}">Abrir visita</button>
+                <button class="mini-btn primary" type="button" data-action="open-visit-window" data-id="${visit.visita_id}">Abrir visita</button>
                 <span class="status ${visitState.className}"><i class="fa-solid ${visitState.icon}"></i>${visitState.label}</span>
               </div>
             </div>
@@ -2652,7 +3401,13 @@
         uiState.selectedVisitId = visit.visita_id;
         const visitState = getVisitDisplayState(visit);
         const canMarkDone = visitState.key !== 'realizada'
-          && (parseVisitDateTime(visit.fecha_confirmada || visit.fecha_solicitada, visit.hora_confirmada || visit.hora_solicitada)?.getTime() || 0) < Date.now();
+          && (() => {
+            const scheduledAtKey = getVisitDateTimeKey(
+              visit.fecha_confirmada || visit.fecha_solicitada,
+              visit.hora_confirmada || visit.hora_solicitada
+            );
+            return scheduledAtKey && scheduledAtKey < getMadridNowDateTimeKey();
+          })();
         const calendarActions = visitState.key === 'realizada'
           ? [{ type: 'hide-visit-from-calendar', id, label: 'Quitar del calendario', icon: 'fa-eye-slash' }]
           : [{ type: 'reprogram-visit', id, label: 'Modificar visita', icon: 'fa-pen-to-square' }];
@@ -2673,6 +3428,13 @@
             { type: 'copy-summary', id, label: 'Compartir resumen', icon: 'fa-copy', ghost: true }
           ]
         });
+        return;
+      }
+      if (type === 'open-visit-window') {
+        closeVisitPopover();
+        closeDrawer();
+        closeClientsWindow();
+        openVisitWindow(id);
         return;
       }
       if (type === 'reprogram-visit') {
@@ -2782,11 +3544,12 @@
       }
       if (type === 'card-leads') {
         openDrawer({
-          eyebrow: 'Leads',
-          title: 'Base comercial activa',
-          copy: 'Vista pensada para dirección: cuánto volumen hay, cuánto es recurrente y cuántos ya avanzaron a visita.',
+          eyebrow: 'Interacciones',
+          title: 'Volumen comercial registrado',
+          copy: 'Vista pensada para dirección: cuánto movimiento histórico ha entrado, cuántos clientes únicos hay y cuánto es recurrente.',
           stats: [
-            { label: 'Leads totales', value: dashboardData.kpisGenerales.leads_totales },
+            { label: 'Interacciones totales', value: dashboardData.kpisGenerales.leads_totales },
+            { label: 'Clientes únicos', value: dashboardData.kpisGenerales.clientes_unicos },
             { label: 'Clientes recurrentes', value: dashboardData.kpisGenerales.clientes_recurrentes },
             { label: 'Clientes activos', value: dashboardData.kpisGenerales.clientes_activos }
           ],
@@ -2799,11 +3562,12 @@
         return;
       }
       if (type === 'card-leads-visits') {
+        const completedVisits = getCompletedVisits();
         openDrawer({
-          eyebrow: 'Leads con visita',
-          title: 'Visitas abiertas y realizadas',
-          copy: 'Verde para las ya realizadas. Naranja para las pendientes, programadas o a falta de cierre post-visita.',
-          bodyHtml: buildVisitListHtml(getLeadVisitList(), { includeCompletedAction: true }),
+          eyebrow: 'Visitas realizadas',
+          title: 'Visitas ya celebradas',
+          copy: 'Aquí solo mostramos las visitas que ya se han completado. Las futuras quedan en el bloque de visitas programadas.',
+          bodyHtml: buildVisitListHtml(completedVisits),
           actions: [
             { type: 'open-calendar-window', label: 'Abrir calendario', icon: 'fa-calendar-days' }
           ]
@@ -2936,7 +3700,7 @@
       const futureScheduledVisits = getFutureScheduledVisits();
       const completedVisits = getCompletedVisits();
       const pendingFollowUps = getPendingFollowUps();
-      const leadsWithoutVisit = Math.max(0, Number(kpisGenerales.leads_totales || 0) - Number(kpisGenerales.leads_con_visita || 0));
+      const leadsWithoutVisit = getLeadsWithoutVisitRecords().length;
       const todayInteractionsCount = getTodayInteractionsCount();
       const nextVisit = futureScheduledVisits[0] || null;
       const latestLead = [...dashboardData.leadEstado]
@@ -2977,10 +3741,10 @@
         }
       ];
       const heroTags = [
-        `${kpisGenerales.leads_totales} leads en cartera`,
-        `${kpisGenerales.leads_con_visita} lead con visita`,
-        `${upcomingScheduledVisits.length} visita programada`,
+        `${kpisGenerales.leads_totales} interacciones registradas`,
         `${completedVisits.length} visita realizada`,
+        `${upcomingScheduledVisits.length} visita programada`,
+        `${leadsWithoutVisit} lead sin visita`,
         `${pendingFollowUps.length} seguimientos abiertos`,
         `${todayInteractionsCount} interacciones hoy`
       ];
@@ -2997,7 +3761,7 @@
       `).join('');
       setText(
         'heroCopy',
-        `${kpisGenerales.leads_totales} leads en cartera, ${upcomingScheduledVisits.length} visitas futuras y ${completedVisits.length} ya celebradas. El bloque superior ahora prioriza datos reales del pipeline en vez de texto genérico.`
+        `${kpisGenerales.leads_totales} interacciones registradas, ${upcomingScheduledVisits.length} visitas futuras, ${completedVisits.length} ya celebradas y ${leadsWithoutVisit} leads todavía sin visita. El bloque superior ahora prioriza datos reales del pipeline en vez de texto genérico.`
       );
 
       const zoneTopValue = kpisDiarios.zona_top_demanda || kpisGenerales.zona_mas_demandada || 'Sin señal clara';
@@ -3018,7 +3782,7 @@
 
     function renderSummaryCards() {
       if (uiState.remoteDataState !== 'ready') {
-        document.getElementById('summaryCards').innerHTML = ['Leads Totales', 'Leads Con Visita', 'Visitas Programadas', 'Seguimiento Pendiente'].map((label) => `
+        document.getElementById('summaryCards').innerHTML = ['Interacciones Totales', 'Leads Con Visita Realizada', 'Visitas Programadas', 'Seguimiento Pendiente'].map((label) => `
           <article class="kpi">
             <div class="kpi-icon"><i class="fa-solid fa-hourglass-half"></i></div>
             <div class="kpi-label">${label}</div>
@@ -3029,7 +3793,7 @@
         return;
       }
       const { kpisGenerales } = dashboardData;
-      const upcomingScheduledVisits = getOpenVisits();
+      const upcomingScheduledVisits = getFutureScheduledVisits();
       const completedVisits = getCompletedVisits();
       const pendingFollowUps = getPendingFollowUps();
       const pendingConfirmationVisits = getPendingConfirmationVisits();
@@ -3037,16 +3801,18 @@
       const cards = [
         {
           icon: 'fa-users',
-          label: 'Leads Totales',
+          label: 'Interacciones Totales',
           value: kpisGenerales.leads_totales,
-          meta: `${kpisGenerales.clientes_recurrentes} clientes recurrentes en la base.`,
+          meta: `${kpisGenerales.clientes_unicos} clientes únicos y ${kpisGenerales.clientes_recurrentes} recurrentes.`,
           action: 'card-leads'
         },
         {
           icon: 'fa-house-circle-check',
-          label: 'Leads Con Visita',
-          value: kpisGenerales.leads_con_visita,
-          meta: `${kpisGenerales.tasa_lead_a_visita}% de conversión desde lead a visita.`,
+          label: 'Leads Con Visita Realizada',
+          value: completedVisits.length,
+          meta: upcomingScheduledVisits.length === 0
+            ? 'No hay visitas futuras pendientes ahora mismo.'
+            : `${upcomingScheduledVisits.length} visita programada pendiente de celebrarse.`,
           action: 'card-leads-visits'
         },
         {
@@ -3151,7 +3917,7 @@
           .sort((a, b) => String(a.hora_confirmada || a.hora_solicitada).localeCompare(String(b.hora_confirmada || b.hora_solicitada)));
 
         return `
-          <article class="calendar-day ${day === (dashboardData.kpisGenerales.fecha_snapshot || toMadridDateParts().ymd) ? 'today' : ''}">
+          <article class="calendar-day ${day === toMadridDateParts().ymd ? 'today' : ''}">
             <div class="calendar-day-head">
               <div class="calendar-day-name">${parts.label}</div>
               <div class="calendar-day-date">${parts.day}</div>
@@ -3185,7 +3951,8 @@
       }
       const scheduledVisits = getCalendarVisits();
       const view = uiState.calendarView;
-      const baseDate = uiState.calendarBaseDate || dashboardData.kpisGenerales.fecha_snapshot || toMadridDateParts().ymd;
+      const today = toMadridDateParts().ymd;
+      const baseDate = getCalendarAnchorDate();
 
       if (view === 'week') {
         const weekStart = startOfWeek(baseDate);
@@ -3203,7 +3970,7 @@
                 .sort((a, b) => String(a.hora_confirmada || a.hora_solicitada).localeCompare(String(b.hora_confirmada || b.hora_solicitada)));
 
               return `
-                <article class="calendar-day ${day === dashboardData.kpisGenerales.fecha_snapshot ? 'today' : ''}">
+                <article class="calendar-day ${day === today ? 'today' : ''}">
                   <div class="calendar-day-head">
                     <div class="calendar-day-name">${parts.label}</div>
                     <div class="calendar-day-date">${parts.day}</div>
@@ -3241,7 +4008,7 @@
               .sort((a, b) => String(a.hora_confirmada || a.hora_solicitada).localeCompare(String(b.hora_confirmada || b.hora_solicitada)));
 
             return `
-              <article class="month-day ${!isSameMonth(day, baseDate) ? 'muted' : ''} ${day === dashboardData.kpisGenerales.fecha_snapshot ? 'today' : ''}">
+              <article class="month-day ${!isSameMonth(day, baseDate) ? 'muted' : ''} ${day === today ? 'today' : ''}">
                 <div class="month-day-num">${day.slice(-2)}</div>
                 <div class="month-day-events">
                   ${visitsForDay.length ? visitsForDay.map((visit) => `
@@ -3393,7 +4160,7 @@
     renderFollowUp();
     renderStock();
     renderActivity();
-    uiState.calendarBaseDate = dashboardData.kpisGenerales.fecha_snapshot;
+    uiState.calendarBaseDate = toMadridDateParts().ymd;
     uiState.selectedPropertyId = dashboardData.pisos[0]?.piso_id || '';
     uiState.selectedVisitId = dashboardData.visitas[0]?.visita_id || '';
     renderCalendarWindow();
@@ -3435,6 +4202,39 @@
     document.getElementById('openCalendarFromVisitBtn').addEventListener('click', () => {
       closeVisitWindow();
       openCalendarWindow();
+    });
+    document.getElementById('deleteVisitBtn').addEventListener('click', () => {
+      const visit = getVisitById(uiState.selectedVisitId);
+      if (!visit) return;
+
+      const confirmed = window.confirm(`¿Seguro que quieres eliminar la visita ${visit.visita_id} de ${visit.cliente_nombre || visit.cliente_id || 'este cliente'}?`);
+      if (!confirmed) return;
+
+      const visitId = visit.visita_id;
+      const clientId = visit.cliente_id;
+      dashboardData.visitas = dashboardData.visitas.filter((item) => item.visita_id !== visitId);
+
+      const remainingClientVisits = dashboardData.visitas.filter((item) => item.cliente_id === clientId);
+      const lead = dashboardData.leadEstado.find((item) => item.cliente_id === clientId);
+      if (lead && !remainingClientVisits.length) {
+        const movementTimestamp = madridDateTimeFormatter.format(new Date()).replace(',', '');
+        lead.estado_pipeline = 'En gestión';
+        lead.proxima_accion = 'Revisar oportunidad';
+        lead.requiere_seguimiento = false;
+        lead.motivo_seguimiento = '';
+        lead.ultima_accion = `Visita ${visitId} eliminada del dashboard`;
+        lead.ultima_interaccion_fecha = movementTimestamp;
+        lead.updated_at = movementTimestamp;
+      }
+
+      uiState.selectedVisitId = dashboardData.visitas[0]?.visita_id || '';
+      syncKpisWithVisits();
+      refreshDashboardData();
+      renderCalendarWindow();
+      closeVisitPopover();
+      closeDrawer();
+      closeVisitWindow();
+      showToast(`Visita ${visitId} eliminada.`);
     });
     document.getElementById('newPropertyBtn').addEventListener('click', () => {
       const nextNumber = dashboardData.pisos.length + 1;
@@ -3480,37 +4280,29 @@
       const client = getClientById(uiState.selectedClientId);
       if (!client) return;
       clientWorkspaceStore.notes[client.cliente_id] = document.getElementById('clientNote').value.trim();
+      clientWorkspaceStore.preferences[client.cliente_id] = {
+        zona: document.getElementById('clientSearchZone').value.trim(),
+        precio_max: document.getElementById('clientSearchBudget').value.trim(),
+        m2_min: document.getElementById('clientSearchSurface').value.trim(),
+        hab_min: document.getElementById('clientSearchRooms').value.trim(),
+        finca_pref: document.getElementById('clientSearchBuilding').value.trim(),
+        tipo_busqueda: document.getElementById('clientSearchType').value.trim(),
+        ascensor_pref: normalizePreferenceChoice(document.getElementById('clientSearchLift').value),
+        balcon_pref: normalizePreferenceChoice(document.getElementById('clientSearchBalcony').value),
+        terraza_pref: normalizePreferenceChoice(document.getElementById('clientSearchTerrace').value),
+        parking_pref: normalizePreferenceChoice(document.getElementById('clientSearchParking').value)
+      };
       persistClientWorkspaceStore();
       renderClientsWindow();
-      showToast(`Nota guardada para ${client.cliente_nombre}.`);
+      showToast(`Ficha guardada para ${client.cliente_nombre || client.cliente_id}.`);
     });
     document.getElementById('visitForm').addEventListener('submit', (event) => {
       event.preventDefault();
-      const visit = getVisitById(uiState.selectedVisitId);
-      if (!visit) return;
-      const movementTimestamp = madridDateTimeFormatter.format(new Date()).replace(',', '');
-      visit.fecha_confirmada = document.getElementById('visitDate').value;
-      visit.hora_confirmada = document.getElementById('visitTime').value;
-      visit.estado_visita = document.getElementById('visitStatus').value;
-      visit.resultado_agenda = document.getElementById('visitNotes').value.trim() || `Visita ${visit.estado_visita.replaceAll('_', ' ')}`;
-      visit.updated_at = movementTimestamp;
-      const lead = dashboardData.leadEstado.find((item) => item.cliente_id === visit.cliente_id);
-      if (lead) {
-        lead.estado_pipeline = visit.estado_visita === 'realizada' ? 'Seguimiento post-visita' : 'Visita confirmada';
-        lead.proxima_accion = visit.estado_visita === 'realizada' ? 'Registrar seguimiento post-visita' : 'Preparar visita';
-        lead.requiere_seguimiento = visit.estado_visita === 'realizada';
-        lead.motivo_seguimiento = visit.estado_visita === 'realizada'
-          ? 'Pendiente de anotar conclusiones y siguiente propuesta comercial'
-          : '';
-        lead.ultima_accion = visit.resultado_agenda;
-        lead.ultima_interaccion_fecha = movementTimestamp;
-        lead.updated_at = movementTimestamp;
-      }
-      syncKpisWithVisits();
-      refreshDashboardData();
-      renderCalendarWindow();
-      renderVisitWindow();
-      showToast(`Visita ${visit.visita_id} reprogramada para ${formatDateTime(visit.fecha_confirmada, visit.hora_confirmada)}.`);
+      saveVisitFromForm();
+    });
+    document.getElementById('markVisitDoneFromWindow').addEventListener('click', () => {
+      document.getElementById('visitStatus').value = 'realizada';
+      saveVisitFromForm({ forceStatus: 'realizada', closeAfterSave: true });
     });
     document.getElementById('visitDate').addEventListener('input', refreshVisitPreview);
     document.getElementById('visitTime').addEventListener('input', () => {
@@ -3541,19 +4333,21 @@
       renderCalendarWindow();
     });
     document.getElementById('calendarPrevBtn').addEventListener('click', () => {
+      const baseDate = getCalendarAnchorDate();
       uiState.calendarBaseDate = uiState.calendarView === 'week'
-        ? addDays(uiState.calendarBaseDate, -7)
-        : addMonths(uiState.calendarBaseDate, -1);
+        ? addDays(baseDate, -7)
+        : addMonths(baseDate, -1);
       renderCalendarWindow();
     });
     document.getElementById('calendarNextBtn').addEventListener('click', () => {
+      const baseDate = getCalendarAnchorDate();
       uiState.calendarBaseDate = uiState.calendarView === 'week'
-        ? addDays(uiState.calendarBaseDate, 7)
-        : addMonths(uiState.calendarBaseDate, 1);
+        ? addDays(baseDate, 7)
+        : addMonths(baseDate, 1);
       renderCalendarWindow();
     });
     document.getElementById('calendarTodayBtn').addEventListener('click', () => {
-      uiState.calendarBaseDate = dashboardData.kpisGenerales.fecha_snapshot;
+      uiState.calendarBaseDate = toMadridDateParts().ymd;
       renderCalendarWindow();
     });
     document.addEventListener('click', (event) => {
